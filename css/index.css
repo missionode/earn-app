@@ -1,0 +1,219 @@
+.container {
+    padding: 20px;
+}
+
+/* UPI Setup Popup Styles */
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--background-secondary); /* Using a CSS variable */
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    text-align: center;
+}
+
+@media (max-width: 700px) {
+    /* Adjust the width of your target element */
+    .popup {
+      width: 69%; /* Example width adjustment */
+      /* You can also add other responsive properties here */
+      margin: 0 auto; /* Optional: centers the element */
+    }
+    
+  }
+
+  @media (max-width: 420px) {
+    /* Adjust the width of your target element */
+    .popup {
+      width: 96%; /* Example width adjustment */
+      /* You can also add other responsive properties here */
+      margin: 0 auto; /* Optional: centers the element */
+    }
+    
+  }
+
+  @media (max-width: 498px) {
+    .filter-controls .filter-group:first-child #startDate {
+        margin-bottom: 14px;
+    }
+  }
+
+
+.popup h2 {
+    color: var(--text-primary); /* Using a CSS variable */
+    margin-bottom: 15px;
+}
+
+.popup p {
+    color: var(--text-secondary); /* Using a CSS variable */
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    color: var(--text-primary); /* Using a CSS variable */
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color); /* Using a CSS variable */
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.error-message {
+    color: var(--error-color); /* Using a CSS variable */
+    font-size: 0.8rem;
+    margin-top: 5px;
+}
+
+/* Action Buttons Section */
+.action-buttons {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.action-buttons .button {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--accent-color); /* Using a CSS variable */
+    color: var(--text-on-accent); /* Using a CSS variable */
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out, transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.action-buttons .button img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+    color: #fff;
+}
+
+.action-buttons .button:hover {
+    background-color: var(--accent-hover-color); /* Using a CSS variable */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Summary Section */
+.summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.summary-item {
+    background-color: var(--background-secondary); /* Using a CSS variable */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.summary-item p {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.summary-item img {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 10px;
+    opacity: 0.4;
+}
+
+.summary-item h3 {
+    color: #788294; /* Using a CSS variable */
+    margin-bottom: 5px;
+}
+
+.summary-item.income p strong {
+    color: var(--income-color); /* Using a CSS variable */
+}
+
+.summary-item.expense p strong {
+    color: var(--expense-color); /* Using a CSS variable */
+}
+
+/* Transactions Section */
+.transactions h2 {
+    color: var(--text-primary); /* Using a CSS variable */
+    margin-bottom: 15px;
+}
+
+.filter-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+
+.filter-group label {
+    color: var(--text-secondary); /* Using a CSS variable */
+    margin-right: 5px;
+}
+
+.filter-group input[type="date"],
+.filter-group select,
+.filter-group input[type="text"] {
+    padding: 8px;
+    border: 1px solid var(--border-color); /* Using a CSS variable */
+    border-radius: 5px;
+}
+
+.table_wrap {
+    overflow: scroll;
+}
+
+#transactionsTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background-color: var(--background-secondary); /* Using a CSS variable */
+    border-radius: 8px;
+    overflow: auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+#transactionsTable th,
+#transactionsTable td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color-light); /* Using a CSS variable */
+}
+
+#transactionsTable th {
+    background-color: var(--background-light); /* Using a CSS variable */
+    font-weight: bold;
+    color: var(--text-primary); /* Using a CSS variable */
+}
+
+#transactionsTable tbody tr:last-child td {
+    border-bottom: none;
+}
+
+#upiSetupPopup {
+    display: none;
+}

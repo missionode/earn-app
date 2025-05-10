@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receive QR Code - Earn</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/receive-qr.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Scan to Pay</h1>
+        <div id="qrCodeContainer">
+            </div>
+        <div class="payment-details">
+            <p>Amount: <strong><span id="amountDisplay"></span></strong></p>
+            <p>Description: <span id="descriptionDisplay"></span></p>
+            <p>Payee: <strong id="payeeNameDisplay"></strong></p>
+        </div>
+        <button id="doneButton" class="button primary">Done</button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/easyqrcodejs@4.6.2/dist/easy.qrcode.min.js"></script> <script src="js/receive-qr.js"></script>
+</body>
+</html>

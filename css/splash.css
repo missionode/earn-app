@@ -1,0 +1,39 @@
+body {
+    background-color: #007AFF; /* Using a CSS variable */
+}
+
+.splash-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.logo {
+    width: 150px; /* Adjust size as needed */
+    height: auto;
+    margin-bottom: 1px;
+}
+
+h1 {
+    color: var(--text-on-accent); /* Using a CSS variable */
+    font-size: 1.4rem;
+    margin-bottom: 30px;
+    font-weight: 300;
+}
+
+.loading-icon {
+    width: 50px; /* Adjust size as needed */
+    height: 50px;
+    border-radius: 50%;
+    border: 3px solid var(--accent-color); /* Using a CSS variable */
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

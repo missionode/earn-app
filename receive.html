@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receive Money - Earn</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/receive.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Receive Money</h1>
+        <form id="receiveForm">
+            <div class="form-group">
+                <label for="amount">Amount:</label>
+                <input type="number" id="amount" name="amount" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description (Optional):</label>
+                <textarea id="description" name="description"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Category (Optional):</label>
+                <div class="icon-grid">
+                    <input type="radio" id="categoryCash" name="category" value="cash">
+                    <label for="categoryCash"><img src="assets/icons/cash.svg" alt="Cash"><span>Cash</span></label>
+            
+                    <input type="radio" id="categoryRent" name="category" value="rent">
+                    <label for="categoryRent"><img src="assets/icons/rent.svg" alt="Rent"><span>Rent</span></label>
+            
+                    <input type="radio" id="categorySalary" name="category" value="salary">
+                    <label for="categorySalary"><img src="assets/icons/salary.svg" alt="Salary"><span>Salary</span></label>
+            
+                    <input type="radio" id="categoryOther" name="category" value="other">
+                    <label for="categoryOther"><img src="assets/icons/other.svg" alt="Other"><span>Other</span></label>
+                </div>
+            </div>
+            <button type="submit" class="button primary">Generate QR Code</button>
+        </form>
+        <a href="index.html" class="back-link">Back to Home</a>
+    </div>
+    <script src="js/script.js"></script>
+    <script src="js/receive.js"></script>
+</body>
+</html>
