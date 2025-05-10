@@ -35,38 +35,58 @@ document.addEventListener('DOMContentLoaded', () => {
         const video = document.createElement('video');
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
-
+        const aspectRatioVideo = video.videoWidth / video.videoHeight || 1; // Default to 1 if not loaded
+    
         navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
             .then(stream => {
-                streamGlobal = stream; // Store the stream globally
+                streamGlobal = stream;
                 video.srcObject = stream;
                 video.setAttribute('playsinline', true);
                 video.play();
-
+    
                 video.addEventListener('loadedmetadata', () => {
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
+                    const aspectRatioCanvas = window.innerWidth / window.innerHeight;
+                    let width, height;
+    
+                    if (aspectRatioCanvas > aspectRatioVideo) {
+                        // Canvas is wider than video, so fit video height
+                        height = window.innerHeight;
+                        width = height * aspectRatioVideo;
+                    } else {
+                        // Canvas is narrower than video, so fit video width
+                        width = window.innerWidth;
+                        height = width / aspectRatioVideo;
+                    }
+    
+                    canvas.width = window.innerWidth; // Full width
+                    canvas.height = window.innerHeight; // Full height
                     qrScannerView.appendChild(canvas);
-
+    
+                    context.fillStyle = 'black';
+                    context.fillRect(0, 0, canvas.width, canvas.height); // Fill with black
+    
+                    const offsetX = (canvas.width - width) / 2;
+                    const offsetY = (canvas.height - height) / 2;
+    
                     function scan() {
-                        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                        context.drawImage(video, offsetX, offsetY, width, height);
                         const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
                         const code = jsQR(imageData.data, canvas.width, canvas.height);
-
+    
                         if (code) {
                             stopCamera(stream);
                             qrScannerPopup.style.display = 'none';
                             const recipientVPA = extractVPAFromQRCode(code.data);
                             if (recipientVPA) {
-                                initiateUpiPayment(recipientVPA, amount, description); // Use outer scope variables
+                                initiateUpiPayment(recipientVPA, amount, description);
                             } else {
                                 alert('Invalid UPI QR code.');
                             }
                         } else {
-                            requestAnimationFrame(scan);    
+                            requestAnimationFrame(scan);
                         }
                     }
-
+    
                     scan();
                 });
             })
