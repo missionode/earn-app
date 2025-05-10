@@ -8,6 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const categoryTravel = document.getElementById('categoryTravel');
     const categoryOthers = document.getElementById('categoryOthers');
 
+    // **Move generateUniqueId() outside the submit listener**
+    function generateUniqueId() {
+        return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    }
+
     sendForm.addEventListener('submit', (event) => {
         event.preventDefault();
 
@@ -37,13 +42,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         console.log('Expense Data:', transactionData);
         saveTransaction(transactionData); // Save the transaction
-        
-             // **Crucially, you need the recipient's VPA here.**
-        const recipientVPA = 'recipientupi@examplebank'; // Replace with actual recipient VPA
 
-        const transactionId = generateUniqueId(); // Generate a unique transaction ID
+        // **Crucially, you need the recipient's VPA here.**
+        const recipientVPA = 'nath.syam.1986@okicici'; // Replace with actual recipient VPA
 
-        const upiIntentUrl = `upi://pay?pa=<span class="math-inline">\{encodeURIComponent\(recipientVPA\)\}&pn\=</span>{encodeURIComponent('Recipient Name')}&am=<span class="math-inline">\{amount\.toFixed\(2\)\}&cu\=INR&tr\=</span>{encodeURIComponent(transactionId)}&tn=${encodeURIComponent(description)}`;
+        const transactionId = generateUniqueId(); // Now this will work
+
+        const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(recipientVPA)}&pn=${encodeURIComponent('Recipient Name')}&am=${amount.toFixed(2)}&cu=INR&tr=${encodeURIComponent(transactionId)}&tn=${encodeURIComponent(description)}`;
 
         // Try to open the UPI app
         window.location.href = upiIntentUrl;
@@ -54,6 +59,4 @@ document.addEventListener('DOMContentLoaded', () => {
         transactions.unshift(transaction); // Add to the beginning for recent first
         localStorage.setItem('earn_transactions', JSON.stringify(transactions));
     }
-
-
 });
