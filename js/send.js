@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Redirect or open UPI app (implementation will depend on platform)
         alert('Initiating UPI payment (implementation pending)');
         // For now, redirect back to home
+        const upiIntentUrl = `upi://pay?pa=<span class="math-inline">\{encodeURIComponent\(recipientVPA\)\}&pn\=</span>{encodeURIComponent('Recipient Name')}&am=<span class="math-inline">\{amount\.toFixed\(2\)\}&cu\=INR&tr\=</span>{encodeURIComponent(transactionId)}&tn=${encodeURIComponent(description)}`;
         window.location.href = 'upi://pay';
     });
 
@@ -48,4 +49,14 @@ document.addEventListener('DOMContentLoaded', () => {
         transactions.unshift(transaction); // Add to the beginning for recent first
         localStorage.setItem('earn_transactions', JSON.stringify(transactions));
     }
+    
+     // **Crucially, you need the recipient's VPA here.**
+     const recipientVPA = 'recipientupi@examplebank'; // Replace with actual recipient VPA
+
+     const transactionId = generateUniqueId(); // Generate a unique transaction ID
+
+     const upiIntentUrl = `upi://pay?pa=<span class="math-inline">\{encodeURIComponent\(recipientVPA\)\}&pn\=</span>{encodeURIComponent('Recipient Name')}&am=<span class="math-inline">\{amount\.toFixed\(2\)\}&cu\=INR&tr\=</span>{encodeURIComponent(transactionId)}&tn=${encodeURIComponent(description)}`;
+
+     // Try to open the UPI app
+     window.location.href = upiIntentUrl;
 });
