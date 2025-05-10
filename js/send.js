@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
             time: new Date().toTimeString().split(' ')[0]
         };
 
-        console.log('Expense Data:', transactionData);
+        // console.log('Expense Data:', transactionData);
         saveTransaction(transactionData); // Save the transaction
 
         // **Crucially, you need the recipient's VPA here.**
