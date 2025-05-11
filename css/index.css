@@ -1,5 +1,14 @@
 .container {
-    padding: 10px;
+    padding: 22px 10px 10px;
+}
+
+.earn-logo {
+    position: absolute;
+    width: 40px;
+    border-radius: 100%;
+    margin: -17px auto 1px auto;
+    left: 0;
+    right: 0;
 }
 
 /* UPI Setup Popup Styles */
@@ -84,6 +93,15 @@
     display: flex;
     gap: 20px;
     margin-bottom: 30px;
+    position: fixed;
+    bottom: -16px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .action-buttons .button {
@@ -125,7 +143,7 @@
 .summary-item {
     background-color: var(--background-secondary); /* Using a CSS variable */
     padding: 20px;
-    border-radius: 8px;
+    border-radius: 15px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
