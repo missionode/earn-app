@@ -203,12 +203,14 @@
 
 .table_wrap {
     overflow: scroll;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
 }
 
 #transactionsTable {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
+    /* margin-top: 10px; */
     background-color: var(--background-secondary); /* Using a CSS variable */
     border-radius: 8px;
     overflow: auto;
