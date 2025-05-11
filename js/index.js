@@ -14,6 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchBox = document.getElementById('searchBox');
     const startDateInput = document.getElementById('startDate');
     const endDateInput = document.getElementById('endDate');
+    const filterType = document.getElementById('filterType'); // Get the new filter type dropdown
+    const clearFilterButton = document.getElementById('clearFilter'); // Get the clear filter button
+
+    let allTransactions = [];
 
     // --- Helper Functions ---
     function getLocalStorageItem(key) {
@@ -53,6 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'cash': return 'assets/icons/cash.svg';
             case 'rent': return 'assets/icons/rent.svg';
             case 'salary': return 'assets/icons/salary.svg';
+            case 'gift': return 'assets/icons/gift.svg';
+            case 'investment': return 'assets/icons/investment.svg';
             case 'other': return 'assets/icons/other.svg';
             case 'food': return 'assets/icons/food.svg';
             case 'shopping': return 'assets/icons/shopping-bag.svg';
@@ -64,7 +70,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function filterTransactions(transactions, filters) {
-        let filteredTransactions = [...transactions]; // Create a copy to avoid modifying the original
+        let filteredTransactions = [...transactions];
+
+        if (filters.type) {
+            filteredTransactions = filteredTransactions.filter(t => t.type === filters.type);
+        }
 
         if (filters.category) {
             filteredTransactions = filteredTransactions.filter(t => t.category === filters.category);
@@ -86,20 +96,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function loadTransactions() {
-        let transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-    
-        // Apply filters
+        allTransactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
+
         const filters = {
+            type: filterType.value,
             category: categoryFilter.value,
             startDate: startDateInput.value,
             endDate: endDateInput.value,
             search: searchBox.value.toLowerCase()
         };
-        transactions = filterTransactions(transactions, filters);
-    
-        // Take the first 50 transactions after filtering
-        const displayedTransactions = transactions.slice(0, 50);
-    
+        const displayedTransactions = filterTransactions(allTransactions, filters).slice(0, 50);
+
         transactionsTableBody.innerHTML = '';
         displayedTransactions.forEach(transaction => {
             const row = transactionsTableBody.insertRow();
@@ -109,19 +116,27 @@ document.addEventListener('DOMContentLoaded', () => {
             const amountCell = row.insertCell();
             const dateCell = row.insertCell();
             const timeCell = row.insertCell();
-    
+
             typeCell.textContent = transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1);
             let categoryIcon = getCategoryIcon(transaction.category);
             if (!categoryIcon) {
-                categoryIcon = 'assets/icons/default.svg'; // Use a default icon path
+                categoryIcon = 'assets/icons/default.svg';
             }
             categoryCell.innerHTML = categoryIcon ? `<img src="${categoryIcon}" alt="${transaction.category}">` : transaction.category;
             descriptionCell.textContent = transaction.description || '-';
             amountCell.textContent = `₹${transaction.amount.toFixed(2)}`;
+            if (transaction.type === 'expense') {
+                amountCell.classList.add('expense');
+                amountCell.textContent = `- ${amountCell.textContent}`;
+            } else if (transaction.type === 'income') {
+                amountCell.classList.add('income');
+                amountCell.textContent = `+ ${amountCell.textContent}`;
+            }
             dateCell.textContent = transaction.date;
             timeCell.textContent = transaction.time;
         });
         updateSummary();
+        updateCategoryFilterByType(filterType.value); // Call this here to update on load/filter
     }
 
     function updateSummary() {
@@ -154,18 +169,37 @@ document.addEventListener('DOMContentLoaded', () => {
             setLocalStorageItem('earn_upiId', upiId);
             setLocalStorageItem('earn_username', username);
             hideUPISetupPopup();
-            loadTransactions(); // Load transactions after setup for new users
+            loadTransactions();
         }
     }
 
-    function applyFilters() {
-        const filters = {
-            category: categoryFilter.value,
-            startDate: startDateInput.value,
-            endDate: endDateInput.value,
-            search: searchBox.value
-        };
-        loadTransactions(filters);
+    function updateCategoryFilterByType(selectedType) {
+        const categoryOptions = categoryFilter.options;
+        for (let i = 1; i < categoryOptions.length; i++) {
+            const option = categoryOptions[i];
+            const expenseCategories = ['food', 'shopping', 'entertainment', 'travel', 'others'];
+            const incomeCategories = ['salary', 'gift', 'investment', 'cash', 'other']; // Include all income categories
+
+            if (selectedType === 'income') {
+                option.style.display = incomeCategories.includes(option.value) ? 'block' : 'none';
+            } else if (selectedType === 'expense') {
+                option.style.display = expenseCategories.includes(option.value) ? 'block' : 'none';
+            } else {
+                option.style.display = 'block';
+            }
+        }
+        categoryFilter.value = ''; // Reset category filter when type changes
+    }
+
+    function populateCategoryFilter() {
+        const categories = ['food', 'shopping', 'entertainment', 'travel', 'others', 'salary', 'gift', 'investment', 'cash', 'other'];
+        const categorySelect = document.getElementById('categoryFilter');
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+            categorySelect.appendChild(option);
+        });
     }
 
     // --- Event Listeners ---
@@ -176,13 +210,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     upiSetupForm.addEventListener('submit', handleUPISetupSubmit);
-
     receiveMoneyBtn.addEventListener('click', () => {
         window.location.href = 'receive.html';
     });
-
     sendMoneyBtn.addEventListener('click', () => {
         window.location.href = 'send.html';
+    });
+
+    filterType.addEventListener('change', (event) => {
+        const selectedType = event.target.value;
+        updateCategoryFilterByType(selectedType);
+        loadTransactions();
     });
 
     categoryFilter.addEventListener('change', loadTransactions);
@@ -190,6 +228,13 @@ document.addEventListener('DOMContentLoaded', () => {
     startDateInput.addEventListener('change', loadTransactions);
     endDateInput.addEventListener('change', loadTransactions);
 
-    //# allFunctionsCalledOnLoad - Ensuring initial functions are called
-    updateSummary(); // Call again to ensure initial values are set if transactions exist
+    clearFilterButton.addEventListener('click', () => {
+        filterType.value = '';
+        categoryFilter.value = '';
+        updateCategoryFilterByType('');
+        loadTransactions();
+    });
+
+    populateCategoryFilter(); // Populate categories on load
+    updateSummary();
 });

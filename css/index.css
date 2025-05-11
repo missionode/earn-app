@@ -1,5 +1,5 @@
 .container {
-    padding: 30px 10px 50px 10px;
+    padding: 30px 10px 90px 10px;
 }
 
 .earn-logo {
@@ -9,6 +9,11 @@
     margin: -20px auto 1px auto;
     left: 0;
     right: 0;
+}
+
+.filter-research {
+    margin-bottom: 15px;
+    display: flex;;
 }
 
 /* UPI Setup Popup Styles */

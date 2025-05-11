@@ -54,13 +54,21 @@
         </section>
 
         <section class="transactions">
-            <h2>Transaction History</h2>
+            <b class="filter-research">financial analysis</b>
             <div class="filter-controls">
                 <div class="filter-group">
-                    <label for="dateRange">Date Range:</label>
+                    <label for="dateRange">Range:</label>
                     <input type="date" id="startDate">
                     <span>-</span>
                     <input type="date" id="endDate">
+                </div>
+                <div class="filter-group">
+                    <label for="filterType">Type:</label>
+                    <select id="filterType">
+                        <option value="">All Types</option>
+                        <option value="income">Income</option>
+                        <option value="expense">Expense</option>
+                    </select>
                 </div>
                 <div class="filter-group">
                     <label for="categoryFilter">Category:</label>
@@ -76,11 +84,13 @@
                         <option value="travel">Travel</option>
                     </select>
                 </div>
+                
                 <div class="filter-group">
                     <label for="searchBox">Search:</label>
                     <input type="text" id="searchBox" placeholder="Description">
                 </div>
             </div>
+            <h2>Transaction History</h2>
             <div class="table_wrap">
                 <table id="transactionsTable">
                     <thead>
