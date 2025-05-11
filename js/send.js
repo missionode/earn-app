@@ -151,8 +151,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(recipientVPA)}&pn=${payeeName}&am=${amount.toFixed(2)}&cu=INR&tr=${encodeURIComponent(transactionId)}&tn=${description}`;
     
         // window.location.href = upiIntentUrl;
-        const basicUpiIntentUrl = `upi://pay?pa=<span class="math-inline">\{encodeURIComponent\(recipientVPA\)\}&am\=</span>1&cu=INR`;
-        window.location.href = basicUpiIntentUrl;
+        const upiIntentUrl = `upi://pay?pa=<span class="math-inline">\{encodeURIComponent\(recipientVPA\)\}&am\=</span>{amount.toFixed(2)}&cu=INR&tr=<span class="math-inline">\{encodeURIComponent\(transactionId\)\}&tn\=</span>{encodeURIComponent(description)}`;
+        window.location.href = upiIntentUrl;
     }
 
     function saveTransaction(transaction) {
