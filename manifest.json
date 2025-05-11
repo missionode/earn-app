@@ -2,7 +2,7 @@
     "name": "Earn",
     "short_name": "Earn",
     "description": "Just keep earning",
-    "start_url": "splash.html",
+    "start_url": "index.html",
     "display": "standalone",
     "background_color": "#007AFF",
     "theme_color": "#007AFF",
