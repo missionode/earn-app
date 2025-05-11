@@ -103,7 +103,7 @@ h1 {
 }
 
 .back-link:hover {
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 .fullscreen-popup {
