@@ -2,18 +2,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const sendForm = document.getElementById('sendForm');
     const amountInput = document.getElementById('amount');
     const descriptionInput = document.getElementById('description');
+    const categoryFood = document.getElementById('categoryFood');
+    const categoryShopping = document.getElementById('categoryShopping');
+    const categoryEntertainment = document.getElementById('categoryEntertainment');
+    const categoryTravel = document.getElementById('categoryTravel');
+    const categoryOthers = document.getElementById('categoryOthers');
     const qrScannerPopup = document.getElementById('qrScannerPopup');
     const qrScannerView = document.getElementById('qrScannerView');
     const closeScannerButton = document.getElementById('closeScanner');
 
-    let amount; // Declare amount outside the submit listener
-    let description; // Declare description outside the submit listener
+    let amount;
+    let description;
+    let category = '';
+    let streamGlobal;
 
     sendForm.addEventListener('submit', (event) => {
         event.preventDefault();
 
-        amount = parseFloat(amountInput.value); // Assign to the outer scope variable
-        description = descriptionInput.value; // Assign to the outer scope variable
+        amount = parseFloat(amountInput.value);
+        description = descriptionInput.value;
+        category = getSelectedCategory(); // Get the selected category
 
         if (isNaN(amount) || amount <= 0) {
             alert('Please enter a valid amount.');
@@ -26,59 +34,64 @@ document.addEventListener('DOMContentLoaded', () => {
 
     closeScannerButton.addEventListener('click', () => {
         qrScannerPopup.style.display = 'none';
-        stopCamera(); // Ensure camera is stopped when closing
+        stopCamera();
     });
 
-    let streamGlobal; // To store the camera stream globally for stopCamera()
+    function getSelectedCategory() {
+        if (categoryFood.checked) return 'food';
+        if (categoryShopping.checked) return 'shopping';
+        if (categoryEntertainment.checked) return 'entertainment';
+        if (categoryTravel.checked) return 'travel';
+        if (categoryOthers.checked) return 'others';
+        return ''; // Default or handle no selection as needed
+    }
 
     function startQrScanner() {
         const video = document.createElement('video');
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
-        const aspectRatioVideo = video.videoWidth / video.videoHeight || 1; // Default to 1 if not loaded
-    
+
         navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
             .then(stream => {
                 streamGlobal = stream;
                 video.srcObject = stream;
                 video.setAttribute('playsinline', true);
                 video.play();
-    
+
                 video.addEventListener('loadedmetadata', () => {
+                    const aspectRatioVideo = video.videoWidth / video.videoHeight || 1;
                     const aspectRatioCanvas = window.innerWidth / window.innerHeight;
                     let width, height;
-    
+
                     if (aspectRatioCanvas > aspectRatioVideo) {
-                        // Canvas is wider than video, so fit video height
                         height = window.innerHeight;
                         width = height * aspectRatioVideo;
                     } else {
-                        // Canvas is narrower than video, so fit video width
                         width = window.innerWidth;
                         height = width / aspectRatioVideo;
                     }
-    
-                    canvas.width = window.innerWidth; // Full width
-                    canvas.height = window.innerHeight; // Full height
+
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
                     qrScannerView.appendChild(canvas);
-    
+
                     context.fillStyle = 'black';
-                    context.fillRect(0, 0, canvas.width, canvas.height); // Fill with black
-    
+                    context.fillRect(0, 0, canvas.width, canvas.height);
+
                     const offsetX = (canvas.width - width) / 2;
                     const offsetY = (canvas.height - height) / 2;
-    
+
                     function scan() {
                         context.drawImage(video, offsetX, offsetY, width, height);
                         const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
                         const code = jsQR(imageData.data, canvas.width, canvas.height);
-    
+
                         if (code) {
                             stopCamera(stream);
                             qrScannerPopup.style.display = 'none';
                             const recipientVPA = extractVPAFromQRCode(code.data);
                             if (recipientVPA) {
-                                initiateUpiPayment(recipientVPA, amount, description);
+                                initiateUpiPayment(recipientVPA, amount, description, category); // Pass category
                             } else {
                                 alert('Invalid UPI QR code.');
                             }
@@ -86,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             requestAnimationFrame(scan);
                         }
                     }
-    
+
                     scan();
                 });
             })
@@ -104,12 +117,11 @@ document.addEventListener('DOMContentLoaded', () => {
             stream.getTracks().forEach(track => track.stop());
         }
         if (qrScannerView.firstChild) {
-            qrScannerView.removeChild(qrScannerView.firstChild); // Clean up canvas
+            qrScannerView.removeChild(qrScannerView.firstChild);
         }
     }
 
     function extractVPAFromQRCode(qrCodeText) {
-        // Implement your VPA extraction logic here (example below)
         if (qrCodeText && qrCodeText.includes("pa=")) {
             const vpaStart = qrCodeText.indexOf("pa=") + 3;
             let vpaEnd = qrCodeText.indexOf("&", vpaStart);
@@ -121,8 +133,17 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
     }
 
-    function initiateUpiPayment(recipientVPA, amount, description) {
+    function initiateUpiPayment(recipientVPA, amount, description, category) {
         const transactionId = generateUniqueId();
+        const transactionData = {
+            type: 'expense',
+            amount: amount,
+            category: category,
+            description: description,
+            date: new Date().toISOString().split('T')[0],
+            time: new Date().toTimeString().split(' ')[0]
+        };
+        saveTransaction(transactionData); // Save the transaction
         const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(recipientVPA)}&pn=${encodeURIComponent('Recipient Name')}&am=${amount.toFixed(2)}&cu=INR&tr=${encodeURIComponent(transactionId)}&tn=${encodeURIComponent(description)}`;
         window.location.href = upiIntentUrl;
     }
