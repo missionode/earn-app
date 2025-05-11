@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function initiateUpiPayment(recipientVPA, amount, description, category) {
         const transactionId = generateUniqueId();
-        const payeeName = localStorage.getItem('earn_username') || 'Recipient Name'; // Get username from localStorage
+        const payeeName = localStorage.getItem('earn_username') || 'Recipient Name';
     
         const transactionData = {
             type: 'expense',
@@ -146,7 +146,10 @@ document.addEventListener('DOMContentLoaded', () => {
             time: new Date().toTimeString().split(' ')[0]
         };
         saveTransaction(transactionData);
-        const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(recipientVPA)}&pn=${encodeURIComponent(payeeName)}&am=${amount.toFixed(2)}&cu=INR&tr=${encodeURIComponent(transactionId)}&tn=${encodeURIComponent(description)}`;
+    
+        // Try with unencoded payee name and transaction note
+        const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(recipientVPA)}&pn=${payeeName}&am=${amount.toFixed(2)}&cu=INR&tr=${encodeURIComponent(transactionId)}&tn=${description}`;
+        console.log(upiIntentUrl)
         window.location.href = upiIntentUrl;
     }
 
