@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return 'Invalid UPI ID format.';
         }
         const domain = upiId.split('@')[1];
-        const validDomains = ['ybl', 'upi', 'okhdfcbank', 'icici', 'axisbank', 'oksbi', 'paytm','fbl']; // Example list
+        const validDomains = ['ybl', 'upi', 'okhdfcbank', 'icici', 'axisbank', 'oksbi', 'paytm','fbl','okicici']; // Example list
         if (!validDomains.includes(domain)) {
             return 'Invalid UPI ID domain.';
         }
