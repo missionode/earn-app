@@ -5,7 +5,7 @@
     "start_url": "splash.html",
     "display": "standalone",
     "background_color": "#007AFF",
-    "theme_color": "#f9f9f9",
+    "theme_color": "#007AFF",
     "icons": [
       {
         "src": "assets/icons/icon-48x48.png",
