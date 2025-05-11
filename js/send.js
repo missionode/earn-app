@@ -149,12 +149,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
         // Try with unencoded payee name and transaction note
         const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(recipientVPA)}&pn=${payeeName}&am=${amount.toFixed(2)}&cu=INR&tr=${encodeURIComponent(transactionId)}&tn=${description}`;
-        console.log(upiIntentUrl)
+    
         window.location.href = upiIntentUrl;
     }
 
     function saveTransaction(transaction) {
-        alert()
         let transactions = JSON.parse(localStorage.getItem('earn_transactions') || '[]');
         transactions.unshift(transaction);
         localStorage.setItem('earn_transactions', JSON.stringify(transactions));
