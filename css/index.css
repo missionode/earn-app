@@ -1,12 +1,12 @@
 .container {
-    padding: 22px 10px 10px;
+    padding: 30px 10px 10px;
 }
 
 .earn-logo {
     position: absolute;
-    width: 40px;
+    width:33px;
     border-radius: 100%;
-    margin: -17px auto 1px auto;
+    margin: -20px auto 1px auto;
     left: 0;
     right: 0;
 }
