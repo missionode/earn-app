@@ -135,6 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function initiateUpiPayment(recipientVPA, amount, description, category) {
         const transactionId = generateUniqueId();
+        const payeeName = localStorage.getItem('earn_username') || 'Recipient Name'; // Get username from localStorage
+    
         const transactionData = {
             type: 'expense',
             amount: amount,
@@ -143,12 +145,13 @@ document.addEventListener('DOMContentLoaded', () => {
             date: new Date().toISOString().split('T')[0],
             time: new Date().toTimeString().split(' ')[0]
         };
-        saveTransaction(transactionData); // Save the transaction
-        const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(recipientVPA)}&pn=${encodeURIComponent('Recipient Name')}&am=${amount.toFixed(2)}&cu=INR&tr=${encodeURIComponent(transactionId)}&tn=${encodeURIComponent(description)}`;
+        saveTransaction(transactionData);
+        const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(recipientVPA)}&pn=${encodeURIComponent(payeeName)}&am=${amount.toFixed(2)}&cu=INR&tr=${encodeURIComponent(transactionId)}&tn=${encodeURIComponent(description)}`;
         window.location.href = upiIntentUrl;
     }
 
     function saveTransaction(transaction) {
+        alert()
         let transactions = JSON.parse(localStorage.getItem('earn_transactions') || '[]');
         transactions.unshift(transaction);
         localStorage.setItem('earn_transactions', JSON.stringify(transactions));
