@@ -53,6 +53,7 @@
   @media (max-width: 498px) {
     .filter-controls .filter-group:first-child #startDate {
         margin-bottom: 14px;
+        font-size: 10px;
     }
   }
 
