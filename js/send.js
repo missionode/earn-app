@@ -148,9 +148,11 @@ document.addEventListener('DOMContentLoaded', () => {
         saveTransaction(transactionData);
     
         // Try with unencoded payee name and transaction note
-        const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(recipientVPA)}&pn=${payeeName}&am=${amount.toFixed(2)}&cu=INR&tr=${encodeURIComponent(transactionId)}&tn=${description}`;
+        // const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(recipientVPA)}&pn=${payeeName}&am=${amount.toFixed(2)}&cu=INR&tr=${encodeURIComponent(transactionId)}&tn=${description}`;
     
-        window.location.href = upiIntentUrl;
+        // window.location.href = upiIntentUrl;
+        const basicUpiIntentUrl = `upi://pay?pa=<span class="math-inline">\{encodeURIComponent\(recipientVPA\)\}&am\=</span>{amount.toFixed(2)}&cu=INR`;
+        window.location.href = basicUpiIntentUrl;
     }
 
     function saveTransaction(transaction) {
