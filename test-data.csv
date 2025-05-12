@@ -1,101 +1,106 @@
 type,category,description,amount,date,time
-income,salary,Monthly%salary%credited,55000.00,2025-05-12,09:30:00
-expense,rent,Apartment%rent%for%May,12000.00,2025-05-13,10:15:00
-income,gift,Received%birthday%gift,500.00,2025-05-13,18:45:00
-expense,food,Grocery%shopping,2550.75,2025-05-14,11:20:00
-expense,shopping,New%shoes%purchase,1800.00,2025-05-14,16:00:00
-income,investment,Interest%earned,320.50,2025-05-15,14:00:00
-expense,entertainment,Movie%tickets,850.00,2025-05-15,20:30:00
-expense,travel,Fuel%for%car,1100.00,2025-05-16,08:00:00
-income,other,Freelance%payment,7500.00,2025-05-16,15:00:00
-expense,others,Office%supplies,345.20,2025-05-17,12:45:00
-income,salary,Bonus%payment,2500.00,2025-05-17,17:30:00
-expense,food,Lunch%with%colleagues,480.00,2025-05-18,13:00:00
-expense,shopping,Clothes%online,2200.00,2025-05-18,19:15:00
-income,gift,Cash%from%relatives,2000.00,2025-05-19,10:00:00
-expense,entertainment,Concert%tickets,1500.00,2025-05-19,21:00:00
-expense,travel,Bus%fare,150.00,2025-05-20,07:30:00
-income,investment,Stock%dividends,180.75,2025-05-20,16:45:00
-expense,others,Subscription%renewal,999.00,2025-05-21,11:00:00
-income,other,Sale%of%furniture,1200.00,2025-05-21,19:00:00
-expense,food,Dinner%out,920.50,2025-05-22,20:00:00
-income,salary,Monthly%salary,55000.00,2025-05-27,09:30:00
-expense,rent,June%rent,12000.00,2025-05-28,10:15:00
-income,gift,Gift%card%received,250.00,2025-05-28,18:45:00
-expense,food,Weekend%brunch,680.00,2025-05-29,12:00:00
-expense,shopping,Book%purchase,450.00,2025-05-29,17:00:00
-income,investment,Fixed%deposit%interest,410.25,2025-05-30,14:30:00
-expense,entertainment,Bowling,520.00,2025-05-30,20:00:00
-expense,travel,Train%ticket,780.00,2025-05-31,09:00:00
-income,other,Refund%received,150.00,2025-05-31,16:30:00
-expense,others,Mobile%recharge,299.00,2025-06-01,13:15:00
-income,salary,Bonus%payment,2500.00,2025-06-01,17:45:00
-expense,food,Coffee%and%snacks,220.00,2025-06-02,10:45:00
-expense,shopping,Electronics%item,750.00,2025-06-02,19:45:00
-income,gift,Contest%prize,100.00,2025-06-03,11:30:00
-expense,entertainment,Museum%visit,300.00,2025-06-03,15:30:00
-expense,travel,Toll%charges,80.00,2025-06-04,08:30:00
-income,investment,Stock%gains,950.00,2025-06-04,17:15:00
-expense,others,Charity%donation,500.00,2025-06-05,14:00:00
-income,other,Consulting%fee,3000.00,2025-06-05,20:30:00
-expense,food,Pizza%delivery,780.00,2025-06-06,19:30:00
-income,salary,Monthly%salary,55000.00,2025-06-16,09:30:00
-expense,rent,July%rent,12000.00,2025-06-17,10:15:00
-income,gift,Sold%handmade%item,150.00,2025-06-17,19:30:00
-expense,food,Farmers%market,820.00,2025-06-18,13:30:00
-expense,shopping,Gadget%purchase,3500.00,2025-06-18,18:30:00
-income,investment,Dividend%reinvested,210.75,2025-06-19,16:00:00
-expense,entertainment,Escape%room,700.00,2025-06-19,22:00:00
-expense,travel,Flight%booking,8500.00,2025-06-20,10:00:00
-income,other,Compensation%received,120.00,2025-06-20,14:45:00
-expense,others,Bank%fees,50.00,2025-06-21,11:15:00
-income,salary,Bonus%payment,2500.00,2025-06-21,17:00:00
-expense,food,Ice%cream,120.00,2025-06-22,15:30:00
-expense,shopping,Home%decor,980.00,2025-06-22,20:30:00
-income,gift,Raffle%win,250.00,2025-06-23,12:00:00
-expense,entertainment,Comedy%show,600.00,2025-06-23,21:00:00
-expense,travel,Cab%fares,450.00,2025-06-24,09:30:00
-income,investment,P2P%interest,110.20,2025-06-24,18:30:00
-expense,others,Learning%books,680.00,2025-06-25,13:00:00
-income,other,Royalty%income,1800.00,2025-06-25,19:45:00
-expense,food,Travel%snacks,280.00,2025-06-26,10:00:00
-income,salary,Monthly%salary,55000.00,2025-07-01,09:30:00
-expense,rent,August%rent,12000.00,2025-07-02,10:15:00
-income,gift,Sold%plant,40.00,2025-07-02,17:30:00
-expense,food,New%cafe,550.00,2025-07-03,12:15:00
-expense,shopping,Kitchen%item,320.00,2025-07-03,17:45:00
-income,investment,Bond%sale,1100.00,2025-07-04,15:30:00
-expense,entertainment,Gaming%sub,399.00,2025-07-04,22:30:00
-expense,travel,Train%pass,350.00,2025-07-05,07:00:00
-income,other,Expense%reimbursement,280.00,2025-07-05,16:15:00
-expense,others,Postage%fees,75.00,2025-07-06,13:45:00
-income,salary,Bonus%payment,2500.00,2025-07-06,18:30:00
-expense,food,Weekend%BBQ,980.00,2025-07-07,19:00:00
-expense,shopping,Garden%supplies,620.00,2025-07-07,21:30:00
-income,gift,Cash%from%return,180.00,2025-07-08,11:00:00
-expense,entertainment,Dance%class,750.00,2025-07-08,17:00:00
-expense,travel,Bike%repair,250.00,2025-07-09,09:45:00
-income,investment,Govt%bond%interest,220.50,2025-07-09,16:30:00
-expense,others,Online%course,1999.00,2025-07-10,10:30:00
-income,other,Freelance%writing,1500.00,2025-07-10,20:00:00
-expense,food,Smoothie,150.00,2025-07-11,14:30:00
-income,salary,Monthly%salary,55000.00,2025-07-26,09:30:00
-expense,rent,September%rent,12000.00,2025-07-27,10:15:00
-income,gift,Sold%gift%plant,100.00,2025-07-27,18:30:00
-expense,food,New%cuisine,1100.00,2025-07-28,21:00:00
-expense,shopping,Watch%repair,400.00,2025-07-28,17:15:00
-income,investment,Rental%income,9000.00,2025-07-29,11:30:00
-expense,entertainment,Pottery%class,800.00,2025-07-29,19:30:00
-expense,travel,Airport%transfer,650.00,2025-07-30,07:45:00
-income,other,Insurance%payout,2500.00,2025-07-30,15:15:00
-expense,others,Website%hosting,350.00,2025-07-31,12:00:00
-income,salary,Bonus%payment,2500.00,2025-07-31,17:30:00
-expense,food,Home%baking,310.50,2025-08-01,10:45:00
-expense,shopping,Household%goods,1150.00,2025-08-01,16:30:00
-income,gift,Cash%for%old%item,200.00,2025-08-02,13:00:00
-expense,entertainment,Live%music,1200.00,2025-08-02,20:00:00
-expense,travel,Parking%fee,50.00,2025-08-03,08:00:00
-income,investment,Reward%cashback,220.00,2025-08-03,17:45:00
-expense,others,Printing%service,120.00,2025-08-04,11:30:00
-income,other,Small%job%payment,700.00,2025-08-04,19:15:00
-expense,food,Restaurant%bill,950.00,2025-08-05,20:30:00
+income,salary,Executive Management Compensation,125000.00,2025-05-01,10:00:00
+expense,rent,Luxury Apartment - Monthly Rent,35000.00,2025-05-02,11:30:00
+income,investment,Dividend Income - Blue Chip Stocks,18750.50,2025-05-02,15:45:00
+expense,food,Fine Dining Experience,850.75,2025-05-03,20:00:00
+expense,shopping,Designer Clothing Purchase,6200.00,2025-05-03,16:30:00
+income,business,Profit Distribution - Private Equity,45000.00,2025-05-04,14:00:00
+expense,entertainment,Private Yacht Charter,12000.00,2025-05-04,12:00:00
+expense,travel,First-Class Airfare - International Trip,9500.00,2025-05-05,09:00:00
+income,real_estate,Rental Income - Investment Property 1,7800.00,2025-05-05,18:15:00
+expense,others,High-End Watch Maintenance,1550.20,2025-05-06,14:45:00
+income,salary,Annual Bonus Payment (Partial),60000.00,2025-05-06,17:00:00
+expense,food,Private Chef Services,2800.00,2025-05-07,19:00:00
+expense,shopping,Luxury Handbag Purchase,8900.00,2025-05-07,15:30:00
+income,investment,Interest Income - High-Yield Bonds,5200.00,2025-05-08,11:00:00
+expense,entertainment,Exclusive Concert Tickets + Backstage Pass,3200.00,2025-05-08,21:30:00
+expense,travel,Luxury Hotel Suite - Weekend Stay,4800.00,2025-05-09,16:00:00
+income,business,Consulting Fees - High Profile Client,22000.00,2025-05-09,10:30:00
+expense,others,Art Collection Insurance Premium,2100.00,2025-05-10,12:30:00
+income,real_estate,Rental Income - Investment Property 2,9200.00,2025-05-10,19:30:00
+expense,food,Gourmet Grocery Delivery,1250.50,2025-05-11,10:45:00
+income,salary,Stock Options Vesting,38000.00,2025-05-12,14:30:00
+expense,rent,Second Home - Mortgage Payment,28000.00,2025-05-13,10:00:00
+income,investment,Capital Gains - Real Estate Sale,75000.00,2025-05-13,16:15:00
+expense,food,Business Lunch - High-End Restaurant,620.00,2025-05-14,13:00:00
+expense,shopping,Antique Furniture Purchase,15000.00,2025-05-14,17:45:00
+income,business,Angel Investment Return,62000.00,2025-05-15,11:30:00
+expense,entertainment,Charity Gala Donation,10000.00,2025-05-15,20:30:00
+expense,travel,Private Jet Usage - Short Trip,18000.00,2025-05-16,08:30:00
+income,real_estate,Property Management Fees Received,1500.00,2025-05-16,19:00:00
+expense,others,Financial Advisor Fees,3800.00,2025-05-17,09:30:00
+income,salary,Board Member Fees,12000.00,2025-05-17,15:00:00
+expense,food,Exclusive Wine Collection Purchase,5500.00,2025-05-18,17:00:00
+expense,shopping,Jewelry Purchase,22000.00,2025-05-18,14:00:00
+income,investment,Hedge Fund Distribution,28000.00,2025-05-19,12:00:00
+expense,entertainment,Art Auction Purchase,45000.00,2025-05-19,21:00:00
+expense,travel,Luxury Train Journey,7200.00,2025-05-20,10:30:00
+income,business,Royalties from Intellectual Property,11000.00,2025-05-20,16:45:00
+expense,others,Philanthropic Foundation Contribution,25000.00,2025-05-21,13:00:00
+income,real_estate,Commercial Property Lease Income,15000.00,2025-05-21,18:00:00
+expense,food,Catering for Private Event,4200.00,2025-05-22,19:30:00
+income,salary,Deferred Compensation Payout,52000.00,2025-05-23,11:00:00
+expense,rent,Vacation Villa Rental,18000.00,2025-05-24,14:00:00
+income,investment,Private Lending Interest,6800.00,2025-05-24,17:30:00
+expense,food,Michelin Star Restaurant Experience,1150.00,2025-05-25,20:30:00
+expense,shopping,Custom Tailored Suits,9800.00,2025-05-25,16:00:00
+income,business,Startup Acquisition Payout,95000.00,2025-05-26,10:00:00
+expense,entertainment,Private Performance Booking,28000.00,2025-05-26,22:00:00
+expense,travel,Helicopter Charter,15000.00,2025-05-27,08:00:00
+income,real_estate,Land Lease Revenue,5500.00,2025-05-27,19:00:00
+expense,others,Estate Management Fees,4100.00,2025-05-28,11:30:00
+income,salary,Performance-Based Incentives,25000.00,2025-05-28,16:30:00
+expense,food,Exotic Fruit and Delicacy Purchase,780.00,2025-05-29,10:00:00
+expense,shopping,Luxury Car Accessory,3500.00,2025-05-29,17:15:00
+income,investment,Venture Capital Fund Distribution,32000.00,2025-05-30,13:00:00
+expense,entertainment,Exclusive Sporting Event Tickets + Hospitality,6800.00,2025-05-30,19:30:00
+expense,travel,Spa and Wellness Retreat,8200.00,2025-05-31,11:00:00
+income,business,Patent Licensing Fees,14000.00,2025-05-31,15:30:00
+expense,others,Security Services - Residential,5200.00,2025-06-01,10:30:00
+income,real_estate,Short-Term Rental Income (Luxury Property),6500.00,2025-06-01,17:00:00
+expense,food,Personal Sommelier Services,1900.00,2025-06-02,20:00:00
+expense,shopping,Rare Book Collection Addition,12000.00,2025-06-02,15:00:00
+income,investment,Commodity Trading Profits,19000.00,2025-06-03,13:30:00
+expense,entertainment,Private Museum Tour + Curator Fees,4800.00,2025-06-03,18:30:00
+expense,travel,Luxury Cruise - Suite Booking,11000.00,2025-06-04,09:30:00
+income,business,Affiliate Marketing Earnings,3800.00,2025-06-04,16:00:00
+expense,others,Concierge Services - Annual Fee,2900.00,2025-06-05,11:00:00
+income,salary,Equity Grant Vesting,48000.00,2025-06-05,14:30:00
+expense,food,Imported Gourmet Food Items,920.00,2025-06-06,12:00:00
+expense,shopping,Custom Artwork Commission,25000.00,2025-06-06,17:30:00
+income,investment,Cryptocurrency Trading Gains,21000.00,2025-06-07,10:00:00
+expense,entertainment,Luxury Spa Day + Treatments,1650.00,2025-06-07,16:30:00
+expense,travel,Chauffeur Services - Monthly Retainer,6500.00,2025-06-08,08:30:00
+income,real_estate,Parking Space Rentals (Multiple),2200.00,2025-06-08,19:00:00
+expense,others,Legal Fees - Estate Planning,7800.00,2025-06-09,13:00:00
+income,business,Book Advance Payment,16000.00,2025-06-09,15:45:00
+expense,food,Exclusive Club Membership Dues (Food & Beverage),3100.00,2025-06-10,21:00:00
+expense,shopping,Personal Shopper Fees + Purchases,14000.00,2025-06-10,16:45:00
+income,investment,Peer-to-Peer Lending Returns,4200.00,2025-06-11,11:30:00
+expense,entertainment,Hot Air Balloon Ride - Private,2800.00,2025-06-11,07:00:00
+expense,travel,Luxury Safari Adventure,22000.00,2025-06-12,10:00:00
+income,real_estate,Billboard Rental Income,1800.00,2025-06-12,18:30:00
+expense,others,Personal Assistant Salary,8500.00,2025-06-13,09:00:00
+income,salary,Profit Sharing Bonus,31000.00,2025-06-13,17:15:00
+expense,food,Rare Tea and Coffee Subscription,450.00,2025-06-14,14:00:00
+expense,shopping,Bespoke Furniture Commission,18000.00,2025-06-14,19:30:00
+income,investment,Angel Investor Exit Returns,110000.00,2025-06-15,12:30:00
+expense,entertainment,Opera Season Tickets (Best Seats),5800.00,2025-06-15,20:00:00
+expense,travel,River Cruise - Deluxe Cabin,9800.00,2025-06-16,11:30:00
+income,business,Software License Fees,7200.00,2025-06-16,16:00:00
+expense,others,Donation to Prestigious University,50000.00,2025-06-17,13:30:00
+income,real_estate,Royalty Income - Land Rights,3500.00,2025-06-17,18:00:00
+expense,food,Private Cooking Class - Gourmet Cuisine,680.00,2025-06-18,10:30:00
+expense,shopping,Limited Edition Collectible,28000.00,2025-06-18,15:30:00
+income,investment,Structured Investment Product Returns,15000.00,2025-06-19,14:30:00
+expense,entertainment,Luxury Box at Sporting Event (Annual),35000.00,2025-06-19,21:30:00
+expense,travel,Personalized Guided Tour - Historical Site,3100.00,2025-06-20,07:30:00
+income,business,Speaking Engagement Fees,9000.00,2025-06-20,16:30:00
+expense,others,Tax Preparation and Planning Fees,12000.00,2025-06-21,12:00:00
+income,real_estate,Income from Agricultural Land Lease,4200.00,2025-06-21,19:00:00
+expense,food,Cigar and Fine Spirits Collection,2200.00,2025-06-22,20:30:00
+expense,shopping,Custom Boat Equipment,48000.00,2025-06-22,17:00:00
+income,investment,Inheritance Payout (Partial),150000.00,2025-06-23,11:00:00
+expense,entertainment,Attend Film Festival (VIP Pass + Events),7500.00,2025-06-23,22:00:00
+expense,travel,Extended Stay at Exclusive Resort,16000.00,2025-06-24,09:30:00
+income,business,Merchandise Sales (High-End Goods),11500.00,2025-06-
