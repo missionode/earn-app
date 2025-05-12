@@ -1,0 +1,112 @@
+type,category,description,amount,date,time
+income,salary,Monthly salary credited,55000.00,2025-05-01,09:30:00
+expense,rent,Apartment rent for May,12000.00,2025-05-02,10:15:00
+income,gift,Received birthday gift from friend,500.00,2025-05-02,18:45:00
+expense,food,Grocery shopping at supermarket,2550.75,2025-05-03,11:20:00
+expense,shopping,New shoes purchase,1800.00,2025-05-03,16:00:00
+income,investment,Interest earned on mutual funds,320.50,2025-05-04,14:00:00
+expense,entertainment,Movie tickets and snacks,850.00,2025-05-04,20:30:00
+expense,travel,Fuel for the car,1100.00,2025-05-05,08:00:00
+income,other,Freelance project payment,7500.00,2025-05-05,15:00:00
+expense,others,Stationery and office supplies,345.20,2025-05-06,12:45:00
+income,salary,Bi-weekly bonus payment,2500.00,2025-05-06,17:30:00
+expense,food,Lunch with colleagues,480.00,2025-05-07,13:00:00
+expense,shopping,Clothes from online store,2200.00,2025-05-07,19:15:00
+income,gift,Cash gift from relatives,2000.00,2025-05-08,10:00:00
+expense,entertainment,Concert tickets,1500.00,2025-05-08,21:00:00
+expense,travel,Bus fare for commute,150.00,2025-05-09,07:30:00
+income,investment,Dividends from stocks,180.75,2025-05-09,16:45:00
+expense,others,Software subscription renewal,999.00,2025-05-10,11:00:00
+income,other,Sale of old furniture,1200.00,2025-05-10,19:00:00
+expense,food,Dinner at a restaurant,920.50,2025-05-11,20:00:00
+income,salary,Monthly salary credited,55000.00,2025-05-16,09:30:00
+expense,rent,Apartment rent for June,12000.00,2025-05-17,10:15:00
+income,gift,Received gift card,250.00,2025-05-17,18:45:00
+expense,food,Weekend brunch,680.00,2025-05-18,12:00:00
+expense,shopping,Book purchase,450.00,2025-05-18,17:00:00
+income,investment,Interest earned on fixed deposit,410.25,2025-05-19,14:30:00
+expense,entertainment,Bowling with friends,520.00,2025-05-19,20:00:00
+expense,travel,Train ticket for weekend trip,780.00,2025-05-20,09:00:00
+income,other,Refund for returned item,150.00,2025-05-20,16:30:00
+expense,others,Mobile recharge,299.00,2025-05-21,13:15:00
+income,salary,Bi-weekly bonus payment,2500.00,2025-05-21,17:45:00
+expense,food,Coffee and snacks,220.00,2025-05-22,10:45:00
+expense,shopping,Electronics accessory,750.00,2025-05-22,19:45:00
+income,gift,Won a small contest,100.00,2025-05-23,11:30:00
+expense,entertainment,Art museum visit,300.00,2025-05-23,15:30:00
+expense,travel,Toll charges,80.00,2025-05-24,08:30:00
+income,investment,Capital gains from stock sale,950.00,2025-05-24,17:15:00
+expense,others,Donation to charity,500.00,2025-05-25,14:00:00
+income,other,Payment for consulting work,3000.00,2025-05-25,20:30:00
+expense,food,Pizza delivery,780.00,2025-05-26,19:30:00
+income,salary,Monthly salary credited,55000.00,2025-05-31,09:30:00
+expense,rent,Apartment rent for July,12000.00,2025-06-01,10:15:00
+income,gift,Received flowers (sold for cash),80.00,2025-06-01,18:00:00
+expense,food,Ingredients for baking,310.50,2025-06-02,11:45:00
+expense,shopping,Household items,1150.00,2025-06-02,16:30:00
+income,investment,Bonus shares received (sold),620.00,2025-06-03,15:00:00
+expense,entertainment,Live music show,1200.00,2025-06-03,21:30:00
+expense,travel,Parking fees,50.00,2025-06-04,09:15:00
+income,other,Reward points converted to cash,220.00,2025-06-04,17:00:00
+expense,others,Printing and scanning,120.00,2025-06-05,12:30:00
+income,salary,Bi-weekly bonus payment,2500.00,2025-06-05,18:00:00
+expense,food,Snacks at work,180.00,2025-06-06,14:00:00
+expense,shopping,Personal care products,580.00,2025-06-06,20:00:00
+income,gift,Lottery winnings,5000.00,2025-06-07,10:30:00
+expense,entertainment,Theme park visit,2800.00,2025-06-07,16:00:00
+expense,travel,Auto rickshaw fares,210.00,2025-06-08,08:45:00
+income,investment,Interest on savings account,75.50,2025-06-08,19:00:00
+expense,others,Magazine subscription,499.00,2025-06-09,11:30:00
+income,other,Referral bonus,300.00,2025-06-09,17:45:00
+expense,food,Takeout food,650.00,2025-06-10,20:45:00
+income,salary,Monthly salary credited,55000.00,2025-06-15,09:30:00
+expense,rent,Apartment rent for August,12000.00,2025-06-16,10:15:00
+income,gift,Handmade gift (valued and sold),150.00,2025-06-16,19:30:00
+expense,food,Farmers market haul,820.00,2025-06-17,13:30:00
+expense,shopping,Electronics gadget,3500.00,2025-06-17,18:30:00
+income,investment,Dividend reinvestment (tracked as income),210.75,2025-06-18,16:00:00
+expense,entertainment,Escape room challenge,700.00,2025-06-18,22:00:00
+expense,travel,Flight booking for vacation,8500.00,2025-06-19,10:00:00
+income,other,Compensation for inconvenience,120.00,2025-06-19,14:45:00
+expense,others,Bank charges,50.00,2025-06-20,11:15:00
+income,salary,Bi-weekly bonus payment,2500.00,2025-06-20,17:00:00
+expense,food,Ice cream treat,120.00,2025-06-21,15:30:00
+expense,shopping,Home decor item,980.00,2025-06-21,20:30:00
+income,gift,Won a raffle,250.00,2025-06-22,12:00:00
+expense,entertainment,Stand-up comedy show,600.00,2025-06-22,21:00:00
+expense,travel,Cab fares for the week,450.00,2025-06-23,09:30:00
+income,investment,Interest from peer-to-peer lending,110.20,2025-06-23,18:30:00
+expense,others,Books for learning,680.00,2025-06-24,13:00:00
+income,other,Royalty payment,1800.00,2025-06-24,19:45:00
+expense,food,Snacks while traveling,280.00,2025-06-25,10:00:00
+income,salary,Monthly salary credited,55000.00,2025-06-30,09:30:00
+expense,rent,Apartment rent for September,12000.00,2025-07-01,10:15:00
+income,gift,Received a plant (sold),40.00,2025-07-01,17:30:00
+expense,food,Trying a new cafe,550.00,2025-07-02,12:15:00
+expense,shopping,Kitchen utensil,320.00,2025-07-02,17:45:00
+income,investment,Proceeds from selling bonds,1100.00,2025-07-03,15:30:00
+expense,entertainment,Gaming subscription,399.00,2025-07-03,22:30:00
+expense,travel,Local train pass,350.00,2025-07-04,07:00:00
+income,other,Reimbursement for expenses,280.00,2025-07-04,16:15:00
+expense,others,Postage and shipping,75.00,2025-07-05,13:45:00
+income,salary,Bi-weekly bonus payment,2500.00,2025-07-05,18:30:00
+expense,food,Weekend barbecue,980.00,2025-07-06,19:00:00
+expense,shopping,Gardening supplies,620.00,2025-07-06,21:30:00
+income,gift,Cash from returned faulty item,180.00,2025-07-07,11:00:00
+expense,entertainment,Dance class,750.00,2025-07-07,17:00:00
+expense,travel,Bike repair,250.00,2025-07-08,09:45:00
+income,investment,Interest on government bonds,220.50,2025-07-08,16:30:00
+expense,others,Online course fee,1999.00,2025-07-09,10:30:00
+income,other,Freelance writing gig,1500.00,2025-07-09,20:00:00
+expense,food,Smoothie and juice,150.00,2025-07-10,14:30:00
+income,salary,Monthly salary credited,55000.00,2025-07-15,09:30:00
+expense,rent,Apartment rent for October,12000.00,2025-07-16,10:15:00
+income,gift,Gift certificate (used for online purchase),100.00,2025-07-16,18:30:00
+expense,food,Trying a new cuisine,1100.00,2025-07-17,21:00:00
+expense,shopping,Watch repair,400.00,2025-07-17,17:15:00
+income,investment,Rental income from property,9000.00,2025-07-18,11:30:00
+expense,entertainment,Pottery class,800.00,2025-07-18,19:30:00
+expense,travel,Airport transfer,650.00,2025-07-19,07:45:00
+income,other,Insurance claim payout,2500.00,2025-07-19,15:15:00
+expense,others,Website hosting fees,350.00,2025-07-20,12:00:00
+income,salary,Bi-weekly
