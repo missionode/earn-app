@@ -15,14 +15,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
             reader.onload = function(e) {
                 const contents = e.target.result;
-                const transactions = parseCSV(contents);
+                try {
+                    const transactions = parseCSV(contents);
 
-                if (transactions && transactions.length > 0) {
-                    localStorage.setItem('earn_transactions', JSON.stringify(transactions));
-                    uploadStatus.textContent = `Successfully loaded ${transactions.length} entries to local storage.`;
-                    uploadStatus.classList.add('success');
-                } else {
-                    uploadStatus.textContent = 'Error parsing CSV or empty data.';
+                    if (transactions && transactions.length > 0) {
+                        localStorage.setItem('earn_transactions', JSON.stringify(transactions));
+                        uploadStatus.textContent = `Successfully loaded ${transactions.length} entries to local storage.`;
+                        uploadStatus.classList.add('success');
+                    } else {
+                        uploadStatus.textContent = 'Error parsing CSV or empty data.';
+                        uploadStatus.classList.add('error');
+                    }
+                } catch (error) {
+                    console.error("Error parsing CSV:", error);
+                    uploadStatus.textContent = 'Error parsing CSV.';
                     uploadStatus.classList.add('error');
                 }
             };
@@ -53,7 +59,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (values.length === headers.length) {
                 const transaction = {};
                 for (let j = 0; j < headers.length; j++) {
-                    transaction[headers[j]] = values[j].trim();
+                    let value = values[j].trim();
+                    if (headers[j] === 'amount') {
+                        const parsedAmount = parseFloat(value);
+                        transaction[headers[j]] = isNaN(parsedAmount) ? 0 : parsedAmount; // Default to 0 if not a number
+                    } else {
+                        transaction[headers[j]] = value;
+                    }
                 }
                 transactions.push(transaction);
             }
