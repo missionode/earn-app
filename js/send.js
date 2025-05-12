@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let description;
     let category = '';
     let streamGlobal;
+    let extractedUPIID;
+    let extractedMerchantName;
 
     sendForm.addEventListener('submit', (event) => {
         event.preventDefault();
@@ -89,9 +91,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (code) {
                             stopCamera(stream);
                             qrScannerPopup.style.display = 'none';
-                            const recipientVPA = extractVPAFromQRCode(code.data);
-                            if (recipientVPA) {
-                                initiateUpiPayment(recipientVPA, amount, description, category); // Pass category
+                            const qrData = extractDataFromQRCode(code.data);
+                            extractedUPIID = qrData.upiId;
+                            extractedMerchantName = qrData.merchantName;
+                            if (extractedUPIID) {
+                                initiateUpiPayment(extractedUPIID, amount, description, category, extractedMerchantName);
                             } else {
                                 alert('Invalid UPI QR code.');
                             }
@@ -121,35 +125,49 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function extractVPAFromQRCode(qrCodeText) {
+    function extractDataFromQRCode(qrCodeText) {
+        let upiId = null;
+        let merchantName = null;
+
         if (qrCodeText && qrCodeText.includes("pa=")) {
             const vpaStart = qrCodeText.indexOf("pa=") + 3;
             let vpaEnd = qrCodeText.indexOf("&", vpaStart);
             if (vpaEnd === -1) {
                 vpaEnd = qrCodeText.length;
             }
-            return qrCodeText.substring(vpaStart, vpaEnd);
+            upiId = qrCodeText.substring(vpaStart, vpaEnd);
         }
-        return null;
+
+        if (qrCodeText && qrCodeText.includes("pn=")) {
+            const nameStart = qrCodeText.indexOf("pn=") + 3;
+            let nameEnd = qrCodeText.indexOf("&", nameStart);
+            if (nameEnd === -1) {
+                nameEnd = qrCodeText.length;
+            }
+            merchantName = qrCodeText.substring(nameStart, nameEnd);
+        }
+
+        return { upiId, merchantName };
     }
 
-    function initiateUpiPayment(recipientVPA, amount, description, category) {
+    function initiateUpiPayment(recipientVPA, amount, description, category, merchantNameFromQR) {
         const transactionId = generateUniqueId();
-        const payeeName = localStorage.getItem('earn_username') || 'Recipient Name';
-    
-        const transactionData = {
+        const payeeName = merchantNameFromQR || localStorage.getItem('earn_username') || 'Recipient Name';
+        const merchantCategoryCode = '0000';
+
+        const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(recipientVPA)}&pn=${encodeURIComponent(payeeName)}&am=${parseFloat(amount).toFixed(2)}&cu=INR&tr=${encodeURIComponent(transactionId)}&tn=${encodeURIComponent(description)}&mc=${merchantCategoryCode}`;
+
+        console.log("Generated UPI Intent URL:", upiIntentUrl); // For debugging
+
+        window.location.href = upiIntentUrl;
+        saveTransaction({
             type: 'expense',
-            amount: amount,
+            amount: parseFloat(amount),
             category: category,
             description: description,
             date: new Date().toISOString().split('T')[0],
             time: new Date().toTimeString().split(' ')[0]
-        };
-        saveTransaction(transactionData);
-    
-        // Try with unencoded payee name and transaction note
-        const gpayMinimalUrl = `upi://pay?pa=${encodeURIComponent("nath.syam.1986@okicici")}&am=1&cu=INR`;
-        window.location.href = gpayMinimalUrl;
+        });
     }
 
     function saveTransaction(transaction) {
