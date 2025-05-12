@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Test Data</title>
+    <title>Upload Test Data for Local Testing</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/data.css">
 </head>
 <body>
     <header>
-        <h1>Upload Test Data</h1>
+        <h1>Upload Test Data for Local Testing</h1>
     </header>
     <main>
         <section id="upload-section">
@@ -19,15 +19,17 @@
                     <label for="csvFile">Select CSV file:</label>
                     <input type="file" id="csvFile" name="csvFile" accept=".csv" required>
                 </div>
-                <button type="submit">Upload Data</button>
+                <button type="submit">Load Data to Local Storage</button>
                 <p id="upload-status" class="hidden"></p>
             </form>
         </section>
 
-        <section id="backup-section">
-            <h2>Backup Current Data</h2>
-            <button id="backupButton">Create Backup</button>
-            <p id="backup-status" class="hidden"></p>
+        <section id="instructions-section">
+            <h2>Instructions</h2>
+            <p>Select a CSV file containing your test financial data and click "Load Data to Local Storage".</p>
+            <p>The data from the CSV will be stored in your browser's local storage under the key 'earn_transactions'.</p>
+            <p>Ensure your CSV file has the following headers: <code>type,category,description,amount,date,time</code></p>
+            <p>After successful upload, navigate back to the main application page to see the data.</p>
         </section>
     </main>
     <footer>
