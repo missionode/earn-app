@@ -20,7 +20,7 @@
 
 /* UPI Setup Popup Styles */
 .popup {
-    position: fixed;
+    position: absolute;
     top: 0px;
     left: 0px;
     background-color: var(--background-secondary); /* Using a CSS variable */
