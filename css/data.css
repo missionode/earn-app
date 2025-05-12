@@ -1,6 +1,4 @@
-/* css/data.css */
-
-/* Styles specific to the data upload page */
+/* Styles specific to the data upload page for local testing */
 body {
     font-family: sans-serif;
     line-height: 1.6;
@@ -10,7 +8,7 @@ body {
 }
 
 header {
-    background-color: #007bff; /* Blue */
+    background-color: #28a745; /* Green */
     color: white;
     padding: 1em 0;
     text-align: center;
@@ -71,25 +69,25 @@ button {
     border-radius: 5px;
     cursor: pointer;
     font-size: 1em;
-    background-color: #28a745; /* Green for upload/backup */
+    background-color: #007bff; /* Blue */
     color: white;
     transition: background-color 0.3s ease;
 }
 
 button:hover {
-    background-color: #218838; /* Darker green */
+    background-color: #0056b3; /* Darker blue */
 }
 
-#upload-status, #backup-status {
+#upload-status {
     margin-top: 15px;
     font-weight: bold;
 }
 
-#upload-status.success, #backup-status.success {
+#upload-status.success {
     color: green;
 }
 
-#upload-status.error, #backup-status.error {
+#upload-status.error {
     color: red;
 }
 
@@ -102,4 +100,11 @@ footer {
     margin-top: 20px;
     color: #777;
     font-size: 0.9em;
+}
+
+#instructions-section code {
+    background-color: #eee;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-family: monospace;
 }
