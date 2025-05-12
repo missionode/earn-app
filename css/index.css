@@ -37,7 +37,6 @@
 @media (max-width: 700px) {
     /* Adjust the width of your target element */
     .popup {
-      width: 69%; /* Example width adjustment */
       /* You can also add other responsive properties here */
       margin: 0 auto; /* Optional: centers the element */
     }
@@ -47,7 +46,6 @@
   @media (max-width: 420px) {
     /* Adjust the width of your target element */
     .popup {
-      width: 96%; /* Example width adjustment */
       /* You can also add other responsive properties here */
       margin: 0 auto; /* Optional: centers the element */
     }
