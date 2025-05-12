@@ -103,4 +103,88 @@ expense,shopping,Custom Boat Equipment,48000.00,2025-06-22,17:00:00
 income,investment,Inheritance Payout (Partial),150000.00,2025-06-23,11:00:00
 expense,entertainment,Attend Film Festival (VIP Pass + Events),7500.00,2025-06-23,22:00:00
 expense,travel,Extended Stay at Exclusive Resort,16000.00,2025-06-24,09:30:00
-income,business,Merchandise Sales (High-End Goods),11500.00,2025-06-
+income,business,Merchandise Sales (High-End Goods),11500.00,2025-06-06-24,14:00:00
+expense,others,Luxury Goods Storage Unit - Annual Fee,11000.00,2025-06-25,11:30:00
+income,real_estate,Income from Wind Turbine Lease,2800.00,2025-06-25,17:00:00
+expense,food,Truffle and Caviar Purchase,1500.00,2025-06-26,19:00:00
+expense,shopping,Custom-Made Footwear,4200.00,2025-06-26,14:30:00
+income,investment,Life Insurance Policy Dividend,950.00,2025-06-27,10:30:00
+expense,entertainment,Rent Private Island for Weekend,65000.00,2025-06-27,12:00:00
+expense,travel,Around the World Cruise - Grand Suite,150000.00,2025-06-28,09:00:00
+income,business,Sale of Domain Name Portfolio,22000.00,2025-06-28,17:45:00
+expense,others,Personal Trainer and Wellness Coach (Annual),18000.00,2025-06-29,11:00:00
+income,real_estate,Income from Cell Tower Lease,3100.00,2025-06-29,19:30:00
+expense,food,Exotic Spices and Herbs Collection,380.00,2025-06-30,16:00:00
+expense,shopping,Bespoke Bicycle Purchase,7200.00,2025-06-30,14:00:00
+income,investment,Annuity Payment Received,12500.00,2025-07-01,10:00:00
+expense,entertainment,Own Racehorse - Upkeep and Training,35000.00,2025-07-01,07:00:00
+expense,travel,Private Helicopter Ownership - Maintenance,28000.00,2025-07-02,11:30:00
+income,business,E-commerce Store Profits (Luxury Goods),19000.00,2025-07-02,15:45:00
+expense,others,Cybersecurity Services - Personal,5500.00,2025-07-03,14:45:00
+income,real_estate,Income from Farmland Lease,2500.00,2025-07-03,18:15:00
+expense,food,Organic and Sustainable Food Subscription,620.00,2025-07-04,10:45:00
+expense,shopping,Rare Coin and Stamp Collection Addition,9500.00,2025-07-04,16:30:00
+income,investment,Government Treasury Bill Interest,1100.00,2025-07-05,11:00:00
+expense,entertainment,Attend Cannes Film Festival (VIP Package),12000.00,2025-07-05,21:30:00
+expense,travel,Luxury Villa Rental - Summer Getaway,25000.00,2025-07-06,16:00:00
+income,business,Intellectual Property Licensing Fees,8800.00,2025-07-06,10:30:00
+expense,others,Personal Library Curation Services,3100.00,2025-07-07,12:30:00
+income,real_estate,Income from Solar Panel Farm Lease,4800.00,2025-07-07,19:30:00
+expense,food,Artisanal Cheese and Charcuterie Selection,290.00,2025-07-08,10:45:00
+expense,shopping,Vintage Car Restoration Project,38000.00,2025-07-08,15:30:00
+income,investment,Mutual Fund Redemption Gains,21000.00,2025-07-09,11:30:00
+expense,entertainment,Host Private Charity Auction,18000.00,2025-07-09,20:30:00
+expense,travel,Private Jet Fuel and Crew Costs,32000.00,2025-07-10,08:30:00
+income,business,Sale of Online Course Platform,68000.00,2025-07-10,17:15:00
+expense,others,Private Tutor Fees (Multiple Subjects),6200.00,2025-07-11,13:00:00
+income,real_estate,Income from Billboard Advertisement,1500.00,2025-07-11,19:00:00
+expense,food,Exotic Seafood and Shellfish Purchase,410.00,2025-07-12,14:45:00
+expense,shopping,Bespoke Suit Alterations,550.00,2025-07-12,16:00:00
+income,investment,Stock Dividend Reinvestment,1650.00,2025-07-13,12:00:00
+expense,entertainment,Attend Venice Biennale (VIP Access),9200.00,2025-07-13,21:00:00
+expense,travel,Luxury Barge Cruise - European Waterways,13500.00,2025-07-14,10:30:00
+income,business,Podcast Sponsorship Revenue,5100.00,2025-07-14,16:45:00
+expense,others,Personal Security Detail (Monthly),15000.00,2025-07-15,11:30:00
+income,real_estate,Income from Parking Garage Operation,7800.00,2025-07-15,18:00:00
+expense,food,Artisanal Bread and Pastry Subscription,180.00,2025-07-16,09:30:00
+expense,shopping,Custom Leather Goods,2800.00,2025-07-16,15:00:00
+income,investment,Bond Coupon Payment Received,3200.00,2025-07-17,13:30:00
+expense,entertainment,Rent Entire Movie Theater for Private Screening,4500.00,2025-07-17,20:30:00
+expense,travel,Private Island Rental - Day Trip,8500.00,2025-07-18,07:30:00
+income,business,Online Course Sales Revenue,6200.00,2025-07-18,16:00:00
+expense,others,Wine Cellar Management Services,2100.00,2025-07-19,12:00:00
+income,real_estate,Income from Mobile Home Park Lease,3900.00,2025-07-19,19:30:00
+expense,food,Rare Imported Coffee Beans Purchase,210.00,2025-07-20,10:00:00
+expense,shopping,High-End Sporting Equipment,5800.00,2025-07-20,14:00:00
+income,investment,Stock Split Gains (Realized),11000.00,2025-07-21,11:30:00
+expense,entertainment,Sponsor Local Arts Festival,12000.00,2025-07-21,21:00:00
+expense,travel,Luxury RV Rental - Cross Country Trip,19000.00,2025-07-22,09:00:00
+income,business,Commission on High-Value Sales,9500.00,2025-07-22,17:30:00
+expense,others,Aircraft Hangar Rental (Annual),22000.00,2025-07-23,13:00:00
+income,real_estate,Income from Advertising Space Lease,1200.00,2025-07-23,18:30:00
+expense,food,Artisanal Chocolate and Confectionery Purchase,150.00,2025-07-24,15:00:00
+expense,shopping,Custom Musical Instrument,16000.00,2025-07-24,16:30:00
+income,investment,Real Estate Investment Trust (REIT) Dividend,4800.00,2025-07-25,10:00:00
+expense,entertainment,Fund Private Film Production,75000.00,2025-07-25,22:30:00
+expense,travel,Hire Private Jet for Family Vacation,85000.00,2025-07-26,08:00:00
+income,business,Sale of Digital Assets (NFTs),28000.00,2025-07-26,17:00:00
+expense,others,Private Language Tutor (Multiple Languages),9200.00,2025-07-27,11:00:00
+income,real_estate,Income from Marina Dock Rental,5200.00,2025-07-27,19:30:00
+expense,food,Imported Mineral Water Collection,90.00,2025-07-28,14:00:00
+expense,shopping,High-End Camera Equipment,11000.00,2025-07-28,16:00:00
+income,investment,Treasury Inflation-Protected Securities (TIPS) Interest,1900.00,2025-07-29,10:00:00
+expense,entertainment,Become Patron of Major Orchestra,30000.00,2025-07-29,21:00:00
+expense,travel,Rent Luxury Villa for Extended Period,42000.00,2025-07-30,09:30:00
+income,business,Grants and Awards Received,15000.00,2025-07-30,17:45:00
+expense,others,Personal Stylist and Wardrobe Management,12000.00,2025-07-31,11:00:00
+income,real_estate,Income from Parking Lot Operation,6100.00,2025-07-31,19:00:00
+expense,food,Artisanal Olive Oil and Vinegar Collection,250.00,2025-08-01,13:00:00
+expense,shopping,Custom-Built Gaming PC,8500.00,2025-08-01,16:30:00
+income,investment,Foreign Currency Exchange Gains,7800.00,2025-08-02,10:00:00
+expense,entertainment,Sponsor Emerging Artists Exhibition,16000.00,2025-08-02,20:00:00
+expense,travel,Private Train Carriage Rental,28000.00,2025-08-03,08:00:00
+income,business,Sale of Software as a Service (SaaS) Subscription,9200.00,2025-08-03,17:00:00
+expense,others,Private Investigator Services,4500.00,2025-08-04,14:00:00
+income,real_estate,Income from Storage Unit Rentals,3300.00,2025-08-04,19:30:00
+expense,food,Exotic Fruits and Vegetables Delivery,310.00,2025-08-05,11:00:00
+expense,shopping,High-End Luggage Set,6200.00,2025-08-05,15:30:00
