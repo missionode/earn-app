@@ -1,0 +1,96 @@
+/* css/reset.css */
+
+/* Basic styles for the reset page */
+body {
+    font-family: sans-serif;
+    line-height: 1.6;
+    margin: 20px;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+header {
+    background-color: #333;
+    color: white;
+    padding: 1em 0;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    margin: 0;
+}
+
+main {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#reset-warning {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #ffe0b2; /* Light orange/amber */
+    border: 1px solid #ffb300; /* Amber */
+    border-radius: 4px;
+    color: #795548; /* Brownish */
+}
+
+#reset-warning .warning {
+    color: #d32f2f; /* Dark red */
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+#reset-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+#resetButton {
+    background-color: #d32f2f; /* Red */
+    color: white;
+}
+
+#resetButton:hover {
+    background-color: #b71c1c; /* Darker red */
+}
+
+#cancelButton {
+    background-color: #4CAF50; /* Green */
+    color: white;
+}
+
+#cancelButton:hover {
+    background-color: #388E3C; /* Darker green */
+}
+
+#reset-message {
+    margin-top: 20px;
+    font-weight: bold;
+    color: green;
+}
+
+.hidden {
+    display: none;
+}
+
+footer {
+    text-align: center;
+    margin-top: 20px;
+    color: #777;
+    font-size: 0.9em;
+}
