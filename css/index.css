@@ -25,7 +25,7 @@
     left: 0px;
     background-color: var(--background-secondary); /* Using a CSS variable */
     padding: 30px;
-    border-radius: 8px;
+    border-radius: 0px;
     z-index: 1000;
     text-align: center;
     width:100%;
