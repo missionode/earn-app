@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Earn App</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/reset.css">
+</head>
+<body>
+    <header>
+        <h1>Reset Earn App</h1>
+    </header>
+    <main>
+        <section id="reset-warning">
+            <p class="warning">
+                <strong>Warning!</strong> This action will reset the Earn app to its factory settings.
+                All your recorded transactions, UPI ID, and username will be permanently deleted.
+                This action cannot be undone.
+            </p>
+            <p>Are you sure you want to continue?</p>
+        </section>
+
+        <section id="reset-actions">
+            <button id="resetButton">Yes, Reset App</button>
+            <button id="cancelButton">No, Go Back</button>
+            <p id="reset-message" class="hidden"></p>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Earn App</p>
+    </footer>
+    <script src="js/reset.js"></script>
+</body>
+</html>
