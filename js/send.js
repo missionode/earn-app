@@ -52,19 +52,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const video = document.createElement('video');
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
-
+    
+        // Clear any existing content in qrScannerView
+        qrScannerView.innerHTML = '';
+    
         navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
             .then(stream => {
                 streamGlobal = stream;
                 video.srcObject = stream;
                 video.setAttribute('playsinline', true);
                 video.play();
-
+    
                 video.addEventListener('loadedmetadata', () => {
                     const aspectRatioVideo = video.videoWidth / video.videoHeight || 1;
                     const aspectRatioCanvas = window.innerWidth / window.innerHeight;
                     let width, height;
-
+    
                     if (aspectRatioCanvas > aspectRatioVideo) {
                         height = window.innerHeight;
                         width = height * aspectRatioVideo;
@@ -72,22 +75,22 @@ document.addEventListener('DOMContentLoaded', () => {
                         width = window.innerWidth;
                         height = width / aspectRatioVideo;
                     }
-
+    
                     canvas.width = window.innerWidth;
                     canvas.height = window.innerHeight;
                     qrScannerView.appendChild(canvas);
-
+    
                     context.fillStyle = 'black';
                     context.fillRect(0, 0, canvas.width, canvas.height);
-
+    
                     const offsetX = (canvas.width - width) / 2;
                     const offsetY = (canvas.height - height) / 2;
-
+    
                     function scan() {
                         context.drawImage(video, offsetX, offsetY, width, height);
                         const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
                         const code = jsQR(imageData.data, canvas.width, canvas.height);
-
+    
                         if (code) {
                             stopCamera(stream);
                             qrScannerPopup.style.display = 'none';
@@ -103,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             requestAnimationFrame(scan);
                         }
                     }
-
+    
                     scan();
                 });
             })
