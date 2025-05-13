@@ -13,6 +13,13 @@
     display: none;
 }
 
+.app-olog {
+    /* margin-top: 50px; */
+    margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .filter-research {
     margin-bottom: 15px;
     display: flex;
