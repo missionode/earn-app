@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const qrScannerPopup = document.getElementById('qrScannerPopup');
     const qrScannerView = document.getElementById('qrScannerView');
     const closeScannerButton = document.getElementById('closeScanner');
+    const paymentStatusDiv = document.getElementById('paymentStatus');
+    const successfulButton = document.getElementById('paymentSuccessfulButton');
+    const failedButton = document.getElementById('paymentFailedButton');
 
     let amount;
     let description;
@@ -17,13 +20,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let streamGlobal;
     let extractedUPIID;
     let extractedMerchantName;
+    let currentTransactionId; // To track the initiated transaction
 
     sendForm.addEventListener('submit', (event) => {
         event.preventDefault();
 
         amount = parseFloat(amountInput.value);
         description = descriptionInput.value;
-        category = getSelectedCategory(); // Get the selected category
+        category = getSelectedCategory();
 
         if (isNaN(amount) || amount <= 0) {
             alert('Please enter a valid amount.');
@@ -45,29 +49,28 @@ document.addEventListener('DOMContentLoaded', () => {
         if (categoryEntertainment.checked) return 'entertainment';
         if (categoryTravel.checked) return 'travel';
         if (categoryOthers.checked) return 'others';
-        return ''; // Default or handle no selection as needed
+        return '';
     }
 
     function startQrScanner() {
         const video = document.createElement('video');
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
-    
-        // Clear any existing content in qrScannerView
+
         qrScannerView.innerHTML = '';
-    
+
         navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
             .then(stream => {
                 streamGlobal = stream;
                 video.srcObject = stream;
                 video.setAttribute('playsinline', true);
                 video.play();
-    
+
                 video.addEventListener('loadedmetadata', () => {
                     const aspectRatioVideo = video.videoWidth / video.videoHeight || 1;
                     const aspectRatioCanvas = window.innerWidth / window.innerHeight;
                     let width, height;
-    
+
                     if (aspectRatioCanvas > aspectRatioVideo) {
                         height = window.innerHeight;
                         width = height * aspectRatioVideo;
@@ -75,22 +78,22 @@ document.addEventListener('DOMContentLoaded', () => {
                         width = window.innerWidth;
                         height = width / aspectRatioVideo;
                     }
-    
+
                     canvas.width = window.innerWidth;
                     canvas.height = window.innerHeight;
                     qrScannerView.appendChild(canvas);
-    
+
                     context.fillStyle = 'black';
                     context.fillRect(0, 0, canvas.width, canvas.height);
-    
+
                     const offsetX = (canvas.width - width) / 2;
                     const offsetY = (canvas.height - height) / 2;
-    
+
                     function scan() {
                         context.drawImage(video, offsetX, offsetY, width, height);
                         const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
                         const code = jsQR(imageData.data, canvas.width, canvas.height);
-    
+
                         if (code) {
                             stopCamera(stream);
                             qrScannerPopup.style.display = 'none';
@@ -106,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             requestAnimationFrame(scan);
                         }
                     }
-    
+
                     scan();
                 });
             })
@@ -154,22 +157,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function initiateUpiPayment(recipientVPA, amount, description, category, merchantNameFromQR) {
-        const transactionId = generateUniqueId();
+        currentTransactionId = generateUniqueId();
         const payeeName = merchantNameFromQR || localStorage.getItem('earn_username') || 'Recipient Name';
         const merchantCategoryCode = '0000';
+        const callbackUrl = window.location.origin + '/payment-status'; // Replace with your actual callback URL
 
-        const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(recipientVPA)}&pn=${encodeURIComponent(payeeName)}&am=${parseFloat(amount).toFixed(2)}&cu=INR&tr=${encodeURIComponent(transactionId)}&tn=${encodeURIComponent(description)}&mc=${merchantCategoryCode}`;
+        let encodedDescription = encodeURIComponent(description);
+        const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(recipientVPA)}&pn=${encodeURIComponent(payeeName)}&am=${parseFloat(amount).toFixed(2)}&cu=INR&tr=${encodeURIComponent(currentTransactionId)}&tn=${encodedDescription.replace(/%20/g, '%')}&mc=${merchantCategoryCode}&callbackUrl=${encodeURIComponent(callbackUrl)}`;
 
-        console.log("Generated UPI Intent URL:", upiIntentUrl); // For debugging
+        console.log("Generated UPI Intent URL:", upiIntentUrl);
 
         window.location.href = upiIntentUrl;
-        saveTransaction({
-            type: 'expense',
-            amount: parseFloat(amount),
-            category: category,
-            description: description,
-            date: new Date().toISOString().split('T')[0],
-            time: new Date().toTimeString().split(' ')[0]
+
+        paymentStatusDiv.style.display = 'block';
+
+        successfulButton.addEventListener('click', () => {
+            saveTransaction({
+                id: currentTransactionId,
+                type: 'expense',
+                amount: parseFloat(amount),
+                category: category,
+                description: description,
+                date: new Date().toISOString().split('T')[0],
+                time: new Date().toTimeString().split(' ')[0],
+                status: 'success'
+            });
+            paymentStatusDiv.style.display = 'none';
+            alert('Payment recorded as successful.');
+            // Optionally redirect or update UI
+        });
+
+        failedButton.addEventListener('click', () => {
+            paymentStatusDiv.style.display = 'none';
+            alert('Payment marked as failed. Transaction not recorded.');
+            // Optionally handle failure scenario
         });
     }
 
