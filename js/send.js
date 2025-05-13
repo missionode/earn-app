@@ -10,9 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const qrScannerPopup = document.getElementById('qrScannerPopup');
     const qrScannerView = document.getElementById('qrScannerView');
     const closeScannerButton = document.getElementById('closeScanner');
-    const paymentStatusDiv = document.getElementById('paymentStatus');
-    const successfulButton = document.getElementById('paymentSuccessfulButton');
-    const failedButton = document.getElementById('paymentFailedButton');
 
     let amount;
     let description;
@@ -20,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let streamGlobal;
     let extractedUPIID;
     let extractedMerchantName;
-    let currentTransactionId; // To track the initiated transaction
 
     sendForm.addEventListener('submit', (event) => {
         event.preventDefault();
@@ -157,40 +153,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function initiateUpiPayment(recipientVPA, amount, description, category, merchantNameFromQR) {
-        currentTransactionId = generateUniqueId();
+        const transactionId = generateUniqueId();
         const payeeName = merchantNameFromQR || localStorage.getItem('earn_username') || 'Recipient Name';
         const merchantCategoryCode = '0000';
-        const callbackUrl = window.location.origin + '/payment-status'; // Replace with your actual callback URL
+        const successUrl = encodeURIComponent('https://missionode.github.io/earn-app/index.html?status=success');
 
         let encodedDescription = encodeURIComponent(description);
-        const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(recipientVPA)}&pn=${encodeURIComponent(payeeName)}&am=${parseFloat(amount).toFixed(2)}&cu=INR&tr=${encodeURIComponent(currentTransactionId)}&tn=${encodedDescription.replace(/%20/g, '%')}&mc=${merchantCategoryCode}&callbackUrl=${encodeURIComponent(callbackUrl)}`;
+        const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(recipientVPA)}&pn=${encodeURIComponent(payeeName)}&am=${parseFloat(amount).toFixed(2)}&cu=INR&tr=${encodeURIComponent(transactionId)}&tn=${encodedDescription.replace(/%20/g, '%')}&mc=${merchantCategoryCode}&url=${successUrl}`;
 
         console.log("Generated UPI Intent URL:", upiIntentUrl);
 
         window.location.href = upiIntentUrl;
 
-        paymentStatusDiv.style.display = 'block';
-
-        successfulButton.addEventListener('click', () => {
-            saveTransaction({
-                id: currentTransactionId,
-                type: 'expense',
-                amount: parseFloat(amount),
-                category: category,
-                description: description,
-                date: new Date().toISOString().split('T')[0],
-                time: new Date().toTimeString().split(' ')[0],
-                status: 'success'
-            });
-            paymentStatusDiv.style.display = 'none';
-            alert('Payment recorded as successful.');
-            // Optionally redirect or update UI
-        });
-
-        failedButton.addEventListener('click', () => {
-            paymentStatusDiv.style.display = 'none';
-            alert('Payment marked as failed. Transaction not recorded.');
-            // Optionally handle failure scenario
+        // Since we are relying on the redirect, we can immediately save the transaction
+        // with a 'pending' status. The 'success' status will be inferred when the user
+        // returns to the index.html page with the status parameter.
+        saveTransaction({
+            id: transactionId,
+            type: 'expense',
+            amount: parseFloat(amount),
+            category: category,
+            description: description,
+            date: new Date().toISOString().split('T')[0],
+            time: new Date().toTimeString().split(' ')[0],
+            status: 'pending'
         });
     }
 
@@ -204,3 +190,26 @@ document.addEventListener('DOMContentLoaded', () => {
         return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     }
 });
+
+// In your index.js, you will need to check for the 'status' parameter in the URL
+// when the page loads to update the transaction status.
+
+// Example in index.js (add this within the DOMContentLoaded listener):
+const urlParams = new URLSearchParams(window.location.search);
+const paymentStatus = urlParams.get('status');
+
+if (paymentStatus === 'success') {
+    // Find the most recent 'pending' transaction and update its status to 'success'
+    const transactions = JSON.parse(localStorage.getItem('earn_transactions') || '[]');
+    const latestPendingTransaction = transactions.find(t => t.type === 'expense' && t.status === 'pending');
+    if (latestPendingTransaction) {
+        latestPendingTransaction.status = 'success';
+        localStorage.setItem('earn_transactions', JSON.stringify(transactions));
+        alert('Payment successful!');
+        // Optionally update the transactions table immediately
+        loadTransactions();
+    }
+    // Clear the status parameter from the URL
+    const newUrl = window.location.pathname + window.location.hash;
+    window.history.replaceState({}, document.title, newUrl);
+}
