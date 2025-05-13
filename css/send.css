@@ -153,5 +153,14 @@ h1 {
     justify-content: space-between;
 }
 .footer-Adv figure {
-    text-align: right;
+    display: flex
+;
+    gap: 2px;
+    width: 220px;
+    overflow: visible;
+    padding: 20px;
+    align-content: space-around;
+    align-items: center;
+    justify-content: flex-end;
 }
+
