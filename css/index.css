@@ -233,11 +233,12 @@ body {
 
 .table_wrap {
     overflow: scroll;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     border-radius: 15px;
+    padding-bottom: 50px;
 }
 
 #transactionsTable {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
     border-collapse: collapse;
     /* margin-top: 10px; */
