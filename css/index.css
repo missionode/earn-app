@@ -167,7 +167,13 @@
 #transactionsTable tr td:nth-child(6),
 #transactionsTable tr th:nth-child(6) {
     display: none;
-    border: 1px solid red;
+}
+
+
+#transactionsTable tr th:nth-child(5), 
+#transactionsTable tr td:nth-child(5){
+    /* border: 1px solid red; */
+    display: none;
 }
 
 #transactionsTable * {
