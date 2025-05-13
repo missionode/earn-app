@@ -1,8 +1,3 @@
-body {
-    position: relative;
-    
-}
-
 .container {
     padding: 30px 10px 20px 10px;
     /* height: 100vh */
@@ -15,6 +10,7 @@ body {
     margin: -20px auto 1px auto;
     left: 0;
     right: 0;
+    display: none;
 }
 
 .filter-research {
