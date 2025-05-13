@@ -144,7 +144,7 @@
 }
 
 #receiveMoneyBtn {
-    background-color:#85bb65;
+    background-color: var(--income-color);
 }
 
 #sendMoneyBtn {
@@ -246,7 +246,7 @@
 .table_wrap {
     overflow: scroll;
     border-radius: 15px;
-    padding-bottom: 50px;
+    /* padding-bottom: 50px; */
 }
 
 #transactionsTable {
