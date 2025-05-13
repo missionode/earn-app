@@ -51,3 +51,7 @@ h1 {
 #doneButton:hover {
     background-color: var(--accent-hover-color); /* Using a CSS variable */
 }
+
+.advertisement {
+    margin-top: 20px;
+}
