@@ -145,3 +145,13 @@ h1 {
     cursor: pointer;
     z-index: 1001; /* Ensure it's above the canvas */
 }
+
+.footer-Adv {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.footer-Adv figure {
+    text-align: right;
+}

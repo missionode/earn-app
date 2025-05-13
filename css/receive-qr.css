@@ -52,6 +52,7 @@ h1 {
     background-color: var(--accent-hover-color); /* Using a CSS variable */
 }
 
-.advertisement {
+.cred-advertisement {
     margin-top: 20px;
+    border-radius: 4px;
 }
