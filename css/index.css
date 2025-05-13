@@ -1,10 +1,11 @@
 body {
     position: relative;
-    height: 100vh
+    
 }
 
 .container {
     padding: 30px 10px 120px 10px;
+    height: 100vh
 }
 
 .earn-logo {
@@ -105,18 +106,20 @@ body {
 /* Action Buttons Section */
 .action-buttons {
     display: flex;
-    z-index: 999;
+    margin-bottom: 20px;
     gap: 20px;
+   /* z-index: 999;
+   
     position: fixed;
     bottom: 0px;
-    left: 0;
     width: 100%;
     margin-left: auto;
     margin-right: auto;
     left: 0;
     right: 0;
+    /* margin-bottom: 120px; 
     padding: 15px 10px;
-    background: #FAB972;
+    background: #FAB972; */
 }
 
 .action-buttons .button {
