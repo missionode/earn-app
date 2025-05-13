@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const transactionData = {
-            id: generateUniqueId(), // Use the global function to generate a unique ID
+            id: generateUniqueId(),
             type: 'income',
             amount: amount,
             category: category,
@@ -34,15 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
             time: new Date().toTimeString().split(' ')[0]
         };
 
-        saveTransaction(transactionData); // Save the transaction
+        // Store the transaction data temporarily in localStorage
+        localStorage.setItem('pending_receive_transaction', JSON.stringify(transactionData));
         window.location.href = 'receive-qr.html';
     });
-
-    function saveTransaction(transaction) {
-        let transactions = JSON.parse(localStorage.getItem('earn_transactions') || '[]');
-        transactions.unshift(transaction); // Add to the beginning for recent first
-        localStorage.setItem('earn_transactions', JSON.stringify(transactions));
-    }
 
     const iconGrid = document.querySelector('.icon-grid');
 
@@ -61,3 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+function generateUniqueId() {
+    return Date.now().toString(36) + Math.random().toString(36).substring(2, 15);
+}

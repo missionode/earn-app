@@ -27,7 +27,18 @@ h1 {
 }
 
 #doneButton {
-    background-color: var(--accent-color); /* Using a CSS variable */
+    background-color: var(--income-color); /* Using a CSS variable */
+    color: var(--text-on-accent); /* Using a CSS variable */
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.15s ease-in-out;
+}
+
+#cancelButton {
+    background-color: var(--error-color); /* Using a CSS variable */
     color: var(--text-on-accent); /* Using a CSS variable */
     padding: 12px 20px;
     border: none;

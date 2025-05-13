@@ -19,7 +19,11 @@
             <p>Description: <span id="descriptionDisplay"></span></p>
             <p>Payee: <strong id="payeeNameDisplay"></strong></p>
         </div>
-        <button id="doneButton" class="button primary">Done</button>
+        <div class="status-update">
+            <button id="doneButton" class="button primary">Recieved Payment</button>
+            <button id="cancelButton" onclick="window.location.href = 'index.html'" class="button primary">Cancelled Transaction</button>
+        </div>
+        
     </div>
     <script src="https://cdn.jsdelivr.net/npm/easyqrcodejs@4.6.2/dist/easy.qrcode.min.js"></script> <script src="js/receive-qr.js"></script>
 </body>

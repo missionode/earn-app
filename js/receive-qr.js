@@ -7,38 +7,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const payeeVPA = localStorage.getItem('earn_upiId');
     const payeeName = localStorage.getItem('earn_username');
-    const transactionsString = localStorage.getItem('earn_transactions');
-    const transactions = transactionsString ? JSON.parse(transactionsString) : [];
+    const pendingTransactionString = localStorage.getItem('pending_receive_transaction');
+    const pendingTransaction = pendingTransactionString ? JSON.parse(pendingTransactionString) : null;
 
-    if (!payeeVPA || !payeeName || transactions.length === 0) {
+    if (!payeeVPA || !payeeName || !pendingTransaction) {
         alert('Error: Payment details not found.');
         window.location.href = 'index.html'; // Redirect to home if data is missing
         return;
     }
 
-    // Get the most recent transaction (assuming the last one added was for receiving)
-    const latestTransaction = transactions[0];
-    const { amount, description } = latestTransaction;
+    const { amount, description } = pendingTransaction;
 
     amountDisplay.textContent = `₹${amount.toFixed(2)}`;
     descriptionDisplay.textContent = description || 'No description provided';
     payeeNameDisplay.textContent = payeeName;
 
-    // Construct the UPI link (basic format - might need adjustments)
-    const upiLink = `upi://pay?pa=${encodeURIComponent(payeeVPA)}&pn=${encodeURIComponent(payeeName)}&am=${amount.toFixed(2)}`;
+    // Construct the UPI link (more robust format)
+    let upiLink = `upi://pay?pa=${encodeURIComponent(payeeVPA)}&pn=${encodeURIComponent(payeeName)}&am=${amount.toFixed(2)}`;
+    if (description) {
+        upiLink += `&tn=${encodeURIComponent(description)}`; // 'tn' for transaction note/remarks
+    }
 
-    // Generate the QR code using EasyQRCodeJS
+    // Generate the QR code using EasyQRCodeJS with logo options
     new QRCode(qrCodeContainer, {
         text: upiLink,
         width: 256,
         height: 256,
         colorDark : "#000000",
         colorLight : "#ffffff",
-        correctLevel : QRCode.CorrectLevel.H
-        // You can add logo options here if you have a logo image
+        correctLevel : QRCode.CorrectLevel.H,
+        logo: 'assets/icons/icon-40x40.svg', // Path to your logo image
+        logoWidth: 50, // Adjust logo width (optional)
+        logoHeight: 50, // Adjust logo height (optional)
+        logoBackgroundColor: '#ffffff', // Background color behind the logo (optional)
+        logoBackgroundTransparent: false // Make the logo background transparent (optional)
     });
 
     doneButton.addEventListener('click', () => {
+        saveTransaction(pendingTransaction); // Save the pending transaction
+        localStorage.removeItem('pending_receive_transaction'); // Clear the pending transaction
         window.location.href = 'index.html';
     });
+
+    function saveTransaction(transaction) {
+        let transactions = JSON.parse(localStorage.getItem('earn_transactions') || '[]');
+        transactions.unshift(transaction); // Add to the beginning for recent first
+        localStorage.setItem('earn_transactions', JSON.stringify(transactions));
+    }
 });
