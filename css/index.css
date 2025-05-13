@@ -164,10 +164,15 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-#transactionsTable tr td:last-child, #transactionsTable tr th:last-child {
+#transactionsTable tr td:nth-child(6),
+#transactionsTable tr th:nth-child(6) {
     display: none;
+    border: 1px solid red;
 }
 
+#transactionsTable * {
+    text-transform: capitalize;
+}
 /* Summary Section */
 .summary {
     display: grid;
@@ -326,4 +331,42 @@
     align-items: center;
     color: var(--income-color);
     font-weight: 600;
+}
+
+.upi-confirmation-notification {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f8f8f8;
+    color: #333;
+    padding: 15px;
+    border-top: 1px solid #ddd;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    transform: translateY(100%); /* Initially hidden */
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000; /* Ensure it's on top */
+}
+
+.upi-confirmation-notification.show {
+    transform: translateY(0); /* Slide up */
+}
+
+.upi-confirmation-notification h3 {
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.upi-confirmation-notification p {
+    margin-bottom: 8px;
+}
+
+.upi-confirmation-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+#upiConfirmationDescription {
+    text-transform: capitalize;
 }

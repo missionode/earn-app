@@ -157,16 +157,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const payeeName = merchantNameFromQR || localStorage.getItem('earn_username') || 'Recipient Name';
         const merchantCategoryCode = '0000';
         const successUrl = encodeURIComponent(`https://missionode.github.io/earn-app/index.html?status=success&transactionId=${transactionId}`);
-    
+
         let encodedDescription = encodeURIComponent(description);
         const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(recipientVPA)}&pn=${encodeURIComponent(payeeName)}&am=${parseFloat(amount).toFixed(2)}&cu=INR&tr=${encodeURIComponent(transactionId)}&tn=${encodedDescription.replace(/%20/g, '%')}&mc=${merchantCategoryCode}&url=${successUrl}`;
-    
+
         console.log("Generated UPI Intent URL:", upiIntentUrl);
-    
-        window.location.href = upiIntentUrl;
-    
-        // Save the transaction with a 'pending' status, including the transactionId
-        saveTransaction({
+
+        // Create the pending transaction object
+        const pendingTransaction = {
             id: transactionId,
             type: 'expense',
             amount: parseFloat(amount),
@@ -174,8 +172,16 @@ document.addEventListener('DOMContentLoaded', () => {
             description: description,
             date: new Date().toISOString().split('T')[0],
             time: new Date().toTimeString().split(' ')[0],
-            status: 'pending'
-        });
+            status: 'pending' // Initially pending
+        };
+
+        // Save the pending transaction to earn_transactions
+        saveTransaction(pendingTransaction);
+
+        // Store the pending transaction details for later confirmation (still needed for your flow)
+        localStorage.setItem('pending_upi_confirmation', JSON.stringify(pendingTransaction));
+
+        window.location.href = upiIntentUrl;
     }
 
     function saveTransaction(transaction) {
@@ -188,27 +194,3 @@ document.addEventListener('DOMContentLoaded', () => {
         return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     }
 });
-
-// In your index.js, you will need to check for the 'status' parameter in the URL
-// when the page loads to update the transaction status.
-
-// Example in index.js (add this within the DOMContentLoaded listener):
-const urlParams = new URLSearchParams(window.location.search);
-const paymentStatus = urlParams.get('status');
-
-
-if (paymentStatus === 'success') {
-    // Find the most recent 'pending' transaction and update its status to 'success'
-    const transactions = JSON.parse(localStorage.getItem('earn_transactions') || '[]');
-    const latestPendingTransaction = transactions.find(t => t.type === 'expense' && t.status === 'pending');
-    if (latestPendingTransaction) {
-        latestPendingTransaction.status = 'success';
-        localStorage.setItem('earn_transactions', JSON.stringify(transactions));
-        alert('Payment successful!');
-        // Optionally update the transactions table immediately
-        loadTransactions();
-    }
-    // Clear the status parameter from the URL
-    const newUrl = window.location.pathname + window.location.hash;
-    window.history.replaceState({}, document.title, newUrl);
-}

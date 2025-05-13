@@ -17,60 +17,44 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterType = document.getElementById('filterType');
     const clearFilterButton = document.getElementById('clearFilter');
     const filteredSummaryContainer = document.getElementById('filteredSummaryContainer');
+    const upiConfirmationNotification = document.getElementById('upiConfirmationNotification');
+    const upiConfirmationTitle = document.getElementById('upiConfirmationTitle');
+    const upiConfirmationAmount = document.getElementById('upiConfirmationAmount');
+    const upiConfirmationDescription = document.getElementById('upiConfirmationDescription');
+    const upiConfirmCancelButton = document.getElementById('upiConfirmCancelButton');
+    const upiConfirmButton = document.getElementById('upiConfirmButton');
 
     let allTransactions = [];
 
     // --- Helper Functions ---
-    function getLocalStorageItem(key) {
-        return localStorage.getItem(key);
-    }
+    const getLocalStorageItem = (key) => localStorage.getItem(key);
+    const setLocalStorageItem = (key, value) => localStorage.setItem(key, value);
+    const isFirstTimeUser = () => !getLocalStorageItem('earn_upiId') || !getLocalStorageItem('earn_username');
+    const displayUPISetupPopup = () => upiSetupPopup.style.display = 'block';
+    const hideUPISetupPopup = () => upiSetupPopup.style.display = 'none';
 
-    function setLocalStorageItem(key, value) {
-        localStorage.setItem(key, value);
-    }
-
-    function isFirstTimeUser() {
-        return !getLocalStorageItem('earn_upiId') || !getLocalStorageItem('earn_username');
-    }
-
-    function displayUPISetupPopup() {
-        upiSetupPopup.style.display = 'block';
-    }
-
-    function hideUPISetupPopup() {
-        upiSetupPopup.style.display = 'none';
-    }
-
-    function validateUPIId(upiId) {
-        if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,}@[a-zA-Z]{2,}$/.test(upiId)) {
-            return 'Invalid UPI ID format.';
-        }
+    const validateUPIId = (upiId) => {
+        if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,}@[a-zA-Z]{2,}$/.test(upiId)) return 'Invalid UPI ID format.';
         const domain = upiId.split('@')[1];
         const validDomains = ['ybl', 'upi', 'okhdfcbank', 'icici', 'axisbank', 'oksbi', 'paytm', 'fbl', 'okicici'];
-        if (!validDomains.includes(domain)) {
-            return 'Invalid UPI ID domain.';
-        }
-        return '';
-    }
+        return validDomains.includes(domain) ? '' : 'Invalid UPI ID domain.';
+    };
 
-    function getCategoryIcon(category) {
-        switch (category) {
-            case 'cash': return 'assets/icons/cash.svg';
-            case 'rent': return 'assets/icons/rent.svg';
-            case 'salary': return 'assets/icons/salary.svg';
-            case 'gift': return 'assets/icons/gift.svg';
-            case 'investment': return 'assets/icons/investment.svg';
-            case 'other': return 'assets/icons/other.svg';
-            case 'food': return 'assets/icons/food.svg';
-            case 'shopping': return 'assets/icons/shopping-bag.svg';
-            case 'entertainment': return 'assets/icons/entertainment.svg';
-            case 'travel': return 'assets/icons/travel.svg';
-            case 'others': return 'assets/icons/others.svg';
-            default: return '';
-        }
-    }
+    const getCategoryIcon = (category) => ({
+        'cash': 'assets/icons/cash.svg',
+        'rent': 'assets/icons/rent.svg',
+        'salary': 'assets/icons/salary.svg',
+        'gift': 'assets/icons/gift.svg',
+        'investment': 'assets/icons/investment.svg',
+        'other': 'assets/icons/other.svg',
+        'food': 'assets/icons/food.svg',
+        'shopping': 'assets/icons/shopping-bag.svg',
+        'entertainment': 'assets/icons/entertainment.svg',
+        'travel': 'assets/icons/travel.svg',
+        'others': 'assets/icons/others.svg',
+    })[category] || '';
 
-    function filterTransactions(transactions, filters) {
+    const filterTransactions = (transactions, filters) => {
         let filteredTransactions = [...transactions];
 
         if (filters.type) {
@@ -90,29 +74,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (filters.search) {
-            filteredTransactions = filteredTransactions.filter(t => t.description.toLowerCase().includes(filters.search));
+            filteredTransactions = filteredTransactions.filter(t => t.description && t.description.toLowerCase().includes(filters.search));
         }
 
         return filteredTransactions;
-    }
+    };
 
-    function loadTransactions() {
-        allTransactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-
+    const loadTransactions = () => {
+        console.log("loadTransactions called");
+        const storedTransactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
+        allTransactions = storedTransactions.filter(t => t.status !== 'pending');
+        console.log("Transactions loaded (excluding pending):", allTransactions);
         const filters = {
             type: filterType.value,
             category: categoryFilter.value,
             startDate: startDateInput.value,
             endDate: endDateInput.value,
-            search: searchBox.value.toLowerCase()
+            search: searchBox.value ? searchBox.value.toLowerCase() : ''
         };
-        const isFilterActive = Object.values(filters).some(value => value && value !== '');
-        let displayedTransactions = filterTransactions(allTransactions, filters);
-
-        if (!isFilterActive) {
-            displayedTransactions = displayedTransactions.slice(0, 50); // Apply limit only when no filter
-        }
-
+        const displayedTransactions = filterTransactions(allTransactions, filters).slice(0, 50);
         transactionsTableBody.innerHTML = '';
         displayedTransactions.forEach(transaction => {
             const row = transactionsTableBody.insertRow();
@@ -122,31 +102,31 @@ document.addEventListener('DOMContentLoaded', () => {
             const amountCell = row.insertCell();
             const dateCell = row.insertCell();
             const timeCell = row.insertCell();
+            const statusCell = row.insertCell();
 
-            typeCell.textContent = transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1);
-            let categoryIcon = getCategoryIcon(transaction.category);
-            if (!categoryIcon) {
-                categoryIcon = 'assets/icons/default.svg';
-            }
-            categoryCell.innerHTML = categoryIcon ? `<img src="${categoryIcon}" alt="${transaction.category}">` : transaction.category;
-            descriptionCell.textContent = transaction.description || '-';
-            amountCell.textContent = `₹${parseFloat(transaction.amount).toFixed(2)}`;
             if (transaction.type === 'expense') {
-                amountCell.classList.add('expense');
-                amountCell.textContent = `- ${amountCell.textContent}`;
+                typeCell.innerHTML = '<img src="assets/icons/arrow-up-expense.svg" alt="Expense" class="transaction-icon">';
             } else if (transaction.type === 'income') {
-                amountCell.classList.add('income');
-                amountCell.textContent = `+ ${amountCell.textContent}`;
+                typeCell.innerHTML = '<img src="assets/icons/arrow-down-income.svg" alt="Income" class="transaction-icon">';
+            } else {
+                typeCell.textContent = transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1); // Fallback
             }
+
+            const icon = getCategoryIcon(transaction.category) || 'assets/icons/default.svg';
+            categoryCell.innerHTML = `<img src="${icon}" alt="${transaction.category}">`;
+            descriptionCell.textContent = transaction.description || '-';
+            const formattedAmount = `₹${parseFloat(transaction.amount).toFixed(2)}`;
+            amountCell.textContent = transaction.type === 'expense' ? `- ${formattedAmount}` : `+ ${formattedAmount}`;
+            amountCell.classList.add(transaction.type === 'expense' ? 'expense' : 'income');
             dateCell.textContent = transaction.date;
             timeCell.textContent = transaction.time;
+            statusCell.textContent = transaction.status || '';
         });
-
-        updateFilteredSummary(displayedTransactions, filters); // Pass filters to updateFilteredSummary
+        updateFilteredSummary(displayedTransactions, filters);
         updateCategoryFilterByType(filterType.value);
-    }
+    };
 
-    function updateFilteredSummary(transactions, filters) {
+    const updateFilteredSummary = (transactions, filters) => {
         let totalIncome = 0;
         let totalExpenses = 0;
         let isFilterActive = Object.values(filters).some(value => value && value !== '');
@@ -168,9 +148,9 @@ document.addEventListener('DOMContentLoaded', () => {
             filteredSummaryContainer.style.display = 'none';
             filteredSummaryContainer.innerHTML = '';
         }
-    }
+    };
 
-    function updateOverallSummary() {
+    const updateOverallSummary = () => {
         const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
         let totalIncome = 0;
         let totalExpenses = 0;
@@ -185,9 +165,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         totalIncomeDisplay.textContent = `₹${totalIncome.toFixed(2)}`;
         totalExpensesDisplay.textContent = `₹${totalExpenses.toFixed(2)}`;
-    }
+    };
 
-    function handleUPISetupSubmit(event) {
+    const handleUPISetupSubmit = (event) => {
         event.preventDefault();
         const upiId = upiIdInput.value.trim();
         const username = usernameInput.value.trim();
@@ -203,9 +183,9 @@ document.addEventListener('DOMContentLoaded', () => {
             loadTransactions();
             updateOverallSummary();
         }
-    }
+    };
 
-    function updateCategoryFilterByType(selectedType) {
+    const updateCategoryFilterByType = (selectedType) => {
         const categoryOptions = categoryFilter.options;
         for (let i = 1; i < categoryOptions.length; i++) {
             const option = categoryOptions[i];
@@ -221,9 +201,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         categoryFilter.value = '';
-    }
+    };
 
-    function populateCategoryFilter() {
+    const populateCategoryFilter = () => {
         const categories = ['food', 'shopping', 'entertainment', 'travel', 'others', 'salary', 'gift', 'investment', 'cash', 'other'];
         const categorySelect = document.getElementById('categoryFilter');
         categories.forEach(category => {
@@ -232,30 +212,65 @@ document.addEventListener('DOMContentLoaded', () => {
             option.textContent = category.charAt(0).toUpperCase() + category.slice(1);
             categorySelect.appendChild(option);
         });
-    }
+    };
 
-    // --- Event Listeners ---
+    const triggerConfirmationPopup = () => {
+        const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
+        if (transactions.length > 0 && transactions[0].status === 'pending') {
+            const latestPendingTransaction = transactions[0];
+            upiConfirmationTitle.textContent = 'Confirm Pending Payment';
+            upiConfirmationAmount.textContent = `Amount: ₹${parseFloat(latestPendingTransaction.amount).toFixed(2)}`;
+            upiConfirmationDescription.textContent = latestPendingTransaction.description || 'No description provided.';
+            upiConfirmationNotification.classList.add('show');
+
+            upiConfirmButton.onclick = () => {
+                console.log("Confirm button clicked for transaction ID:", latestPendingTransaction.id);
+                updateTransactionStatus(latestPendingTransaction.id, 'success');
+                upiConfirmationNotification.classList.remove('show');
+            };
+
+            upiConfirmCancelButton.onclick = () => {
+                upiConfirmationNotification.classList.remove('show');
+                alert('Payment confirmation cancelled.');
+                // DO NOT call updateTransactionStatus here
+            };
+        } else {
+            upiConfirmationNotification.classList.remove('show'); // Ensure it's hidden if no pending transaction
+        }
+    };
+
+    const updateTransactionStatus = (transactionId, newStatus) => {
+        console.log("updateTransactionStatus called with ID:", transactionId, "and status:", newStatus);
+        const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
+        const updatedTransactions = transactions.map(t =>
+            t.id === transactionId ? { ...t, status: newStatus } : t
+        );
+        setLocalStorageItem('earn_transactions', JSON.stringify(updatedTransactions));
+        loadTransactions(); // Reload to show updated status
+        updateOverallSummary();
+    };
+
+    // --- Initialization ---
     if (isFirstTimeUser()) {
         displayUPISetupPopup();
     } else {
         loadTransactions();
         updateOverallSummary();
+        // Check for and trigger confirmation popup on load
+        setTimeout(triggerConfirmationPopup, 500); // Slight delay to ensure table is loaded
     }
 
-    upiSetupForm.addEventListener('submit', handleUPISetupSubmit);
-    receiveMoneyBtn.addEventListener('click', () => {
-        window.location.href = 'receive.html';
-    });
-    sendMoneyBtn.addEventListener('click', () => {
-        window.location.href = 'send.html';
-    });
+    populateCategoryFilter();
 
+    // --- Event Listeners ---
+    upiSetupForm.addEventListener('submit', handleUPISetupSubmit);
+    receiveMoneyBtn.addEventListener('click', () => window.location.href = 'receive.html');
+    sendMoneyBtn.addEventListener('click', () => window.location.href = 'send.html');
     filterType.addEventListener('change', loadTransactions);
     categoryFilter.addEventListener('change', loadTransactions);
     searchBox.addEventListener('input', loadTransactions);
     startDateInput.addEventListener('change', loadTransactions);
     endDateInput.addEventListener('change', loadTransactions);
-
     clearFilterButton.addEventListener('click', () => {
         filterType.value = '';
         categoryFilter.value = '';
@@ -265,26 +280,24 @@ document.addEventListener('DOMContentLoaded', () => {
         loadTransactions();
     });
 
-    populateCategoryFilter();
-});
+    // (Optional) Handle callback URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentStatus = urlParams.get('status');
+    const returnedTransactionId = urlParams.get('transactionId');
 
-// In your index.js (within the DOMContentLoaded listener):
-const urlParams = new URLSearchParams(window.location.search);
-const paymentStatus = urlParams.get('status');
-const returnedTransactionId = urlParams.get('transactionId');
-
-if (paymentStatus === 'success' && returnedTransactionId) {
-    // Find the 'pending' transaction with the matching transactionId and update its status to 'success'
-    const transactions = JSON.parse(localStorage.getItem('earn_transactions') || '[]');
-    const transactionToUpdate = transactions.find(t => t.id === returnedTransactionId && t.type === 'expense' && t.status === 'pending');
-    if (transactionToUpdate) {
-        transactionToUpdate.status = 'success';
-        localStorage.setItem('earn_transactions', JSON.stringify(transactions));
-        alert(`Payment successful for Transaction ID: ${returnedTransactionId}`);
-        // Optionally update the transactions table immediately
-        loadTransactions();
+    if (paymentStatus === 'success' && returnedTransactionId) {
+        // Find the 'pending' transaction with the matching transactionId and update its status to 'success'
+        const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
+        const transactionToUpdate = transactions.find(t => t.id === returnedTransactionId && t.type === 'expense' && t.status === 'pending');
+        if (transactionToUpdate) {
+            transactionToUpdate.status = 'success';
+            localStorage.setItem('earn_transactions', JSON.stringify(transactions));
+            alert(`Payment successful for Transaction ID: ${returnedTransactionId}`);
+            // Optionally update the transactions table immediately
+            loadTransactions();
+        }
+        // Clear the status and transactionId parameters from the URL
+        const newUrl = window.location.pathname + window.location.hash;
+        window.history.replaceState({}, document.title, newUrl);
     }
-    // Clear the status and transactionId parameters from the URL
-    const newUrl = window.location.pathname + window.location.hash;
-    window.history.replaceState({}, document.title, newUrl);
-}
+});

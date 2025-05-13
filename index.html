@@ -110,6 +110,7 @@
                             <th>Amount</th>
                             <th>Date</th>
                             <th>Time</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -117,6 +118,16 @@
                 </table>
             </div>
         </section>
+    </div>
+
+    <div id="upiConfirmationNotification" class="upi-confirmation-notification">
+        <h3 id="upiConfirmationTitle">Confirm Payment</h3>
+        <p id="upiConfirmationAmount"></p>
+        <p id="upiConfirmationDescription"></p>
+        <div class="upi-confirmation-buttons">
+            <button id="upiConfirmCancelButton" class="button secondary">Cancel</button>
+            <button id="upiConfirmButton" class="button primary">Confirm</button>
+        </div>
     </div>
     <script src="js/script.js"></script>
     <script src="js/index.js"></script>
