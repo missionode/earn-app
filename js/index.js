@@ -14,8 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchBox = document.getElementById('searchBox');
     const startDateInput = document.getElementById('startDate');
     const endDateInput = document.getElementById('endDate');
-    const filterType = document.getElementById('filterType'); // Get the new filter type dropdown
-    const clearFilterButton = document.getElementById('clearFilter'); // Get the clear filter button
+    const filterType = document.getElementById('filterType');
+    const clearFilterButton = document.getElementById('clearFilter');
+    const filteredSummaryContainer = document.getElementById('filteredSummaryContainer');
 
     let allTransactions = [];
 
@@ -45,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return 'Invalid UPI ID format.';
         }
         const domain = upiId.split('@')[1];
-        const validDomains = ['ybl', 'upi', 'okhdfcbank', 'icici', 'axisbank', 'oksbi', 'paytm','fbl','okicici']; // Example list
+        const validDomains = ['ybl', 'upi', 'okhdfcbank', 'icici', 'axisbank', 'oksbi', 'paytm', 'fbl', 'okicici'];
         if (!validDomains.includes(domain)) {
             return 'Invalid UPI ID domain.';
         }
@@ -105,7 +106,12 @@ document.addEventListener('DOMContentLoaded', () => {
             endDate: endDateInput.value,
             search: searchBox.value.toLowerCase()
         };
-        const displayedTransactions = filterTransactions(allTransactions, filters).slice(0, 50);
+        const isFilterActive = Object.values(filters).some(value => value && value !== '');
+        let displayedTransactions = filterTransactions(allTransactions, filters);
+
+        if (!isFilterActive) {
+            displayedTransactions = displayedTransactions.slice(0, 50); // Apply limit only when no filter
+        }
 
         transactionsTableBody.innerHTML = '';
         displayedTransactions.forEach(transaction => {
@@ -124,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             categoryCell.innerHTML = categoryIcon ? `<img src="${categoryIcon}" alt="${transaction.category}">` : transaction.category;
             descriptionCell.textContent = transaction.description || '-';
-            amountCell.textContent = `₹${transaction.amount.toFixed(2)}`;
+            amountCell.textContent = `₹${parseFloat(transaction.amount).toFixed(2)}`;
             if (transaction.type === 'expense') {
                 amountCell.classList.add('expense');
                 amountCell.textContent = `- ${amountCell.textContent}`;
@@ -135,20 +141,45 @@ document.addEventListener('DOMContentLoaded', () => {
             dateCell.textContent = transaction.date;
             timeCell.textContent = transaction.time;
         });
-        updateSummary();
-        updateCategoryFilterByType(filterType.value); // Call this here to update on load/filter
+
+        updateFilteredSummary(displayedTransactions, filters); // Pass filters to updateFilteredSummary
+        updateCategoryFilterByType(filterType.value);
     }
 
-    function updateSummary() {
+    function updateFilteredSummary(transactions, filters) {
+        let totalIncome = 0;
+        let totalExpenses = 0;
+        let isFilterActive = Object.values(filters).some(value => value && value !== '');
+
+        if (isFilterActive && filteredSummaryContainer) {
+            transactions.forEach(t => {
+                if (t.type === 'income') {
+                    totalIncome += parseFloat(t.amount);
+                } else if (t.type === 'expense') {
+                    totalExpenses += parseFloat(t.amount);
+                }
+            });
+            filteredSummaryContainer.innerHTML = `
+                <p><b>Filtered Income:</b> ₹${totalIncome.toFixed(2)}</p>
+                <p><b>Filtered Expenses:</b> ₹${totalExpenses.toFixed(2)}</p>
+            `;
+            filteredSummaryContainer.style.display = 'block';
+        } else if (filteredSummaryContainer) {
+            filteredSummaryContainer.style.display = 'none';
+            filteredSummaryContainer.innerHTML = '';
+        }
+    }
+
+    function updateOverallSummary() {
         const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
         let totalIncome = 0;
         let totalExpenses = 0;
 
         transactions.forEach(t => {
             if (t.type === 'income') {
-                totalIncome += t.amount;
+                totalIncome += parseFloat(t.amount);
             } else if (t.type === 'expense') {
-                totalExpenses += t.amount;
+                totalExpenses += parseFloat(t.amount);
             }
         });
 
@@ -170,6 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setLocalStorageItem('earn_username', username);
             hideUPISetupPopup();
             loadTransactions();
+            updateOverallSummary();
         }
     }
 
@@ -178,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 1; i < categoryOptions.length; i++) {
             const option = categoryOptions[i];
             const expenseCategories = ['food', 'shopping', 'entertainment', 'travel', 'others'];
-            const incomeCategories = ['salary', 'gift', 'investment', 'cash', 'other']; // Include all income categories
+            const incomeCategories = ['salary', 'gift', 'investment', 'cash', 'other'];
 
             if (selectedType === 'income') {
                 option.style.display = incomeCategories.includes(option.value) ? 'block' : 'none';
@@ -188,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 option.style.display = 'block';
             }
         }
-        categoryFilter.value = ''; // Reset category filter when type changes
+        categoryFilter.value = '';
     }
 
     function populateCategoryFilter() {
@@ -207,6 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
         displayUPISetupPopup();
     } else {
         loadTransactions();
+        updateOverallSummary();
     }
 
     upiSetupForm.addEventListener('submit', handleUPISetupSubmit);
@@ -217,12 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'send.html';
     });
 
-    filterType.addEventListener('change', (event) => {
-        const selectedType = event.target.value;
-        updateCategoryFilterByType(selectedType);
-        loadTransactions();
-    });
-
+    filterType.addEventListener('change', loadTransactions);
     categoryFilter.addEventListener('change', loadTransactions);
     searchBox.addEventListener('input', loadTransactions);
     startDateInput.addEventListener('change', loadTransactions);
@@ -231,10 +259,11 @@ document.addEventListener('DOMContentLoaded', () => {
     clearFilterButton.addEventListener('click', () => {
         filterType.value = '';
         categoryFilter.value = '';
-        updateCategoryFilterByType('');
+        searchBox.value = '';
+        startDateInput.value = '';
+        endDateInput.value = '';
         loadTransactions();
     });
 
-    populateCategoryFilter(); // Populate categories on load
-    updateSummary();
+    populateCategoryFilter();
 });
