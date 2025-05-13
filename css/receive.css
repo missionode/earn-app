@@ -118,3 +118,23 @@ h1 {
     color: var(--text-secondary); /* Using a CSS variable */
     font-size: 0.9rem;
 }
+
+.button.secondary {
+    background-color: var(--background-secondary); /* Lighter background */
+    color: var(--income-color);
+    box-shadow: inset 0px 0px 0px 4px var(--income-color);
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.button.secondary:hover {
+    background-color: #e0e0e0;
+}
+
+#customReceiptButton {
+    margin-left: 10px;
+}

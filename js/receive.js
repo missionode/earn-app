@@ -6,10 +6,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const categoryRent = document.getElementById('categoryRent');
     const categorySalary = document.getElementById('categorySalary');
     const categoryOther = document.getElementById('categoryOther');
+    const customReceiptButton = document.getElementById('customReceiptButton'); // Get the new button
 
     receiveForm.addEventListener('submit', (event) => {
         event.preventDefault();
+        processFormData(); // Call the function to handle form data
+        window.location.href = 'receive-qr.html';
+    });
 
+    customReceiptButton.addEventListener('click', () => {
+        processFormData(); // Call the same function for the custom receipt
+        window.location.href = 'index.html'; // Redirect to index or show a message
+    });
+
+    function processFormData() {
         const amount = parseFloat(amountInput.value);
         const description = descriptionInput.value;
         let category = '';
@@ -36,8 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Store the transaction data temporarily in localStorage
         localStorage.setItem('pending_receive_transaction', JSON.stringify(transactionData));
-        window.location.href = 'receive-qr.html';
-    });
+    }
 
     const iconGrid = document.querySelector('.icon-grid');
 
