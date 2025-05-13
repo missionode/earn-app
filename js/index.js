@@ -267,3 +267,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     populateCategoryFilter();
 });
+
+// In your index.js (within the DOMContentLoaded listener):
+const urlParams = new URLSearchParams(window.location.search);
+const paymentStatus = urlParams.get('status');
+const returnedTransactionId = urlParams.get('transactionId');
+
+if (paymentStatus === 'success' && returnedTransactionId) {
+    // Find the 'pending' transaction with the matching transactionId and update its status to 'success'
+    const transactions = JSON.parse(localStorage.getItem('earn_transactions') || '[]');
+    const transactionToUpdate = transactions.find(t => t.id === returnedTransactionId && t.type === 'expense' && t.status === 'pending');
+    if (transactionToUpdate) {
+        transactionToUpdate.status = 'success';
+        localStorage.setItem('earn_transactions', JSON.stringify(transactions));
+        alert(`Payment successful for Transaction ID: ${returnedTransactionId}`);
+        // Optionally update the transactions table immediately
+        loadTransactions();
+    }
+    // Clear the status and transactionId parameters from the URL
+    const newUrl = window.location.pathname + window.location.hash;
+    window.history.replaceState({}, document.title, newUrl);
+}

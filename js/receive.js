@@ -6,20 +6,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const categoryRent = document.getElementById('categoryRent');
     const categorySalary = document.getElementById('categorySalary');
     const categoryOther = document.getElementById('categoryOther');
-    const customReceiptButton = document.getElementById('customReceiptButton'); // Get the new button
+    const customReceiptButton = document.getElementById('customReceiptButton'); // Get the custom receipt button
 
     receiveForm.addEventListener('submit', (event) => {
         event.preventDefault();
-        processFormData(); // Call the function to handle form data
-        window.location.href = 'receive-qr.html';
-    });
 
-    customReceiptButton.addEventListener('click', () => {
-        processFormData(); // Call the same function for the custom receipt
-        window.location.href = 'index.html'; // Redirect to index or show a message
-    });
-
-    function processFormData() {
         const amount = parseFloat(amountInput.value);
         const description = descriptionInput.value;
         let category = '';
@@ -44,8 +35,46 @@ document.addEventListener('DOMContentLoaded', () => {
             time: new Date().toTimeString().split(' ')[0]
         };
 
-        // Store the transaction data temporarily in localStorage
+        // Store the transaction data temporarily in localStorage for QR code
         localStorage.setItem('pending_receive_transaction', JSON.stringify(transactionData));
+        window.location.href = 'receive-qr.html';
+    });
+
+    // Event listener for the "Add Custom Receipt" button
+    customReceiptButton.addEventListener('click', () => {
+        const amount = parseFloat(amountInput.value);
+        const description = descriptionInput.value;
+        let category = '';
+
+        if (categoryCash.checked) category = 'cash';
+        if (categoryRent.checked) category = 'rent';
+        if (categorySalary.checked) category = 'salary';
+        if (categoryOther.checked) category = 'other';
+
+        if (isNaN(amount) || amount <= 0) {
+            alert('Please enter a valid amount.');
+            return;
+        }
+
+        const transactionData = {
+            id: generateUniqueId(),
+            type: 'income',
+            amount: amount,
+            category: category,
+            description: description,
+            date: new Date().toISOString().split('T')[0],
+            time: new Date().toTimeString().split(' ')[0]
+        };
+
+        // Save the transaction directly to earn_transactions
+        saveTransaction(transactionData);
+        window.location.href = 'index.html'; // Redirect to index.html
+    });
+
+    function saveTransaction(transaction) {
+        let transactions = JSON.parse(localStorage.getItem('earn_transactions') || '[]');
+        transactions.unshift(transaction); // Add to the beginning for recent first
+        localStorage.setItem('earn_transactions', JSON.stringify(transactions));
     }
 
     const iconGrid = document.querySelector('.icon-grid');

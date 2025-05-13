@@ -37,8 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
         colorLight : "#ffffff",
         correctLevel : QRCode.CorrectLevel.H,
         logo: 'assets/icons/icon-40x40.svg', // Path to your logo image
-        logoWidth: 50, // Adjust logo width (optional)
-        logoHeight: 50, // Adjust logo height (optional)
+        logoWidth: 64, // Adjust logo width (optional)
+        logoHeight: 64, // Adjust logo height (optional)
         logoBackgroundColor: '#ffffff', // Background color behind the logo (optional)
         logoBackgroundTransparent: false // Make the logo background transparent (optional)
     });

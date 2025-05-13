@@ -156,18 +156,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const transactionId = generateUniqueId();
         const payeeName = merchantNameFromQR || localStorage.getItem('earn_username') || 'Recipient Name';
         const merchantCategoryCode = '0000';
-        const successUrl = encodeURIComponent('https://missionode.github.io/earn-app/index.html?status=success');
-
+        const successUrl = encodeURIComponent(`https://missionode.github.io/earn-app/index.html?status=success&transactionId=${transactionId}`);
+    
         let encodedDescription = encodeURIComponent(description);
         const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(recipientVPA)}&pn=${encodeURIComponent(payeeName)}&am=${parseFloat(amount).toFixed(2)}&cu=INR&tr=${encodeURIComponent(transactionId)}&tn=${encodedDescription.replace(/%20/g, '%')}&mc=${merchantCategoryCode}&url=${successUrl}`;
-
+    
         console.log("Generated UPI Intent URL:", upiIntentUrl);
-
+    
         window.location.href = upiIntentUrl;
-
-        // Since we are relying on the redirect, we can immediately save the transaction
-        // with a 'pending' status. The 'success' status will be inferred when the user
-        // returns to the index.html page with the status parameter.
+    
+        // Save the transaction with a 'pending' status, including the transactionId
         saveTransaction({
             id: transactionId,
             type: 'expense',
@@ -197,6 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Example in index.js (add this within the DOMContentLoaded listener):
 const urlParams = new URLSearchParams(window.location.search);
 const paymentStatus = urlParams.get('status');
+
 
 if (paymentStatus === 'success') {
     // Find the most recent 'pending' transaction and update its status to 'success'
