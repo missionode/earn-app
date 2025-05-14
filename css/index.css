@@ -176,6 +176,12 @@
     display: none;
 }
 
+#transactionsTable tr th:nth-child(2), 
+#transactionsTable tr td:nth-child(2){
+    /* border: 1px solid red; */
+    display: none;
+}
+
 #transactionsTable * {
     text-transform: capitalize;
 }
