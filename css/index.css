@@ -125,6 +125,11 @@
     background: #FAB972; */
 }
 
+.ux-actions {
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .action-buttons .button {
     background-color: (--background-primary);
     flex: 1;
