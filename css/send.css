@@ -135,7 +135,7 @@ h1 {
 
 #closeScanner {
     position: absolute;
-    top: 20px;
+    bottom: 20px;
     right: 20px;
     padding: 10px 20px;
     background-color: #f44336;
