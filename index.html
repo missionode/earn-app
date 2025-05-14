@@ -50,55 +50,69 @@
                 <p><strong id="totalExpenses">₹0.00</strong></p>
             </div>
         </section>
-
-        <section class="action-buttons ux-actions">
-            <button id="sendMoneyBtn" class="button">
-                <img src="assets/icons/arrow-up.svg" alt="Send"> Send
-            </button>
-            <button id="receiveMoneyBtn" class="button">
-                <img src="assets/icons/arrow-down.svg" alt="Receive"> Receive
-            </button>
+        <section  class="wallet">
+            <section id="walletfilter" class="filter">
+                <label>
+                    <img src="assets/icons/Audit.svg" alt="Audit">
+                    <h3>Financial Review</h3>
+                </label>
+            </section>  
+            <section class="action-buttons ux-actions">
+                <button id="sendMoneyBtn" class="button">
+                    <img src="assets/icons/arrow-up.svg" alt="Send"> Send
+                </button>
+                <button id="receiveMoneyBtn" class="button">
+                    <img src="assets/icons/arrow-down.svg" alt="Receive"> Receive
+                </button>
+            </section>
         </section>
 
+     
+
         <section class="transactions">
-            <b class="filter-research">Financial Analysis</b>
-            <div class="filter-controls">
-                
-                <div class="filter-group">
-                    <!-- <label for="filterType">Type:</label> -->
-                    <select id="filterType">
-                        <option value="">All Types</option>
-                        <option value="income">Income</option>
-                        <option value="expense">Expense</option>
-                    </select>
+            <section id="toggleWalletFilter" class="wallet-filter hidden">
+                <b class="filter-research">Start Analysis by filtering with the below form</b>
+                <div class="filter-controls">
+                    
+                    <div class="filter-group">
+                        <!-- <label for="filterType">Type:</label> -->
+                        <select id="filterType">
+                            <option value="">All Types</option>
+                            <option value="income">Income</option>
+                            <option value="expense">Expense</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <!-- <label for="categoryFilter">Category:</label> -->
+                        <select id="categoryFilter">
+                            <option value="">All Categories</option>
+                            <option value="cash">Cash</option>
+                            <option value="rent">Rent</option>
+                            <option value="salary">Salary</option>
+                            <option value="other">Other</option>
+                            <option value="food">Food</option>
+                            <option value="shopping">Shopping</option>
+                            <option value="entertainment">Entertainment</option>
+                            <option value="travel">Travel</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <!-- <label for="dateRange">Range:</label> -->
+                        <input type="date" placeholder="From date" id="startDate">
+                        <span>to</span>
+                        <input type="date" placeholder="To date" id="endDate">
+                    </div>
+                    <div class="filter-group">
+                        <!-- <label for="searchBox">Search:</label> -->
+                        <input type="text" id="searchBox" placeholder="Search by Keywords">
+                    </div>
                 </div>
-                <div class="filter-group">
-                    <!-- <label for="categoryFilter">Category:</label> -->
-                    <select id="categoryFilter">
-                        <option value="">All Categories</option>
-                        <option value="cash">Cash</option>
-                        <option value="rent">Rent</option>
-                        <option value="salary">Salary</option>
-                        <option value="other">Other</option>
-                        <option value="food">Food</option>
-                        <option value="shopping">Shopping</option>
-                        <option value="entertainment">Entertainment</option>
-                        <option value="travel">Travel</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <!-- <label for="dateRange">Range:</label> -->
-                    <input type="date" placeholder="From date" id="startDate">
-                    <span>to</span>
-                    <input type="date" placeholder="To date" id="endDate">
-                </div>
-                <div class="filter-group">
-                    <!-- <label for="searchBox">Search:</label> -->
-                    <input type="text" id="searchBox" placeholder="Search by Keywords">
-                </div>
-            </div>
-            <div id="filteredSummaryContainer" class="filtered-summary"></div>
-            <button style="margin-bottom: 15px;" id="clearFilter" class="button">Clear Filters</button>
+
+                <div id="filteredSummaryContainer" class="filtered-summary"></div>
+                <button style="margin-bottom: 15px;" id="clearFilter" class="button">Clear Filters</button>
+            </section>
+            
+            
             <h2>Transaction History</h2>
             <div class="table_wrap">
                 <table id="transactionsTable">
@@ -134,5 +148,15 @@
     <script src="js/script.js"></script>
     <script src="js/index.js"></script>
     <script src="js/app.js"></script>
+
+    <script>
+        const button = document.getElementById('walletfilter');
+        const section = document.getElementById('toggleWalletFilter');
+
+        button.addEventListener('click', () => {
+        section.classList.toggle('visible');
+        });
+
+    </script>
 </body>
 </html>

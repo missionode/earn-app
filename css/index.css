@@ -124,17 +124,64 @@
     padding: 15px 10px;
     background: #FAB972; */
 }
+.wallet {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 15px;
+    text-align: center;
+    margin-top: 10px;
+    width: 100%;
+    border: 1px solid var(--border-color-light);
+}
+
+.wallet .filter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--background-light);
+    background-color: var(--accent-color);
+    font-weight: bold;
+    font-size: 1.2rem;
+    transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+}
+
+.wallet .filter h3 {
+    color:  var(--background-light);
+    font-size: 1.2rem;
+}
 
 .ux-actions {
   flex-direction: column;
   justify-content: space-between;
+  margin-bottom: 0;
 }
+
+.walletfilter * {
+    cursor: pointer;
+}
+
+#toggleWalletFilter {
+    margin-top: 20px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
+  
+#toggleWalletFilter.visible {
+    max-height: 200px; /* adjust as needed */
+    opacity: 1;
+  }
 
 .action-buttons .button {
     background-color: (--background-primary);
     flex: 1;
     display: flex;
-    align-items: center;
+    align-items: right;
     justify-content: left;
     padding: 15px 20px;
     border: none;
@@ -156,6 +203,19 @@
     background-color: var(--expense-color);
 }
 
+.walletfilter {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
+  
+  .walletfilter.visible {
+    max-height: 200px; /* adjust as needed */
+    opacity: 1;
+  }
+  
+
 .action-buttons .button img {
     width: 24px;
     height: 24px;
@@ -168,23 +228,31 @@
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+@media (max-width: 600px) {
 
-#transactionsTable tr td:nth-child(6),
-#transactionsTable tr th:nth-child(6) {
-    display: none;
-}
-
-
-#transactionsTable tr th:nth-child(5), 
-#transactionsTable tr td:nth-child(5){
-    /* border: 1px solid red; */
-    display: none;
-}
-
-#transactionsTable tr th:nth-child(2), 
-#transactionsTable tr td:nth-child(2){
-    /* border: 1px solid red; */
-    display: none;
+    #transactionsTable tr td:nth-child(6),
+    #transactionsTable tr th:nth-child(6) {
+        display: none;
+    }
+    
+    
+    #transactionsTable tr th:nth-child(5), 
+    #transactionsTable tr td:nth-child(5){
+        /* border: 1px solid red; */
+        display: none;
+    }
+    
+    #transactionsTable tr th:nth-child(2), 
+    #transactionsTable tr td:nth-child(2){
+        /* border: 1px solid red; */
+        display: none;
+    }
+    
+    #transactionsTable tr th:nth-child(7), 
+    #transactionsTable tr td:nth-child(7){
+        /* border: 1px solid red; */
+        display: none;
+    }
 }
 
 #transactionsTable * {

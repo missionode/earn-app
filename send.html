@@ -40,7 +40,10 @@
                 <label for="description">Description (Optional):</label>
                 <textarea id="description" name="description"></textarea>
             </div>
-            <button type="submit" class="button primary">Send Money</button>
+            <div class="intoaction-buttons">
+                <button type="submit" class="button primary">Send Money</button>
+                <button type="button" id="addExpenseBtn" class="button secondary">Add Expense</button>
+            </div>
         </form>
         <div class="footer-Adv">
             <a href="index.html" class="back-link">Back to Home</a>
@@ -49,17 +52,14 @@
                 <img width="100" src="assets/images/wwwc.png" class="responsive-image" alt="works well with cred">
             </figure>
         </div>
-       
     </div>
-
-    <!-- <a href="upi://pay?pn=Syamnath S&pa=nath.syam.1986@okicici&cu=INR">Try Paytm UPI Link</a> -->
 
     <div id="qrScannerPopup" class="fullscreen-popup" style="display: none;">
         <div id="qrScannerView">
             </div>
         <button id="closeScanner">Close Scanner</button>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <script src="js/send.js"></script>
 </body>

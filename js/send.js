@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const qrScannerPopup = document.getElementById('qrScannerPopup');
     const qrScannerView = document.getElementById('qrScannerView');
     const closeScannerButton = document.getElementById('closeScanner');
+    const addExpenseBtn = document.getElementById('addExpenseBtn');
 
     let amount;
     let description;
@@ -37,6 +38,31 @@ document.addEventListener('DOMContentLoaded', () => {
     closeScannerButton.addEventListener('click', () => {
         qrScannerPopup.style.display = 'none';
         stopCamera();
+    });
+
+    addExpenseBtn.addEventListener('click', () => {
+        const manualExpenseAmount = parseFloat(amountInput.value);
+        const manualExpenseDescription = descriptionInput.value;
+        const manualExpenseCategory = getSelectedCategory();
+
+        if (isNaN(manualExpenseAmount) || manualExpenseAmount <= 0) {
+            alert('Please enter a valid expense amount.');
+            return;
+        }
+
+        const newExpenseTransaction = {
+            id: generateUniqueId(),
+            type: 'expense',
+            amount: manualExpenseAmount,
+            category: manualExpenseCategory,
+            description: manualExpenseDescription,
+            date: new Date().toISOString().split('T')[0],
+            time: new Date().toTimeString().split(' ')[0],
+            status: 'success' // Manual entry is directly added as success
+        };
+
+        saveTransaction(newExpenseTransaction);
+        window.location.href = 'index.html';
     });
 
     function getSelectedCategory() {
@@ -163,7 +189,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         console.log("Generated UPI Intent URL:", upiIntentUrl);
 
-        // Create the pending transaction object
         const pendingTransaction = {
             id: transactionId,
             type: 'expense',
@@ -172,15 +197,11 @@ document.addEventListener('DOMContentLoaded', () => {
             description: description,
             date: new Date().toISOString().split('T')[0],
             time: new Date().toTimeString().split(' ')[0],
-            status: 'pending' // Initially pending
+            status: 'pending'
         };
 
-        // Save the pending transaction to earn_transactions
         saveTransaction(pendingTransaction);
-
-        // Store the pending transaction details for later confirmation (still needed for your flow)
         localStorage.setItem('pending_upi_confirmation', JSON.stringify(pendingTransaction));
-
         window.location.href = upiIntentUrl;
     }
 
