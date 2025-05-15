@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Test Data for Local Testing</title>
+    <title>Upload/Download Test Data</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/data.css">
 </head>
 <body>
     <header>
-        <h1>Upload Test Data for Local Testing</h1>
+        <h1>Upload/Download Test Data</h1>
     </header>
     <main>
         <section id="upload-section">
@@ -25,12 +25,19 @@
             </form>
         </section>
 
+        <section id="download-section">
+            <h2>Download Data from Local Storage</h2>
+            <button id="downloadButton" class="secondary">Download CSV from Local Storage</button>
+            <p id="download-status" class="hidden"></p>
+        </section>
+
         <section id="instructions-section">
             <h2>Instructions</h2>
-            <p>Select a CSV file containing your test financial data and click "Load Data to Local Storage".</p>
+            <p><strong>Upload:</strong> Select a CSV file containing your test financial data and click "Load Data to Local Storage".</p>
             <p>The data from the CSV will be stored in your browser's local storage under the key 'earn_transactions'.</p>
             <p>Ensure your CSV file has the following headers: <code>type,category,description,amount,date,time</code></p>
             <p>After successful upload, navigate back to the main application page to see the data.</p>
+            <p><strong>Download:</strong> Click the "Download CSV from Local Storage" button to download the current data in local storage as a CSV file.</p>
         </section>
     </main>
     <footer>
