@@ -232,7 +232,7 @@
 .action-buttons .button img {
     width: 24px;
     height: 24px;
-    margin-left: 10px;
+    /* margin-left: 10px; */
     color: #fff;
 }
 
