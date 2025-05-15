@@ -1,51 +1,60 @@
 /* css/faq.css */
 .faq-section {
-    margin-top: 20px;
+    margin-top: 30px;
 }
 
 .faq-widget {
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px; /* Slightly more rounded corners */
+    margin-bottom: 20px;
+    border-radius: 12px; /* More pronounced rounded corners */
     overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08); /* Softer, more modern shadow */
+    border: 1px solid #e0e0e0; /* Light grey border */
 }
 
 .faq-question {
-    padding: 15px; /* Slightly more padding */
-    background-color: #f8f8f8; /* Light grey background */
-    color: #333; /* Darker text for better readability */
+    padding: 18px 20px; /* Increased padding */
+    background-color: #f0f0f0; /* Very light grey background */
+    color: #2e2e2e; /* Dark grey text */
     cursor: pointer;
-    font-weight: 600; /* Semi-bold for emphasis */
+    font-weight: 500; /* Slightly less bold */
     position: relative;
-    padding-right: 35px; /* More space for the arrow */
-    transition: background-color 0.2s ease-in-out; /* Smooth hover effect */
-    border-bottom: 1px solid #eee; /* Separator line */
+    padding-right: 40px; /* More space for the icon */
+    transition: background-color 0.15s ease-in-out;
+    border-bottom: 1px solid #e0e0e0;
 }
 
 .faq-question:hover {
-    background-color: #eee;
+    background-color: #e8e8e8;
 }
 
 .faq-question::after {
-    content: '+';
+    content: ''; /* Using a custom icon */
     position: absolute;
     top: 50%;
-    right: 15px; /* Adjust arrow position */
+    right: 20px;
     transform: translateY(-50%);
-    font-size: 1.4em; /* Slightly larger arrow */
-    color: #777; /* Grey color for the arrow */
-    transition: transform 0.2s ease-in-out; /* Smooth rotation */
+    width: 20px;
+    height: 20px;
+    background-image: url('assets/icons/chevron-down.svg'); /* Replace with your down arrow icon */
+    background-size: contain;
+    transition: transform 0.2s ease-in-out;
+    opacity: 0.7; /* Slightly desaturated icon */
 }
 
 .faq-widget[open] .faq-question::after {
-    content: '-';
-    transform: translateY(-50%) rotate(45deg); /* Rotate to show minus sign */
+    transform: translateY(-50%) rotate(180deg); /* Rotate to show up arrow */
 }
 
 .faq-answer {
-    padding: 15px; /* Slightly more padding */
+    padding: 20px; /* Increased padding */
     background-color: #fff;
-    color: #555; /* Slightly lighter text for answer */
-    line-height: 1.6; /* Improved line spacing for readability */
+    color: #555;
+    line-height: 1.7; /* Further improved line spacing */
+    font-size: 0.95em; /* Slightly smaller, softer text */
 }
+
+/* If you have a primary button color, you can subtly integrate it */
+/* Example: */
+/* summary::marker { */
+/* color: your-primary-color; */
+/* } */
