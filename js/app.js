@@ -51,7 +51,7 @@ installButton.addEventListener('click', async () => {
 });
 
 const closeButton = document.createElement('button');
-closeButton.textContent = 'Close';
+closeButton.textContent = 'Skip for Now';
 closeButton.classList.add('button', 'secondary', 'install-close-button');
 closeButton.addEventListener('click', () => {
     console.log('Close button clicked');
