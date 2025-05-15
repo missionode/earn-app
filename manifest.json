@@ -1,7 +1,7 @@
 {
-    "name": "Earn",
-    "short_name": "Earn",
-    "description": "Just keep earning",
+    "name": "Earn - Just keep earning",
+  "short_name": "Earn",
+    "description": "Manage your finances effortlessly.",
     "start_url": "index.html",
     "display": "fullscreen",
     "background_color": "#007AFF",
