@@ -391,3 +391,32 @@ h1 {
         text-align: left; /* Adjust button alignment on larger screens */
     }
 }
+
+
+/* css/transactions.css */
+/* ... other styles ... */
+
+.edit-icon, .delete-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    /* Remove vertical-align: middle; */
+    margin-left: 5px;
+    display: inline-block; /* Or inline-flex */
+}
+
+#allTransactionsTable td:last-child { /* Target the last cell (Actions) in each row */
+    display: flex;
+    align-items: center;
+}
+
+#allTransactionsTable td:last-child img {
+    margin-left: 5px;
+}
+
+/* If you want spacing between the icons */
+#allTransactionsTable td:last-child img:first-child {
+    margin-left: 0; /* Remove left margin for the first icon */
+}
+
+/* ... other styles ... */
