@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterStartDateInput = document.getElementById('filterStartDate');
     const filterEndDateInput = document.getElementById('filterEndDate');
     const clearFiltersButton = document.getElementById('clearFilters');
+    const generateReportButton = document.getElementById('generateReport');
 
     const transactionsPerPage = 50;
     let allTransactions = [];
@@ -44,12 +45,15 @@ document.addEventListener('DOMContentLoaded', () => {
     })[category] || '';
 
     const loadAllTransactions = () => {
+        console.log('loadAllTransactions() called');
         const storedTransactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
+        console.log('Stored Transactions:', storedTransactions);
         allTransactions = storedTransactions.sort((a, b) => new Date(b.date + ' ' + b.time) - new Date(a.date + ' ' + a.time));
         applyFilters();
     };
 
     const applyFilters = () => {
+        console.log('applyFilters() called');
         filteredTransactions = allTransactions.filter(transaction => {
             const typeMatch = !currentFilters.type || transaction.type === currentFilters.type;
             const categoryMatch = !currentFilters.category || transaction.category === currentFilters.category;
@@ -63,18 +67,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
             return typeMatch && categoryMatch && startDateMatch && endDateMatch;
         });
-        currentPage = 1; // Reset to the first page after filtering
+        console.log('Filtered Transactions:', filteredTransactions);
+        currentPage = 1;
+        localStorage.setItem('filtered_transactions', JSON.stringify(filteredTransactions));
+
+        if (generateReportButton) {
+            generateReportButton.style.display = filteredTransactions.length > 0 ? 'block' : 'none';
+        }
+
         renderTransactions();
         renderPagination();
+        console.log('applyFilters() finished');
     };
 
     const renderTransactions = () => {
+        console.log('renderTransactions() called');
         const startIndex = (currentPage - 1) * transactionsPerPage;
         const endIndex = startIndex + transactionsPerPage;
         const currentTransactions = filteredTransactions.slice(startIndex, endIndex);
 
+        console.log('Current Page:', currentPage);
+        console.log('Transactions to Render (slice):', currentTransactions);
+        console.log('Table Body Element:', allTransactionsTableBody);
+
+        if (!allTransactionsTableBody) {
+            console.error('Error: allTransactionsTableBody is null. Check your HTML.');
+            return;
+        }
+
         allTransactionsTableBody.innerHTML = '';
         currentTransactions.forEach(transaction => {
+            console.log('Rendering Transaction:', transaction);
             const row = allTransactionsTableBody.insertRow();
             row.insertCell().innerHTML = transaction.type === 'expense' ? '<img src="assets/icons/arrow-up.svg" alt="Expense" class="transaction-icon">' : '<img src="assets/icons/arrow-down.svg" alt="Income" class="transaction-icon">';
             const categoryCell = row.insertCell();
@@ -89,20 +112,28 @@ document.addEventListener('DOMContentLoaded', () => {
             row.insertCell().textContent = transaction.time;
             row.insertCell().textContent = transaction.status || '';
             const actionsCell = row.insertCell();
+
+            const editWrapper = document.createElement('div');
+            editWrapper.classList.add('action-icon-wrapper');
             const editIcon = document.createElement('img');
-            editIcon.src = 'assets/icons/edit.svg'; // Replace with your edit icon path
+            editIcon.src = 'assets/icons/edit.svg';
             editIcon.alt = 'Edit';
             editIcon.classList.add('edit-icon');
             editIcon.addEventListener('click', () => openEditPopup(transaction.id));
-            actionsCell.appendChild(editIcon);
+            editWrapper.appendChild(editIcon);
+            actionsCell.appendChild(editWrapper);
 
+            const deleteWrapper = document.createElement('div');
+            deleteWrapper.classList.add('action-icon-wrapper');
             const deleteIcon = document.createElement('img');
-            deleteIcon.src = 'assets/icons/delete.svg'; // Replace with your delete icon path
+            deleteIcon.src = 'assets/icons/delete.svg';
             deleteIcon.alt = 'Delete';
             deleteIcon.classList.add('delete-icon');
             deleteIcon.addEventListener('click', () => deleteTransaction(transaction.id));
-            actionsCell.appendChild(deleteIcon);
+            deleteWrapper.appendChild(deleteIcon);
+            actionsCell.appendChild(deleteWrapper);
         });
+        console.log('renderTransactions() finished');
     };
 
     const renderPagination = () => {
@@ -113,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const pageNumber = document.createElement('button');
             pageNumber.textContent = i;
             if (i === currentPage) {
-                pageNumber.classList.add('active'); // You can add CSS for active page
+                pageNumber.classList.add('active');
             }
             pageNumber.addEventListener('click', () => {
                 currentPage = i;
@@ -179,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return transaction;
             });
             setLocalStorageItem('earn_transactions', JSON.stringify(updatedTransactions));
-            loadAllTransactions(); // Reload and re-render
+            loadAllTransactions();
             closeEditPopup();
         }
     };
@@ -195,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (confirm('Are you sure you want to delete this transaction?')) {
             const updatedTransactions = allTransactions.filter(transaction => transaction.id !== transactionIdToDelete);
             setLocalStorageItem('earn_transactions', JSON.stringify(updatedTransactions));
-            loadAllTransactions(); // Reload and re-render
+            loadAllTransactions();
         }
     };
 
@@ -239,10 +270,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     clearFiltersButton.addEventListener('click', () => {
-        filterTypeSelect.value = '';
-        filterCategorySelect.value = '';
-        filterStartDateInput.value = '';
-        filterEndDateInput.value = '';
         currentFilters = { type: '', category: '', startDate: '', endDate: '' };
         applyFilters();
     });

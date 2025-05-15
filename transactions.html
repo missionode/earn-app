@@ -46,6 +46,7 @@
                 <input type="date" id="filterEndDate">
             </div>
             <button id="clearFilters" class="button secondary small">Clear Filters</button>
+            <button id="generateReport" class="button primary" style="display: none;">Generate Report</button>
         </div>
         <div class="table_wrap">
             <table id="allTransactionsTable">
@@ -122,5 +123,7 @@
         </div>
     </div>
     <script src="js/transactions.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="js/report.js"></script>
 </body>
 </html>
