@@ -2,9 +2,9 @@
     max-width: 600px;
     margin: 20px auto;
     padding: 20px;
-    background-color: var(--background-secondary); /* Using a CSS variable */
+    /* background-color: var(--background-secondary); Using a CSS variable */
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); */
     text-align: center;
 }
 
@@ -46,6 +46,11 @@ h1 {
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.15s ease-in-out;
+}
+
+#cancelButton,#doneButton {
+    font-size: 1.1rem;
+    margin-top: 20px;
 }
 
 #doneButton:hover {

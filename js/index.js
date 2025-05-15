@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const upiConfirmationDescription = document.getElementById('upiConfirmationDescription');
     const upiConfirmCancelButton = document.getElementById('upiConfirmCancelButton');
     const upiConfirmButton = document.getElementById('upiConfirmButton');
+    const homePage = document.getElementById('homepage');
 
     let allTransactions = [];
 
@@ -30,8 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const getLocalStorageItem = (key) => localStorage.getItem(key);
     const setLocalStorageItem = (key, value) => localStorage.setItem(key, value);
     const isFirstTimeUser = () => !getLocalStorageItem('earn_upiId') || !getLocalStorageItem('earn_username');
-    const displayUPISetupPopup = () => upiSetupPopup.style.display = 'block';
+    const displayUPISetupPopup = () => upiSetupPopup.style.border = 'block';
     const hideUPISetupPopup = () => upiSetupPopup.style.display = 'none';
+
 
     const validateUPIId = (upiId) => {
         if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,}@[a-zA-Z]{2,}$/.test(upiId)) return 'Invalid UPI ID format.';

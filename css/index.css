@@ -357,6 +357,7 @@
     overflow: scroll;
     border-radius: 15px;
     /* padding-bottom: 50px; */
+    min-height: 100px;
 }
 
 #transactionsTable {
@@ -389,9 +390,25 @@
     border-bottom: none;
 }
 
+
 #upiSetupPopup {
     display: none;
+    overflow: hidden;
+    height: 100vh;
 }
+
+.bodymass {
+    margin-top: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 25px;
+}
+
+body:has(> .popup)
 
 
 

@@ -1,3 +1,6 @@
+body {
+    background-color: var(--background-secondary);
+}
 .container {
     max-width: 600px;
     margin: 20px auto;
@@ -11,7 +14,7 @@ h1 {
     text-align: center;
     margin-bottom: 20px;
     font-size: 1.6rem;
-    margin-bottom: 10px;
+    margin-bottom: 40px;
     opacity: 0.5;
 }
 
@@ -138,6 +141,7 @@ h1 {
 
 #customReceiptButton {
     margin-left: 10px;
+    border-radius: 100px;
 }
 
 .intoaction-buttons {
