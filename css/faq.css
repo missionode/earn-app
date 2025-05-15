@@ -1,4 +1,7 @@
 /* css/faq.css */
+body {
+    padding-top: 20px;
+}
 .faq-section {
     margin-top: 30px;
 }

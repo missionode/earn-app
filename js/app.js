@@ -37,12 +37,16 @@ const installButton = document.createElement('button');
 installButton.textContent = 'Install';
 installButton.classList.add('button', 'primary', 'install-button');
 installButton.addEventListener('click', async () => {
+    console.log('Install button clicked');
     if (deferredPrompt) {
+        console.log('deferredPrompt is available');
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
         console.log(`User response to the install prompt: ${outcome}`);
         deferredPrompt = null;
         installPrompt.style.display = 'none'; // Hide the prompt after interaction
+    } else {
+        console.log('deferredPrompt is null or undefined when install button clicked');
     }
 });
 
@@ -50,6 +54,7 @@ const closeButton = document.createElement('button');
 closeButton.textContent = 'Close';
 closeButton.classList.add('button', 'secondary', 'install-close-button');
 closeButton.addEventListener('click', () => {
+    console.log('Close button clicked');
     installPrompt.style.display = 'none'; // Hide the prompt if closed
 });
 
@@ -58,6 +63,7 @@ installPrompt.appendChild(appInfo);
 installPrompt.appendChild(installButton);
 installPrompt.appendChild(closeButton);
 document.body.appendChild(installPrompt);
+console.log('installPrompt appended to body');
 
 window.addEventListener('beforeinstallprompt', (e) => {
     console.log('beforeinstallprompt fired');
@@ -65,11 +71,17 @@ window.addEventListener('beforeinstallprompt', (e) => {
     deferredPrompt = e;
     // Show your custom install prompt after a delay or based on user interaction
     setTimeout(() => {
-        if (!isAppInstalled()) { // Check if already installed (optional)
-            installPrompt.style.display = 'block';
-            // Add a subtle animation class
-            installPrompt.classList.add('show-install-prompt');
-        }
+        isAppInstalled().then(isInstalled => {
+            console.log('isAppInstalled() resolved:', isInstalled);
+            if (!isInstalled) {
+                console.log('App is not installed, showing prompt');
+                installPrompt.style.display = 'block';
+                installPrompt.classList.add('show-install-prompt');
+                console.log('installPrompt display set to block and show class added');
+            } else {
+                console.log('App is likely installed, not showing prompt');
+            }
+        });
     }, 2000); // Show after 2 seconds (slightly reduced delay)
 });
 
@@ -81,5 +93,14 @@ window.addEventListener('appinstalled', () => {
 
 // Optional: Function to check if the app is already installed
 function isAppInstalled() {
-    return window.matchMedia('(display-mode: standalone)').matches || navigator.getInstalledRelatedApps().then((relatedApps) => relatedApps.length > 0);
+    const standalone = window.matchMedia('(display-mode: standalone)').matches;
+    console.log('Standalone check:', standalone);
+    return navigator.getInstalledRelatedApps().then((relatedApps) => {
+        const installed = relatedApps.length > 0;
+        console.log('getInstalledRelatedApps check:', installed, relatedApps);
+        return installed || standalone; // Include standalone check in the resolved value
+    }).catch(error => {
+        console.error('Error checking installed related apps:', error);
+        return standalone; // Return standalone status on error
+    });
 }

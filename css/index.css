@@ -1,6 +1,7 @@
 .container {
     padding: 30px 10px 20px 10px;
     /* height: 100vh */
+    position: relative;
 }
 
 .earn-logo {
@@ -155,6 +156,16 @@
     font-size: 1.2rem;
 }
 
+.header-logo-section {
+    display: flex
+;
+    align-items: center;
+    gap: 3px;
+    align-content: center;
+    justify-content: center;
+    flex-direction: row;
+}
+
 .ux-actions {
   flex-direction: column;
   justify-content: space-between;
@@ -184,7 +195,7 @@
     flex: 1;
     display: flex;
     align-items: right;
-    justify-content: left;
+    justify-content: center;
     padding: 15px 20px;
     border: none;
     border-radius: 8px;
@@ -221,7 +232,7 @@
 .action-buttons .button img {
     width: 24px;
     height: 24px;
-    margin-right: 10px;
+    margin-left: 10px;
     color: #fff;
 }
 
@@ -289,8 +300,10 @@
 }
 
 .summary-item h3 {
-    color: #788294; /* Using a CSS variable */
+    color: var(--text-primary);
     margin-bottom: 5px;
+    text-transform: uppercase;
+    font-size: 1rem;
 }
 
 .summary-item.income p strong {
@@ -306,7 +319,7 @@
     color: var(--text-primary); /* Using a CSS variable */
     margin-bottom: 15px;
     opacity: 0.6;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     margin: 15px auto 30px auto;
 }
 
