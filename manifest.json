@@ -3,7 +3,7 @@
   "short_name": "Earn",
     "description": "Manage your finances effortlessly.",
     "start_url": "index.html",
-    "display": "fullscreen",
+    "display": "standalone",
     "background_color": "#007AFF",
     "theme_color": "white",
     "icons": [
