@@ -310,3 +310,71 @@ h1 {
 .footer-Adv a:hover {
     text-decoration: underline;
 }
+
+/* css/transactions.css */
+
+/* Existing styles ... */
+
+.filter-controls {
+    display: grid;
+    grid-template-columns: auto auto auto auto auto; /* Adjust number of columns based on filter fields */
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+@media (max-width: 768px) {
+    .filter-controls {
+        grid-template-columns: auto auto; /* Adjust for smaller screens */
+    }
+
+    .filter-group {
+        width: 100%; /* Make filter groups take full width on smaller screens */
+    }
+}
+
+@media (max-width: 576px) {
+    .filter-controls {
+        grid-template-columns: auto; /* Single column layout for very small screens */
+    }
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    margin-bottom: 5px;
+    color: #555;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.filter-group select,
+.filter-group input[type="date"] {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    color: #333;
+    box-sizing: border-box;
+}
+
+.filter-controls .button.small {
+    padding: 10px 15px;
+    font-size: 0.9em;
+    grid-column: 1 / -1; /* Make the button span across all columns */
+    text-align: center;
+}
+
+@media (min-width: 769px) {
+    .filter-controls .button.small {
+        grid-column: auto; /* Reset grid column span on larger screens if needed */
+        text-align: left; /* Adjust button alignment on larger screens */
+    }
+}

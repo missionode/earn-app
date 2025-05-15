@@ -10,6 +10,42 @@
 <body>
     <div class="container">
         <h1>All Transactions</h1>
+        <div class="filter-controls">
+            <div class="filter-group">
+                <label for="filterType">Type:</label>
+                <select id="filterType">
+                    <option value="">All Types</option>
+                    <option value="income">Income</option>
+                    <option value="expense">Expense</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filterCategory">Category:</label>
+                <select id="filterCategory">
+                    <option value="">All Categories</option>
+                    <option value="cash">Cash</option>
+                    <option value="rent">Rent</option>
+                    <option value="salary">Salary</option>
+                    <option value="gift">Gift</option>
+                    <option value="investment">Investment</option>
+                    <option value="other">Other</option>
+                    <option value="food">Food</option>
+                    <option value="shopping">Shopping</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="travel">Travel</option>
+                    <option value="others">Others</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filterStartDate">From Date:</label>
+                <input type="date" id="filterStartDate">
+            </div>
+            <div class="filter-group">
+                <label for="filterEndDate">To Date:</label>
+                <input type="date" id="filterEndDate">
+            </div>
+            <button id="clearFilters" class="button secondary small">Clear Filters</button>
+        </div>
         <div class="table_wrap">
             <table id="allTransactionsTable">
                 <thead>

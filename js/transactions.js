@@ -13,11 +13,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const editAmountInput = document.getElementById('editAmount');
     const editDateInput = document.getElementById('editDate');
     const editTimeInput = document.getElementById('editTime');
+    const filterTypeSelect = document.getElementById('filterType');
+    const filterCategorySelect = document.getElementById('filterCategory');
+    const filterStartDateInput = document.getElementById('filterStartDate');
+    const filterEndDateInput = document.getElementById('filterEndDate');
+    const clearFiltersButton = document.getElementById('clearFilters');
 
     const transactionsPerPage = 50;
     let allTransactions = [];
+    let filteredTransactions = [];
     let currentPage = 1;
     let editingTransactionId = null;
+    let currentFilters = { type: '', category: '', startDate: '', endDate: '' };
 
     const getLocalStorageItem = (key) => localStorage.getItem(key);
     const setLocalStorageItem = (key, value) => localStorage.setItem(key, value);
@@ -38,8 +45,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const loadAllTransactions = () => {
         const storedTransactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-        // Sort transactions by date and time in descending order (latest first)
         allTransactions = storedTransactions.sort((a, b) => new Date(b.date + ' ' + b.time) - new Date(a.date + ' ' + a.time));
+        applyFilters();
+    };
+
+    const applyFilters = () => {
+        filteredTransactions = allTransactions.filter(transaction => {
+            const typeMatch = !currentFilters.type || transaction.type === currentFilters.type;
+            const categoryMatch = !currentFilters.category || transaction.category === currentFilters.category;
+
+            const transactionDate = new Date(transaction.date);
+            const startDate = currentFilters.startDate ? new Date(currentFilters.startDate) : null;
+            const endDate = currentFilters.endDate ? new Date(currentFilters.endDate) : null;
+
+            const startDateMatch = !startDate || transactionDate >= startDate;
+            const endDateMatch = !endDate || transactionDate <= endDate;
+
+            return typeMatch && categoryMatch && startDateMatch && endDateMatch;
+        });
+        currentPage = 1; // Reset to the first page after filtering
         renderTransactions();
         renderPagination();
     };
@@ -47,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderTransactions = () => {
         const startIndex = (currentPage - 1) * transactionsPerPage;
         const endIndex = startIndex + transactionsPerPage;
-        const currentTransactions = allTransactions.slice(startIndex, endIndex);
+        const currentTransactions = filteredTransactions.slice(startIndex, endIndex);
 
         allTransactionsTableBody.innerHTML = '';
         currentTransactions.forEach(transaction => {
@@ -75,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderPagination = () => {
-        const totalPages = Math.ceil(allTransactions.length / transactionsPerPage);
+        const totalPages = Math.ceil(filteredTransactions.length / transactionsPerPage);
         pageNumbersDiv.innerHTML = '';
 
         for (let i = 1; i <= totalPages; i++) {
@@ -97,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const updatePaginationButtons = () => {
-        const totalPages = Math.ceil(allTransactions.length / transactionsPerPage);
+        const totalPages = Math.ceil(filteredTransactions.length / transactionsPerPage);
         prevPageButton.disabled = currentPage === 1;
         nextPageButton.disabled = currentPage === totalPages || totalPages === 0;
     };
@@ -165,13 +189,42 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     nextPageButton.addEventListener('click', () => {
-        const totalPages = Math.ceil(allTransactions.length / transactionsPerPage);
+        const totalPages = Math.ceil(filteredTransactions.length / transactionsPerPage);
         if (currentPage < totalPages) {
             currentPage++;
             renderTransactions();
             updatePaginationButtons();
             updateActivePageNumber();
         }
+    });
+
+    filterTypeSelect.addEventListener('change', () => {
+        currentFilters.type = filterTypeSelect.value;
+        applyFilters();
+    });
+
+    filterCategorySelect.addEventListener('change', () => {
+        currentFilters.category = filterCategorySelect.value;
+        applyFilters();
+    });
+
+    filterStartDateInput.addEventListener('change', () => {
+        currentFilters.startDate = filterStartDateInput.value;
+        applyFilters();
+    });
+
+    filterEndDateInput.addEventListener('change', () => {
+        currentFilters.endDate = filterEndDateInput.value;
+        applyFilters();
+    });
+
+    clearFiltersButton.addEventListener('click', () => {
+        filterTypeSelect.value = '';
+        filterCategorySelect.value = '';
+        filterStartDateInput.value = '';
+        filterEndDateInput.value = '';
+        currentFilters = { type: '', category: '', startDate: '', endDate: '' };
+        applyFilters();
     });
 
     loadAllTransactions();
