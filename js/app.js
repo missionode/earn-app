@@ -14,17 +14,24 @@ let deferredPrompt;
 const installPrompt = document.createElement('div');
 installPrompt.id = 'installPrompt';
 installPrompt.style.display = 'none'; // Initially hidden
+installPrompt.classList.add('install-prompt-container'); // Add a class for easier styling
 
 const appLogo = document.createElement('img');
 appLogo.src = './assets/icons/icon-96x96.png'; // Adjust path if needed
 appLogo.alt = 'Earn App Logo';
 appLogo.classList.add('install-logo');
 
+const appInfo = document.createElement('div');
+appInfo.classList.add('install-info');
+
 const appName = document.createElement('h3');
 appName.textContent = 'Install Earn App';
 
 const appDescription = document.createElement('p');
 appDescription.textContent = 'Add Earn to your home screen for quick access.';
+
+appInfo.appendChild(appName);
+appInfo.appendChild(appDescription);
 
 const installButton = document.createElement('button');
 installButton.textContent = 'Install';
@@ -47,8 +54,7 @@ closeButton.addEventListener('click', () => {
 });
 
 installPrompt.appendChild(appLogo);
-installPrompt.appendChild(appName);
-installPrompt.appendChild(appDescription);
+installPrompt.appendChild(appInfo);
 installPrompt.appendChild(installButton);
 installPrompt.appendChild(closeButton);
 document.body.appendChild(installPrompt);
@@ -64,7 +70,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
             // Add a subtle animation class
             installPrompt.classList.add('show-install-prompt');
         }
-    }, 3000); // Show after 3 seconds (adjust as needed)
+    }, 2000); // Show after 2 seconds (slightly reduced delay)
 });
 
 window.addEventListener('appinstalled', () => {
