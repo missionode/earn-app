@@ -301,3 +301,43 @@ document.addEventListener('DOMContentLoaded', () => {
         window.history.replaceState({}, document.title, newUrl);
     }
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Function to get the value of a specific query parameter from the URL
+    function getQueryParam(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+  
+    // Check if the 'triggerUPIPopUp' parameter is present and true
+    const triggerPopup = getQueryParam('triggerUPIPopUp');
+    if (triggerPopup === 'true') {
+      const upiSetupPopup = document.getElementById('upiSetupPopup');
+      if (upiSetupPopup) {
+        upiSetupPopup.style.display = 'block';
+        // Optionally, you might want to remove the parameter from the URL
+        // to prevent it from triggering the popup on subsequent reloads
+        const url = new URL(window.location.href);
+        url.searchParams.delete('triggerUPIPopUp');
+        window.history.replaceState({}, document.title, url);
+      } else {
+        console.error('Error: #upiSetupPopup element not found in index.html.');
+      }
+    }
+  });
+  
+  // You'll also likely need a way to close the popup on index.html
+  function closeUpiSetupPopup() {
+    const upiSetupPopup = document.getElementById('upiSetupPopup');
+    if (upiSetupPopup) {
+      upiSetupPopup.style.display = 'none';
+    }
+  }
+  
+  // Attach the close function to a button within the popup (example):
+  document.addEventListener('DOMContentLoaded', () => {
+    const closeUpiSetupButton = document.getElementById('closeUpiSetup');
+    if (closeUpiSetupButton) {
+      closeUpiSetupButton.addEventListener('click', closeUpiSetupPopup);
+    }
+  });

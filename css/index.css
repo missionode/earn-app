@@ -217,6 +217,13 @@
     background-color: var(--expense-color);
 }
 
+.popup-help {
+    margin-top: 7px;
+    font-size: 0.6rem;
+    display: flex;
+    margin-left: 8px;
+}
+
 .walletfilter {
     max-height: 0;
     overflow: hidden;
