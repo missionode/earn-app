@@ -155,7 +155,7 @@ h1 {
 .footer-Adv figure {
     display: flex;
     gap: 2px;
-    width: 220px;
+    /* width: 220px; */
     overflow: visible;
     padding: 20px;
     align-content: space-around;
