@@ -95,6 +95,13 @@ document.addEventListener('DOMContentLoaded', () => {
             editIcon.classList.add('edit-icon');
             editIcon.addEventListener('click', () => openEditPopup(transaction.id));
             actionsCell.appendChild(editIcon);
+
+            const deleteIcon = document.createElement('img');
+            deleteIcon.src = 'assets/icons/delete.svg'; // Replace with your delete icon path
+            deleteIcon.alt = 'Delete';
+            deleteIcon.classList.add('delete-icon');
+            deleteIcon.addEventListener('click', () => deleteTransaction(transaction.id));
+            actionsCell.appendChild(deleteIcon);
         });
     };
 
@@ -155,8 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
         editingTransactionId = null;
     };
 
-    editTransactionForm.addEventListener('submit', (event) => {
-        event.preventDefault();
+    const saveEditedTransaction = () => {
         if (editingTransactionId) {
             const updatedTransactions = allTransactions.map(transaction => {
                 if (transaction.id === editingTransactionId) {
@@ -176,9 +182,23 @@ document.addEventListener('DOMContentLoaded', () => {
             loadAllTransactions(); // Reload and re-render
             closeEditPopup();
         }
+    };
+
+    editTransactionForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        saveEditedTransaction();
     });
 
     cancelEditButton.addEventListener('click', closeEditPopup);
+
+    const deleteTransaction = (transactionIdToDelete) => {
+        if (confirm('Are you sure you want to delete this transaction?')) {
+            const updatedTransactions = allTransactions.filter(transaction => transaction.id !== transactionIdToDelete);
+            setLocalStorageItem('earn_transactions', JSON.stringify(updatedTransactions));
+            loadAllTransactions(); // Reload and re-render
+        }
+    };
+
     prevPageButton.addEventListener('click', () => {
         if (currentPage > 1) {
             currentPage--;

@@ -119,12 +119,25 @@ h1 {
     padding: 12px 15px;
     text-align: left;
     border-bottom: 1px solid #eee;
+    vertical-align: middle;
 }
 
 #allTransactionsTable th {
     background-color: #f8f8f8;
     font-weight: bold;
     color: #555;
+}
+
+
+#allTransactionsTable td:nth-child(1),
+#allTransactionsTable th:nth-child(1),
+#allTransactionsTable td:nth-child(2),
+#allTransactionsTable th:nth-child(2) {
+    display: none;
+}
+
+#allTransactionsTable td img {
+    margin-right: 10px;
 }
 
 #allTransactionsTable tbody tr:nth-child(even) {
