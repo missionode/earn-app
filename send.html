@@ -14,10 +14,7 @@
     <div class="container">
         <h1>Add Expense</h1>
         <form id="sendForm">
-            <div class="form-group">
-                <label for="amount">Amount:</label>
-                <input placeholder="Enter Amount" type="number" id="amount" name="amount" required>
-            </div>
+            
             <div class="form-group">
                 <label>Category:</label>
                 <div class="icon-grid">
@@ -37,10 +34,17 @@
                     <label for="categoryOthers"><img src="assets/icons/others.svg" alt="Others"><span>Others</span></label>
                 </div>
             </div>
+            
             <div class="form-group">
                 <label for="description">Description (Optional):</label>
                 <textarea placeholder="Enter Description" id="description" name="description"></textarea>
             </div>
+
+            <div class="form-group">
+                <label for="amount">Amount:</label>
+                <input placeholder="Enter Amount" type="number" id="amount" name="amount" required>
+            </div>
+            
             <div class="intoaction-buttons">
                 <button type="button" id="addExpenseBtn" class="button secondary">Add Expense</button>
                 <button type="submit" class="button primary">Pay with UPI</button>
