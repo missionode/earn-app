@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
   'ybl',          // Paytm
   'upi',          // General UPI
   'okhdfcbank',   // HDFC Bank
+  'hdfcbank',     // HDFC Bank New
   'icici',        // ICICI Bank (direct)
   'axisbank',     // Axis Bank
   'oksbi',        // SBI
