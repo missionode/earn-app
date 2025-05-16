@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription - Earn</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/subscription.css">
+</head>
+<body>
+    <div class="subscription-container">
+        <h1>Unlock Premium Features</h1>
+        <p>Choose a subscription plan that fits your needs and enjoy enhanced functionality.</p>
+
+        <div class="plan-options">
+           
+
+            <div class="plan-card">
+                <h2 class="plan-title">Premium</h2>
+                <div class="plan-price">₹1/month</div>
+                <ul class="plan-features">
+                    <li>Unlimited Transactions</li>
+                </ul>
+                <button class="subscribe-button" onclick="subscribe(1, 'Monthly Premium Subscription')">Subscribe Now</button>
+            </div>
+        </div>
+
+        <div class="payment-methods">
+            Secure payments via UPI:
+            <div class="payment-icons">
+                <img src="assets/icons/upi.svg" alt="UPI">
+                </div>
+        </div>
+
+        <p><a href="index.html" class="back-link">Back to Home</a></p>
+    </div>
+
+    <script>
+        // Function to generate a unique transaction ID
+        function generateUniqueId() {
+             return Date.now().toString(36) + Math.random().toString(36).substring(2, 15);
+        }
+
+        // Function to initiate UPI payment
+        function subscribe(amount, description) {
+            const recipientVPA = 'bodhiintellect1@fbl'; // Your UPI ID
+            const payeeName = 'Bodhi Intellect Pvt Ltd'; // Your Name
+            const transactionId = generateUniqueId();
+            const currency = 'INR';
+            const merchantCategoryCode = '0000'; // Or a relevant MCC
+
+            // Construct the callback URL to index.html
+            // We'll pass transaction ID and status
+            const callbackUrl = encodeURIComponent(`https://missionode.github.io/earn-app/index.html?paymentStatus=success&transactionId=${transactionId}`);
+            // Note: The actual payment status is determined by the UPI app/gateway,
+            // but we pass 'success' as the expected outcome in the URL for our check.
+            // A real integration would need server-side validation.
+
+            const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(recipientVPA)}&pn=${encodeURIComponent(payeeName)}&am=${parseFloat(amount).toFixed(2)}&cu=${currency}&tr=${encodeURIComponent(transactionId)}&tn=${encodeURIComponent(description)}&mc=${merchantCategoryCode}&url=${callbackUrl}`;
+
+            console.log("Generated UPI Intent URL:", upiIntentUrl);
+
+            // Redirect to the UPI app
+            window.location.href = upiIntentUrl;
+
+            // Store the transaction details temporarily for potential manual confirmation
+            // This is a fallback if the callback doesn't work reliably.
+            const pendingSubscriptionPayment = {
+                id: transactionId,
+                amount: amount,
+                description: description,
+                timestamp: new Date().toISOString()
+            };
+            localStorage.setItem('pending_subscription_payment', JSON.stringify(pendingSubscriptionPayment));
+        }
+    </script>
+</body>
+</html>

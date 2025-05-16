@@ -1,5 +1,5 @@
 .container {
-    padding: 30px 10px 20px 10px;
+    padding: 10px 10px 20px 10px;
     /* height: 100vh */
     position: relative;
 }
@@ -512,3 +512,87 @@ body:has(> .popup)
     text-transform: capitalize;
 }
 
+#subscriptionNotification {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f0f9ff; /* Light blue background */
+    color: #1e3a8a; /* Dark blue text */
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000; /* Ensure it stays on top */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid #e0e7ff; /* Light blue border */
+    transition: transform 0.3s ease-in-out; /* For potential animations */
+}
+
+#subscriptionNotification.hidden {
+    transform: translateY(-100%);
+}
+
+#subscriptionNotification span {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+#skipNotification,
+#paynowheader {
+    background-color: #4f46e5; /* Indigo button */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.2s ease-in-out;
+    text-decoration: none; /* Remove underline from the link */
+    display: inline-block; /* To allow padding and margin */
+    margin-left: 10px; /* Space between buttons */
+}
+
+#skipNotification:hover,
+#paynowheader:hover {
+    background-color: #6366f1; /* Lighter indigo on hover */
+}
+
+/* Optional: Add a close button for more control */
+#closeNotificationButton {
+    background: none;
+    border: none;
+    color: #4b5563; /* Gray close icon */
+    font-size: 20px;
+    cursor: pointer;
+    margin-left: 15px;
+    outline: none;
+}
+
+#closeNotificationButton:hover {
+    color: #6b7280; /* Darker gray on hover */
+}
+
+/* Modern touches */
+#subscriptionNotification {
+    border-radius: 0 0 8px 8px; /* Slightly rounded bottom corners */
+}
+
+#subscriptionNotification span {
+    letter-spacing: 0.5px;
+}
+
+#skipNotification,
+#paynowheader {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+/* Slightly different style for Pay Now to make it stand out */
+#paynowheader {
+    background-color: #22c55e; /* Green Pay Now button */
+}
+
+#paynowheader:hover {
+    background-color: #4ade80; /* Lighter green on hover */
+}

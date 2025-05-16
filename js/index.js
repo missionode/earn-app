@@ -1,4 +1,60 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const homePage = document.getElementById('homepage'); // Initialize homePage first
+    const subscriptionNotification = document.getElementById('subscriptionNotification');
+    const skipNotificationButton = document.getElementById('skipNotification');
+    const transactionsContainer = document.querySelector('.container'); // Or a more specific content container
+
+    const subscriptionDay = 15; // Set the day of the month for subscription trigger
+    const notificationMaxDisplay = 5;
+
+    const isUserSubscribed = localStorage.getItem('earnapp_subscription') === 'paid';
+    const notificationDisplayCount = parseInt(localStorage.getItem('notificationCount')) || 0;
+    const lastNotificationDay = parseInt(localStorage.getItem('lastNotificationDay')) || 0;
+
+    const today = new Date();
+    const currentDay = today.getDate();
+
+    // Function to redirect to the subscription page
+    function redirectToSubscription() {
+        window.location.href = 'subscription.html'; // Replace with your actual subscription page URL
+    }
+
+    // Function to show the notification
+    function showNotification() {
+        subscriptionNotification.style.display = 'flex';
+        localStorage.setItem('notificationCount', notificationDisplayCount + 1);
+        localStorage.setItem('lastNotificationDay', currentDay);
+    }
+
+    // Function to hide the notification
+    function hideNotification() {
+        subscriptionNotification.style.display = 'none';
+    }
+
+    // Function to restrict access
+    function restrictAccess() {
+        homePage.innerHTML = '<div style="text-align:center; padding: 50px;"><h1>Subscription Required</h1><p>Please pay your subscription to access the app.</p><a href="subscription.html" class="button primary">Go to Subscription</a></div>';
+    }
+
+    // Billing cycle logic
+    if (!isUserSubscribed) {
+        if (currentDay === subscriptionDay && notificationDisplayCount < notificationMaxDisplay && lastNotificationDay !== currentDay) {
+            showNotification();
+        } else if (currentDay > subscriptionDay && notificationDisplayCount >= notificationMaxDisplay) {
+            redirectToSubscription();
+        } else if (currentDay > subscriptionDay) {
+            restrictAccess();
+        }
+    }
+
+    // Skip notification button functionality
+    skipNotificationButton.addEventListener('click', () => {
+        hideNotification();
+        localStorage.setItem('notificationCount', notificationDisplayCount + 1);
+        localStorage.setItem('lastNotificationDay', currentDay);
+    });
+
+    // Load transactions (your existing code)
     const upiSetupPopup = document.getElementById('upiSetupPopup');
     const upiSetupForm = document.getElementById('upiSetupForm');
     const upiIdInput = document.getElementById('upiId');
@@ -23,7 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const upiConfirmationDescription = document.getElementById('upiConfirmationDescription');
     const upiConfirmCancelButton = document.getElementById('upiConfirmCancelButton');
     const upiConfirmButton = document.getElementById('upiConfirmButton');
-    const homePage = document.getElementById('homepage');
 
     let allTransactions = [];
 
@@ -298,6 +353,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Initialization ---
     if (isFirstTimeUser()) {
         displayUPISetupPopup();
+    } else if (!isUserSubscribed && currentDay === subscriptionDay) {
+        showNotification();
+    } else if (!isUserSubscribed && currentDay > subscriptionDay && notificationDisplayCount >= notificationMaxDisplay) {
+        redirectToSubscription();
+    } else if (!isUserSubscribed && currentDay > subscriptionDay) {
+        restrictAccess();
     } else {
         loadTransactions();
         updateOverallSummary();
@@ -353,13 +414,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (showDetailsState === 'false') {
         document.body.classList.add('hide-transaction-details');
     }
-    
+
     // Function to get the value of a specific query parameter from the URL
     function getQueryParam(name) {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(name);
     }
-  
+
     // Check if the 'triggerUPIPopUp' parameter is present and true
     const triggerPopup = getQueryParam('triggerUPIPopUp');
     if (triggerPopup === 'true') {
@@ -376,7 +437,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
-  
+
   // You'll also likely need a way to close the popup on index.html
   function closeUpiSetupPopup() {
     const upiSetupPopup = document.getElementById('upiSetupPopup');
@@ -384,7 +445,7 @@ document.addEventListener('DOMContentLoaded', () => {
       upiSetupPopup.style.display = 'none';
     }
   }
-  
+
   // Attach the close function to a button within the popup (example):
   document.addEventListener('DOMContentLoaded', () => {
     const closeUpiSetupButton = document.getElementById('closeUpiSetup');
