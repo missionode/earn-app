@@ -35,7 +35,7 @@ h1 {
     border: 1px solid var(--border-color); /* Using a CSS variable */
     border-radius: 4px;
     box-sizing: border-box;
-    background: #f1f1f1;
+    background-color: #F1F1F1;
 }
 
 .icon-grid {
