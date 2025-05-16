@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('amount').focus();
     const sendForm = document.getElementById('sendForm');
     const amountInput = document.getElementById('amount');
     const descriptionInput = document.getElementById('description');
