@@ -11,13 +11,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const qrScannerView = document.getElementById('qrScannerView');
     const closeScannerButton = document.getElementById('closeScanner');
     const addExpenseBtn = document.getElementById('addExpenseBtn');
-    const toggleFlashButton = document.getElementById('toggleFlash');
-    let flashEnabled = false;
-    let videoTrack = null;
+
+    let amount;
+    let description;
+    let category = '';
     let streamGlobal;
     let extractedUPIID;
     let extractedMerchantName;
-    let html5QrCode = null; // To hold the instance
 
     sendForm.addEventListener('submit', (event) => {
         event.preventDefault();
@@ -39,11 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
     closeScannerButton.addEventListener('click', () => {
         qrScannerPopup.style.display = 'none';
         stopCamera();
-        if (html5QrCode) {
-            html5QrCode.stop();
-            html5QrCode.clear();
-            html5QrCode = null;
-        }
     });
 
     addExpenseBtn.addEventListener('click', () => {
@@ -88,46 +83,84 @@ document.addEventListener('DOMContentLoaded', () => {
 
         qrScannerView.innerHTML = '';
 
-        html5QrCode = new Html5Qrcode("qrScannerView");
-        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-            stopCamera();
-            qrScannerPopup.style.display = 'none';
-            const qrData = extractDataFromQRCode(decodedText);
-            extractedUPIID = qrData.upiId;
-            extractedMerchantName = qrData.merchantName;
-            if (extractedUPIID) {
-                initiateUpiPayment(extractedUPIID, amount, description, category, extractedMerchantName);
-            } else {
-                alert('Invalid UPI QR code.');
+        navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: 'environment'
+                // Zoom control based on proximity to QR code is not directly supported by standard browser APIs.
+                // Users will need to manually zoom using their device's camera controls.
             }
-        };
+        })
+         .then(stream => {
+                streamGlobal = stream;
+                video.srcObject = stream;
+                video.setAttribute('playsinline', true);
+                video.play();
 
-        const config = { fps: 10, qrbox: 250 };
+                videoTrack = stream.getVideoTracks(); // Get the video track for flash control
 
-        html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
-           .catch(err => {
-                console.error('Error starting QR scanner:', err);
-                alert('Error starting QR scanner.');
+                video.addEventListener('loadedmetadata', () => {
+                    const aspectRatioVideo = video.videoWidth / video.videoHeight |
+| 1;
+                    const aspectRatioCanvas = window.innerWidth / window.innerHeight;
+                    let width, height;
+
+                    if (aspectRatioCanvas > aspectRatioVideo) {
+                        height = window.innerHeight;
+                        width = height * aspectRatioVideo;
+                    } else {
+                        width = window.innerWidth;
+                        height = width / aspectRatioVideo;
+                    }
+
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                    qrScannerView.appendChild(canvas);
+
+                    context.fillStyle = 'black';
+                    context.fillRect(0, 0, canvas.width, canvas.height);
+
+                    const offsetX = (canvas.width - width) / 2;
+                    const offsetY = (canvas.height - height) / 2;
+
+                    function scan() {
+                        context.drawImage(video, offsetX, offsetY, width, height);
+                        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                        const code = jsQR(imageData.data, canvas.width, canvas.height);
+
+                        if (code) {
+                            stopCamera(stream);
+                            qrScannerPopup.style.display = 'none';
+                            const qrData = extractDataFromQRCode(code.data);
+                            extractedUPIID = qrData.upiId;
+                            extractedMerchantName = qrData.merchantName;
+                            if (extractedUPIID) {
+                                initiateUpiPayment(extractedUPIID, amount, description, category, extractedMerchantName);
+                            } else {
+                                alert('Invalid UPI QR code.');
+                            }
+                        } else {
+                            requestAnimationFrame(scan);
+                        }
+                    }
+
+                    scan();
+                });
+            })
+         .catch(err => {
+                console.error('Error accessing camera:', err);
+                alert('Error accessing camera.');
             });
-
-        // Attempt to apply zoom after a short delay if no detection
-        setTimeout(() => {
-            if (html5QrCode) {
-                try {
-                    html5QrCode.applyVideoConstraints({ advanced: [{ zoom: 1.5 }] }); // Adjust zoom level
-                    console.log("Attempted to apply zoom.");
-                } catch (error) {
-                    console.error("Error applying zoom:", error);
-                    alert("Could not automatically zoom. Please try moving closer.");
-                }
-            }
-        }, 3000);
     }
 
-    function stopCamera() {
-        if (streamGlobal) {
-            streamGlobal.getTracks().forEach(track => track.stop());
-            streamGlobal = null;
+    function stopCamera(stream) {
+        if (!stream && streamGlobal) {
+            stream = streamGlobal;
+        }
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+        if (qrScannerView.firstChild) {
+            qrScannerView.removeChild(qrScannerView.firstChild);
         }
     }
 
@@ -200,14 +233,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (videoTrack) {
             const imageCapture = new ImageCapture(videoTrack);
             imageCapture.getPhotoCapabilities()
-               .then(capabilities => {
+              .then(capabilities => {
                     if (capabilities.torch) {
                         flashEnabled =!flashEnabled;
                         videoTrack.applyConstraints({ advanced: [{ torch: flashEnabled }] })
-                           .then(() => {
+                          .then(() => {
                                 toggleFlashButton.textContent = flashEnabled? 'Disable Flash' : 'Enable Flash';
                             })
-                           .catch(err => {
+                          .catch(err => {
                                 console.error('Error toggling flash:', err);
                                 alert('Error toggling flash.');
                             });
@@ -215,7 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         alert('Flash control is not supported on this device.');
                     }
                 })
-               .catch(err => {
+              .catch(err => {
                     console.error('Error getting camera capabilities:', err);
                     alert('Error accessing camera capabilities.');
                 });
