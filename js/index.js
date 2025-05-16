@@ -38,7 +38,45 @@ document.addEventListener('DOMContentLoaded', () => {
     const validateUPIId = (upiId) => {
         if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,}@[a-zA-Z]{2,}$/.test(upiId)) return 'Invalid UPI ID format.';
         const domain = upiId.split('@')[1];
-        const validDomains = ['ybl', 'upi', 'okhdfcbank', 'icici', 'axisbank', 'oksbi', 'paytm', 'fbl', 'okicici'];
+        const validDomains = [
+  'ybl',          // Paytm
+  'upi',          // General UPI
+  'okhdfcbank',   // HDFC Bank
+  'icici',        // ICICI Bank (direct)
+  'axisbank',     // Axis Bank
+  'oksbi',        // SBI
+  'paytm',        // Paytm
+  'fbl',          // Federal Bank
+  'okicici',      // ICICI Bank (via Google Pay)
+  // Newly added domains
+  'kotak',        // Kotak Mahindra Bank
+  'yesbank',      // YES Bank
+  'idbi',         // IDBI Bank
+  'canarabank',   // Canara Bank
+  'pnb',          // Punjab National Bank
+  'airtel',       // Airtel Payments Bank
+  'barodapay',    // Bank of Baroda
+  'hsbc',         // HSBC Bank
+  'rbl',          // RBL Bank
+  'indus',        // IndusInd Bank
+  'ubi',          // Union Bank of India
+  'standardchartered', // Standard Chartered Bank
+  'cbin',         // Central Bank of India
+  'iob',          // Indian Overseas Bank
+  'sib',          // South Indian Bank
+  'tjsb',         // TJSB (Co-operative Bank)
+  'kbl',          // Karnataka Bank
+  'dbs',          // DBS Bank India
+  'bandhan',      // Bandhan Bank
+  'nsdl',         // NSDL Payments Bank
+  'jio',          // Jio Payments Bank
+  'lvbank',       // Laxmi Vilas Bank
+  'punjabandsindh', // Punjab & Sind Bank
+  'idfcfirst',    // IDFC First Bank
+  'csb',          // Catholic Syrian Bank
+  'citi',         // Citibank India
+  'dlb'           // Dhanlaxmi Bank
+];
         return validDomains.includes(domain) ? '' : 'Invalid UPI ID domain.';
     };
 
