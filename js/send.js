@@ -26,8 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
         description = descriptionInput.value;
         category = getSelectedCategory();
 
-        if (isNaN(amount) |
-| amount <= 0) {
+        if (isNaN(amount) || amount <= 0) {
             alert('Please enter a valid amount.');
             return;
         }
@@ -46,8 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const manualExpenseDescription = descriptionInput.value;
         const manualExpenseCategory = getSelectedCategory();
 
-        if (isNaN(manualExpenseAmount) |
-| manualExpenseAmount <= 0) {
+        if (isNaN(manualExpenseAmount) || manualExpenseAmount <= 0) {
             alert('Please enter a valid expense amount.');
             return;
         }
@@ -99,8 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 videoTrack = stream.getVideoTracks(); // Get the video track for flash control
 
                 video.addEventListener('loadedmetadata', () => {
-                    const aspectRatioVideo = video.videoWidth / video.videoHeight |
-| 1;
+                    const aspectRatioVideo = video.videoWidth / video.videoHeight || 1;
                     const aspectRatioCanvas = window.innerWidth / window.innerHeight;
                     let width, height;
 
@@ -191,9 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function initiateUpiPayment(recipientVPA, amount, description, category, merchantNameFromQR) {
         const transactionId = generateUniqueId();
-        const payeeName = merchantNameFromQR |
-| localStorage.getItem('earn_username') |
-| 'Recipient Name';
+        const payeeName = merchantNameFromQR || localStorage.getItem('earn_username') || 'Recipient Name';
         const merchantCategoryCode = '0000';
         const successUrl = encodeURIComponent(`https://missionode.github.io/earn-app/index.html?status=success&transactionId=${transactionId}`);
 
@@ -219,8 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function saveTransaction(transaction) {
-        let transactions = JSON.parse(localStorage.getItem('earn_transactions') |
-| '');
+        let transactions = JSON.parse(localStorage.getItem('earn_transactions') || '');
         transactions.unshift(transaction);
         localStorage.setItem('earn_transactions', JSON.stringify(transactions));
     }
