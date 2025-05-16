@@ -1,5 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('amount').focus()
+
+  setTimeout(() => {
+    const input = document.getElementById("amount");
+    input.focus();
+    input.select(); // optional
+  }, 300); // delay ensures mobile keyboard show
+    
     const receiveForm = document.getElementById('receiveForm');
     const amountInput = document.getElementById('amount');
     const descriptionInput = document.getElementById('description');
