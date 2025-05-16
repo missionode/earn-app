@@ -135,6 +135,15 @@
     justify-content: space-between;
 }
 
+.adsSpace {
+    height: auto;
+    overflow: hidden;
+    border-radius: 5px;
+    background-size: cover;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background-position: center;
+}
+
 .wallet .filter {
     display: flex;
     flex-direction: column;
