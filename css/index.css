@@ -215,7 +215,7 @@
     background-color: var(--accent-color); /* Using a CSS variable */
     color: var(--text-on-accent); /* Using a CSS variable */
     font-weight: bold;
-    font-size:9rem;
+    font-size:.8rem;
     text-transform: uppercase;
     gap: 10px;
     cursor: pointer;
