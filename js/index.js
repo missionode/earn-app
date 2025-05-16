@@ -1,10 +1,35 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const homePage = document.getElementById('homepage'); // Initialize homePage first
+    // --- Variables (Declared only once) ---
+    const homePage = document.getElementById('homepage');
     const subscriptionNotification = document.getElementById('subscriptionNotification');
     const skipNotificationButton = document.getElementById('skipNotification');
     const manualConfirmationPopup = document.getElementById('manualConfirmationPopup');
     const confirmPaidButton = document.getElementById('confirmPaidButton');
     const confirmNotPaidButton = document.getElementById('confirmNotPaidButton');
+    const upiSetupPopup = document.getElementById('upiSetupPopup');
+    const upiSetupForm = document.getElementById('upiSetupForm');
+    const upiIdInput = document.getElementById('upiId');
+    const usernameInput = document.getElementById('username');
+    const upiIdError = document.getElementById('upiIdError');
+    const usernameError = document.getElementById('usernameError');
+    const receiveMoneyBtn = document.getElementById('receiveMoneyBtn');
+    const sendMoneyBtn = document.getElementById('sendMoneyBtn');
+    const totalIncomeDisplay = document.getElementById('totalIncome');
+    const totalExpensesDisplay = document.getElementById('totalExpenses');
+    const transactionsTableBody = document.getElementById('transactionsTable').querySelector('tbody');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const searchBox = document.getElementById('searchBox');
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+    const filterType = document.getElementById('filterType');
+    const clearFilterButton = document.getElementById('clearFilter');
+    const filteredSummaryContainer = document.getElementById('filteredSummaryContainer');
+    const upiConfirmationNotification = document.getElementById('upiConfirmationNotification');
+    const upiConfirmationTitle = document.getElementById('upiConfirmationTitle');
+    const upiConfirmationAmount = document.getElementById('upiConfirmationAmount');
+    const upiConfirmationDescription = document.getElementById('upiConfirmationDescription');
+    const upiConfirmCancelButton = document.getElementById('upiConfirmCancelButton');
+    const upiConfirmButton = document.getElementById('upiConfirmButton');
 
 
     const subscriptionDay = 17; // Set the day of the month for subscription trigger
@@ -17,12 +42,78 @@ document.addEventListener('DOMContentLoaded', () => {
     const today = new Date();
     const currentDay = today.getDate();
 
-    // --- Helper Functions ---
+    let allTransactions = [];
+
+    // --- Helper Functions (Defined before they are called) ---
     const getLocalStorageItem = (key) => localStorage.getItem(key);
     const setLocalStorageItem = (key, value) => localStorage.setItem(key, value);
     const isFirstTimeUser = () => !getLocalStorageItem('earn_upiId') || !getLocalStorageItem('earn_username');
-    const displayUPISetupPopup = () => upiSetupPopup.style.border = 'block'; // Note: Should this be 'display'?
+    const displayUPISetupPopup = () => upiSetupPopup.style.display = 'block';
     const hideUPISetupPopup = () => upiSetupPopup.style.display = 'none';
+
+    const validateUPIId = (upiId) => {
+        if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,}@[a-zA-Z]{2,}$/.test(upiId)) return 'Invalid UPI ID format.';
+        const domain = upiId.split('@')[1];
+        const validDomains = [
+            'ybl',          // Paytm
+            'upi',          // General UPI
+            'okhdfcbank',   // HDFC Bank
+            'hdfcbank',     // HDFC Bank New
+            'icici',        // ICICI Bank (direct)
+            'axisbank',     // Axis Bank
+            'oksbi',        // SBI
+            'paytm',        // Paytm
+            'fbl',          // Federal Bank
+            'okicici',      // ICICI Bank (via Google Pay)
+            'kotak',        // Kotak Mahindra Bank
+            'yesbank',      // YES Bank
+            'idbi',         // IDBI Bank
+            'canarabank',   // Canara Bank
+            'pnb',          // Punjab National Bank
+            'airtel',       // Airtel Payments Bank
+            'barodapay',    // Bank of Baroda
+            'hsbc',         // HSBC Bank
+            'rbl',          // RBL Bank
+            'indus',        // IndusInd Bank
+            'ubi',          // Union Bank of India
+            'standardchartered', // Standard Chartered Bank
+            'cbin',         // Central Bank of India
+            'iob',          // Indian Overseas Bank
+            'sib',          // South Indian Bank
+            'tjsb',         // TJSB (Co-operative Bank)
+            'kbl',          // Karnataka Bank
+            'dbs',          // DBS Bank India
+            'bandhan',      // Bandhan Bank
+            'nsdl',         // NSDL Payments Bank
+            'jio',          // Jio Payments Bank
+            'lvbank',       // Laxmi Vilas Bank
+            'punjabandsindh', // Punjab & Sind Bank
+            'idfcfirst',    // IDFC First Bank
+            'csb',          // Catholic Syrian Bank
+            'citi',         // Citibank India
+            'dlb',          // Dhanlaxmi Bank
+            'kvbank',       // Karur Vysya Bank
+            'jandkbank',    // Jammu and Kashmir Bank
+            'equitas',      // Equitas Small Finance Bank
+            'dcb',          // DCB Bank
+            'aubank'        // AU Small Finance Bank
+        ];
+        return validDomains.includes(domain) ? '' : 'Invalid UPI ID domain.';
+    };
+
+    const getCategoryIcon = (category) => ({
+        'cash': 'assets/icons/cash.svg',
+        'rent': 'assets/icons/rent.svg',
+        'salary': 'assets/icons/salary.svg',
+        'gift': 'assets/icons/gift.svg',
+        'investment': 'assets/icons/investment.svg',
+        'other': 'assets/icons/other.svg',
+        'food': 'assets/icons/food.svg',
+        'shopping': 'assets/icons/shopping-bag.svg',
+        'entertainment': 'assets/icons/entertainment.svg',
+        'travel': 'assets/icons/travel.svg',
+        'others': 'assets/icons/others.svg',
+    })[category] || '';
 
     // Function to redirect to the subscription page
     function redirectToSubscription() {
@@ -64,35 +155,208 @@ document.addEventListener('DOMContentLoaded', () => {
         manualConfirmationPopup.style.display = 'none';
     }
 
+    const filterTransactions = (transactions, filters) => {
+        let filteredTransactions = [...transactions];
 
-    // --- Payment Callback and Manual Confirmation Handling ---
-    const urlParams = new URLSearchParams(window.location.search);
-    const paymentStatus = urlParams.get('paymentStatus'); // Use 'paymentStatus' from our callback URL
-    const returnedTransactionId = urlParams.get('transactionId');
+        if (filters.type) {
+            filteredTransactions = filteredTransactions.filter(t => t.type === filters.type);
+        }
 
-    if (paymentStatus === 'success' && returnedTransactionId) {
-        // Payment successful via callback
-        localStorage.setItem('earnapp_subscription', 'paid');
-        isUserSubscribed = true; // Update in-memory status
-        localStorage.removeItem('pending_subscription_payment'); // Clear pending status
-        alert('Subscription payment confirmed!');
-        // Clear the URL parameters to prevent re-triggering on refresh
-        const newUrl = window.location.pathname + window.location.hash;
-        window.history.replaceState({}, document.title, newUrl);
-        // No need to restrict access, proceed to load content
-    } else if (localStorage.getItem('pending_subscription_payment')) {
-         // If there's a pending payment but no success callback, show manual confirmation
-         // This handles cases where the user doesn't return via the callback URL immediately
-         const pendingPayment = JSON.parse(localStorage.getItem('pending_subscription_payment'));
-         // You might want to add a timestamp check here to avoid showing for very old pending payments
-         showManualConfirmationPopup();
-    }
+        if (filters.category) {
+            filteredTransactions = filteredTransactions.filter(t => t.category === filters.category);
+        }
 
+        if (filters.startDate && filters.endDate) {
+            filteredTransactions = filteredTransactions.filter(t => t.date >= filters.startDate && t.date <= filters.endDate);
+        } else if (filters.startDate) {
+            filteredTransactions = filteredTransactions.filter(t => t.date >= filters.startDate);
+        } else if (filters.endDate) {
+            filteredTransactions = filteredTransactions.filter(t => t.date <= filters.endDate);
+        }
+
+        if (filters.search) {
+            filteredTransactions = filteredTransactions.filter(t => t.description && t.description.toLowerCase().includes(filters.search));
+        }
+
+        return filteredTransactions;
+    };
+
+    const loadTransactions = () => {
+        console.log("loadTransactions called");
+        const storedTransactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
+        allTransactions = storedTransactions.filter(t => t.status !== 'pending');
+        console.log("Transactions loaded (excluding pending):", allTransactions);
+        const filters = {
+            type: filterType.value,
+            category: categoryFilter.value,
+            startDate: startDateInput.value,
+            endDate: endDateInput.value,
+            search: searchBox.value ? searchBox.value.toLowerCase() : ''
+        };
+        const displayedTransactions = filterTransactions(allTransactions, filters).slice(0, 50);
+        transactionsTableBody.innerHTML = '';
+        displayedTransactions.forEach(transaction => {
+            const row = transactionsTableBody.insertRow();
+            const typeCell = row.insertCell();
+            const categoryCell = row.insertCell();
+            const descriptionCell = row.insertCell();
+            const amountCell = row.insertCell();
+            const dateCell = row.insertCell();
+            const timeCell = row.insertCell();
+            const statusCell = row.insertCell();
+
+            if (transaction.type === 'expense') {
+                typeCell.innerHTML = '<img src="assets/icons/arrow-up-expense.svg" alt="Expense" class="transaction-icon">';
+            } else if (transaction.type === 'income') {
+                typeCell.innerHTML = '<img src="assets/icons/arrow-down-income.svg" alt="Income" class="transaction-icon">';
+            } else {
+                typeCell.textContent = transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1); // Fallback
+            }
+
+            const icon = getCategoryIcon(transaction.category) || 'assets/icons/default.svg';
+            categoryCell.innerHTML = `<img src="${icon}" alt="${transaction.category}">`;
+            descriptionCell.textContent = transaction.description || '-';
+            const formattedAmount = `₹${parseFloat(transaction.amount).toFixed(2)}`;
+            amountCell.textContent = transaction.type === 'expense' ? `- ${formattedAmount}` : `+ ${formattedAmount}`;
+            amountCell.classList.add(transaction.type === 'expense' ? 'expense' : 'income');
+            dateCell.textContent = transaction.date;
+            timeCell.textContent = transaction.time;
+            statusCell.textContent = transaction.status || '';
+        });
+        updateFilteredSummary(displayedTransactions, filters);
+        updateCategoryFilterByType(filterType.value);
+    };
+
+    const updateFilteredSummary = (transactions, filters) => {
+        let totalIncome = 0;
+        let totalExpenses = 0;
+        let isFilterActive = Object.values(filters).some(value => value && value !== '');
+
+        if (isFilterActive && filteredSummaryContainer) {
+            transactions.forEach(t => {
+                if (t.type === 'income') {
+                    totalIncome += parseFloat(t.amount);
+                } else if (t.type === 'expense') {
+                    totalExpenses += parseFloat(t.amount);
+                }
+            });
+            filteredSummaryContainer.innerHTML = `
+                <p><b><b>Filtered Income:</b></b> ₹${totalIncome.toFixed(2)}</p>
+                <p><b><b>Filtered Expenses:</b></b> ₹${totalExpenses.toFixed(2)}</p>
+            `;
+            filteredSummaryContainer.style.display = 'block';
+        } else if (filteredSummaryContainer) {
+            filteredSummaryContainer.style.display = 'none';
+            filteredSummaryContainer.innerHTML = '';
+        }
+    };
+
+    const updateOverallSummary = () => {
+        const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
+        let totalIncome = 0;
+        let totalExpenses = 0;
+
+        transactions.forEach(t => {
+            if (t.type === 'income') {
+                totalIncome += parseFloat(t.amount);
+            } else if (t.type === 'expense') {
+                totalExpenses += parseFloat(t.amount);
+            }
+        });
+
+        totalIncomeDisplay.textContent = `₹${totalIncome.toFixed(2)}`;
+        totalExpensesDisplay.textContent = `₹${totalExpenses.toFixed(2)}`;
+    };
+
+    const handleUPISetupSubmit = (event) => {
+        event.preventDefault();
+        const upiId = upiIdInput.value.trim();
+        const username = usernameInput.value.trim();
+
+        const upiIdErrorMessage = validateUPIId(upiId);
+        upiIdError.textContent = upiIdErrorMessage;
+        usernameError.textContent = username ? '' : 'Please enter your name.';
+
+        if (!upiIdErrorMessage && username) {
+            setLocalStorageItem('earn_upiId', upiId);
+            setLocalStorageItem('earn_username', username);
+            hideUPISetupPopup();
+            loadTransactions();
+            updateOverallSummary();
+        }
+    };
+
+    const updateCategoryFilterByType = (selectedType) => {
+        const categoryOptions = categoryFilter.options;
+        for (let i = 1; i < categoryOptions.length; i++) {
+            const option = categoryOptions[i];
+            const expenseCategories = ['food', 'shopping', 'entertainment', 'travel', 'others'];
+            const incomeCategories = ['salary', 'gift', 'investment', 'cash', 'other'];
+
+            if (selectedType === 'income') {
+                option.style.display = incomeCategories.includes(option.value) ? 'block' : 'none';
+            } else if (selectedType === 'expense') {
+                option.style.display = expenseCategories.includes(option.value) ? 'block' : 'none';
+            } else {
+                option.style.display = 'block';
+            }
+        }
+        categoryFilter.value = '';
+    };
+
+    const populateCategoryFilter = () => {
+        const categories = ['food', 'shopping', 'entertainment', 'travel', 'others', 'salary', 'gift', 'investment', 'cash', 'other'];
+        const categorySelect = document.getElementById('categoryFilter');
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+            categorySelect.appendChild(option);
+        });
+    };
+
+    const triggerConfirmationPopup = () => {
+        const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
+        if (transactions.length > 0 && transactions[0].status === 'pending') {
+            const latestPendingTransaction = transactions[0];
+            upiConfirmationTitle.textContent = 'Confirm Pending Payment';
+            upiConfirmationAmount.textContent = `Amount: ₹${parseFloat(latestPendingTransaction.amount).toFixed(2)}`;
+            upiConfirmationDescription.textContent = latestPendingTransaction.description || 'No description provided.';
+            upiConfirmationNotification.classList.add('show');
+
+            upiConfirmButton.onclick = () => {
+                console.log("Confirm button clicked for transaction ID:", latestPendingTransaction.id);
+                updateTransactionStatus(latestPendingTransaction.id, 'success');
+                upiConfirmationNotification.classList.remove('show');
+            };
+
+            upiConfirmCancelButton.onclick = () => {
+                upiConfirmationNotification.classList.remove('show');
+                alert('Payment confirmation cancelled.');
+                // DO NOT call updateTransactionStatus here
+            };
+        } else {
+            upiConfirmationNotification.classList.remove('show'); // Ensure it's hidden if no pending transaction
+        }
+    };
+
+    const updateTransactionStatus = (transactionId, newStatus) => {
+        console.log("updateTransactionStatus called with ID:", transactionId, "and status:", newStatus);
+        const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
+        const updatedTransactions = transactions.map(t =>
+            t.id === transactionId ? { ...t, status: newStatus } : t
+        );
+        setLocalStorageItem('earn_transactions', JSON.stringify(updatedTransactions));
+        loadTransactions(); // Reload to show updated status
+        updateOverallSummary();
+    };
 
     // --- Initialization and Billing Cycle Logic ---
+    // Check for UPI setup first
     if (isFirstTimeUser()) {
         displayUPISetupPopup();
     } else if (!isUserSubscribed) {
+        // User is not subscribed
         if (currentDay < subscriptionDay) {
             // User is in the trial period before the subscription day
             loadTransactions();
@@ -112,15 +376,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } else if (currentDay > subscriptionDay) {
             // It's after the subscription day
-            if (notificationDisplayCount >= notificationMaxDisplay) {
-                 // Notification limit reached, restrict access
-                 restrictAccess();
-            } else {
+            if (notificationDisplayCount < notificationMaxDisplay) {
                  // Still within the notification period (less than 5 times shown)
                  showNotification();
                  loadTransactions(); // Allow access with notification
                  updateOverallSummary();
                  setTimeout(triggerConfirmationPopup, 500);
+            } else {
+                 // Notification limit reached, restrict access
+                 restrictAccess();
             }
         }
     } else {
@@ -151,12 +415,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // --- Existing Event Listeners and Functions ---
-    // (Keep your existing event listeners and helper functions here)
-
-    populateCategoryFilter();
-
     // --- Event Listeners ---
+    skipNotificationButton.addEventListener('click', () => {
+        hideNotification();
+        // The count and last day are updated in showNotification, but ensure it's done if skipped before the timeout
+         if (lastNotificationDay !== currentDay) {
+            localStorage.setItem('notificationCount', notificationDisplayCount + 1);
+            localStorage.setItem('lastNotificationDay', currentDay);
+        }
+    });
+
     upiSetupForm.addEventListener('submit', handleUPISetupSubmit);
     receiveMoneyBtn.addEventListener('click', () => window.location.href = 'receive.html');
     sendMoneyBtn.addEventListener('click', () => window.location.href = 'send.html');
@@ -174,839 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadTransactions();
     });
 
-    // Existing UPI confirmation popup logic (keep as is)
-    const upiSetupPopup = document.getElementById('upiSetupPopup');
-    const upiSetupForm = document.getElementById('upiSetupForm');
-    const upiIdInput = document.getElementById('upiId');
-    const usernameInput = document.getElementById('username');
-    const upiIdError = document.getElementById('upiIdError');
-    const usernameError = document.getElementById('usernameError');
-    const upiConfirmationNotification = document.getElementById('upiConfirmationNotification');
-    const upiConfirmationTitle = document.getElementById('upiConfirmationTitle');
-    const upiConfirmationAmount = document.getElementById('upiConfirmationAmount');
-    const upiConfirmationDescription = document.getElementById('upiConfirmationDescription');
-    const upiConfirmCancelButton = document.getElementById('upiConfirmCancelButton');
-    const upiConfirmButton = document.getElementById('upiConfirmButton');
-
-     // --- Helper Functions (Keep your existing ones) ---
-    const validateUPIId = (upiId) => {
-        if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,}@[a-zA-Z]{2,}$/.test(upiId)) return 'Invalid UPI ID format.';
-        const domain = upiId.split('@')[1];
-        const validDomains = [
-            'ybl',          // Paytm
-            'upi',          // General UPI
-            'okhdfcbank',   // HDFC Bank
-            'hdfcbank',     // HDFC Bank New
-            'icici',        // ICICI Bank (direct)
-            'axisbank',     // Axis Bank
-            'oksbi',        // SBI
-            'paytm',        // Paytm
-            'fbl',          // Federal Bank
-            'okicici',      // ICICI Bank (via Google Pay)
-            'kotak',        // Kotak Mahindra Bank
-            'yesbank',      // YES Bank
-            'idbi',         // IDBI Bank
-            'canarabank',   // Canara Bank
-            'pnb',          // Punjab National Bank
-            'airtel',       // Airtel Payments Bank
-            'barodapay',    // Bank of Baroda
-            'hsbc',         // HSBC Bank
-            'rbl',          // RBL Bank
-            'indus',        // IndusInd Bank
-            'ubi',          // Union Bank of India
-            'standardchartered', // Standard Chartered Bank
-            'cbin',         // Central Bank of India
-            'iob',          // Indian Overseas Bank
-            'sib',          // South Indian Bank
-            'tjsb',         // TJSB (Co-operative Bank)
-            'kbl',          // Karnataka Bank
-            'dbs',          // DBS Bank India
-            'bandhan',      // Bandhan Bank
-            'nsdl',         // NSDL Payments Bank
-            'jio',          // Jio Payments Bank
-            'lvbank',       // Laxmi Vilas Bank
-            'punjabandsindh', // Punjab & Sind Bank
-            'idfcfirst',    // IDFC First Bank
-            'csb',          // Catholic Syrian Bank
-            'citi',         // Citibank India
-            'dlb',          // Dhanlaxmi Bank
-            'kvbank',       // Karur Vysya Bank
-            'jandkbank',    // Jammu and Kashmir Bank
-            'equitas',      // Equitas Small Finance Bank
-            'dcb',          // DCB Bank
-            'aubank'        // AU Small Finance Bank
-        ];
-        return validDomains.includes(domain) ? '' : 'Invalid UPI ID domain.';
-    };
-
-    const getCategoryIcon = (category) => ({
-        'cash': 'assets/icons/cash.svg',
-        'rent': 'assets/icons/rent.svg',
-        'salary': 'assets/icons/salary.svg',
-        'gift': 'assets/icons/gift.svg',
-        'investment': 'assets/icons/investment.svg',
-        'other': 'assets/icons/other.svg',
-        'food': 'assets/icons/food.svg',
-        'shopping': 'assets/icons/shopping-bag.svg',
-        'entertainment': 'assets/icons/entertainment.svg',
-        'travel': 'assets/icons/travel.svg',
-        'others': 'assets/icons/others.svg',
-    })[category] || '';
-
-
-    const filterTransactions = (transactions, filters) => {
-        let filteredTransactions = [...transactions];
-
-        if (filters.type) {
-            filteredTransactions = filteredTransactions.filter(t => t.type === filters.type);
-        }
-
-        if (filters.category) {
-            filteredTransactions = filteredTransactions.filter(t => t.category === filters.category);
-        }
-
-        if (filters.startDate && filters.endDate) {
-            filteredTransactions = filteredTransactions.filter(t => t.date >= filters.startDate && t.date <= filters.endDate);
-        } else if (filters.startDate) {
-            filteredTransactions = filteredTransactions.filter(t => t.date >= filters.startDate);
-        } else if (filters.endDate) {
-            filteredTransactions = filteredTransactions.filter(t => t.date <= filters.endDate);
-        }
-
-        if (filters.search) {
-            filteredTransactions = filteredTransactions.filter(t => t.description && t.description.toLowerCase().includes(filters.search));
-        }
-
-        return filteredTransactions;
-    };
-
-    const loadTransactions = () => {
-        console.log("loadTransactions called");
-        const storedTransactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-        allTransactions = storedTransactions.filter(t => t.status !== 'pending');
-        console.log("Transactions loaded (excluding pending):", allTransactions);
-        const filters = {
-            type: filterType.value,
-            category: categoryFilter.value,
-            startDate: startDateInput.value,
-            endDate: endDateInput.value,
-            search: searchBox.value ? searchBox.value.toLowerCase() : ''
-        };
-        const displayedTransactions = filterTransactions(allTransactions, filters).slice(0, 50);
-        transactionsTableBody.innerHTML = '';
-        displayedTransactions.forEach(transaction => {
-            const row = transactionsTableBody.insertRow();
-            const typeCell = row.insertCell();
-            const categoryCell = row.insertCell();
-            const descriptionCell = row.insertCell();
-            const amountCell = row.insertCell();
-            const dateCell = row.insertCell();
-            const timeCell = row.insertCell();
-            const statusCell = row.insertCell();
-
-            if (transaction.type === 'expense') {
-                typeCell.innerHTML = '<img src="assets/icons/arrow-up-expense.svg" alt="Expense" class="transaction-icon">';
-            } else if (transaction.type === 'income') {
-                typeCell.innerHTML = '<img src="assets/icons/arrow-down-income.svg" alt="Income" class="transaction-icon">';
-            } else {
-                typeCell.textContent = transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1); // Fallback
-            }
-
-            const icon = getCategoryIcon(transaction.category) || 'assets/icons/default.svg';
-            categoryCell.innerHTML = `<img src="${icon}" alt="${transaction.category}">`;
-            descriptionCell.textContent = transaction.description || '-';
-            const formattedAmount = `₹${parseFloat(transaction.amount).toFixed(2)}`;
-            amountCell.textContent = transaction.type === 'expense' ? `- ${formattedAmount}` : `+ ${formattedAmount}`;
-            amountCell.classList.add(transaction.type === 'expense' ? 'expense' : 'income');
-            dateCell.textContent = transaction.date;
-            timeCell.textContent = transaction.time;
-            statusCell.textContent = transaction.status || '';
-        });
-        updateFilteredSummary(displayedTransactions, filters);
-        updateCategoryFilterByType(filterType.value);
-    };
-
-    const updateFilteredSummary = (transactions, filters) => {
-        let totalIncome = 0;
-        let totalExpenses = 0;
-        let isFilterActive = Object.values(filters).some(value => value && value !== '');
-
-        if (isFilterActive && filteredSummaryContainer) {
-            transactions.forEach(t => {
-                if (t.type === 'income') {
-                    totalIncome += parseFloat(t.amount);
-                } else if (t.type === 'expense') {
-                    totalExpenses += parseFloat(t.amount);
-                }
-            });
-            filteredSummaryContainer.innerHTML = `
-                <p><b><b>Filtered Income:</b></b> ₹${totalIncome.toFixed(2)}</p>
-                <p><b><b>Filtered Expenses:</b></b> ₹${totalExpenses.toFixed(2)}</p>
-            `;
-            filteredSummaryContainer.style.display = 'block';
-        } else if (filteredSummaryContainer) {
-            filteredSummaryContainer.style.display = 'none';
-            filteredSummaryContainer.innerHTML = '';
-        }
-    };
-
-    const updateOverallSummary = () => {
-        const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-        let totalIncome = 0;
-        let totalExpenses = 0;
-
-        transactions.forEach(t => {
-            if (t.type === 'income') {
-                totalIncome += parseFloat(t.amount);
-            } else if (t.type === 'expense') {
-                totalExpenses += parseFloat(t.amount);
-            }
-        });
-
-        totalIncomeDisplay.textContent = `₹${totalIncome.toFixed(2)}`;
-        totalExpensesDisplay.textContent = `₹${totalExpenses.toFixed(2)}`;
-    };
-
-    const handleUPISetupSubmit = (event) => {
-        event.preventDefault();
-        const upiId = upiIdInput.value.trim();
-        const username = usernameInput.value.trim();
-
-        const upiIdErrorMessage = validateUPIId(upiId);
-        upiIdError.textContent = upiIdErrorMessage;
-        usernameError.textContent = username ? '' : 'Please enter your name.';
-
-        if (!upiIdErrorMessage && username) {
-            setLocalStorageItem('earn_upiId', upiId);
-            setLocalStorageItem('earn_username', username);
-            hideUPISetupPopup();
-            loadTransactions();
-            updateOverallSummary();
-        }
-    };
-
-    const updateCategoryFilterByType = (selectedType) => {
-        const categoryOptions = categoryFilter.options;
-        for (let i = 1; i < categoryOptions.length; i++) {
-            const option = categoryOptions[i];
-            const expenseCategories = ['food', 'shopping', 'entertainment', 'travel', 'others'];
-            const incomeCategories = ['salary', 'gift', 'investment', 'cash', 'other'];
-
-            if (selectedType === 'income') {
-                option.style.display = incomeCategories.includes(option.value) ? 'block' : 'none';
-            } else if (selectedType === 'expense') {
-                option.style.display = expenseCategories.includes(option.value) ? 'block' : 'none';
-            } else {
-                option.style.display = 'block';
-            }
-        }
-        categoryFilter.value = '';
-    };
-
-    const populateCategoryFilter = () => {
-        const categories = ['food', 'shopping', 'entertainment', 'travel', 'others', 'salary', 'gift', 'investment', 'cash', 'other'];
-        const categorySelect = document.getElementById('categoryFilter');
-        categories.forEach(category => {
-            const option = document.createElement('option');
-            option.value = category;
-            option.textContent = category.charAt(0).toUpperCase() + category.slice(1);
-            categorySelect.appendChild(option);
-        });
-    };
-
-    const triggerConfirmationPopup = () => {
-        const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-        if (transactions.length > 0 && transactions[0].status === 'pending') {
-            const latestPendingTransaction = transactions[0];
-            upiConfirmationTitle.textContent = 'Confirm Pending Payment';
-            upiConfirmationAmount.textContent = `Amount: ₹${parseFloat(latestPendingTransaction.amount).toFixed(2)}`;
-            upiConfirmationDescription.textContent = latestPendingTransaction.description || 'No description provided.';
-            upiConfirmationNotification.classList.add('show');
-
-            upiConfirmButton.onclick = () => {
-                console.log("Confirm button clicked for transaction ID:", latestPendingTransaction.id);
-                updateTransactionStatus(latestPendingTransaction.id, 'success');
-                upiConfirmationNotification.classList.remove('show');
-            };
-
-            upiConfirmCancelButton.onclick = () => {
-                upiConfirmationNotification.classList.remove('show');
-                alert('Payment confirmation cancelled.');
-                // DO NOT call updateTransactionStatus here
-            };
-        } else {
-            upiConfirmationNotification.classList.remove('show'); // Ensure it's hidden if no pending transaction
-        }
-    };
-
-    const updateTransactionStatus = (transactionId, newStatus) => {
-        console.log("updateTransactionStatus called with ID:", transactionId, "and status:", newStatus);
-        const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-        const updatedTransactions = transactions.map(t =>
-            t.id === transactionId ? { ...t, status: newStatus } : t
-        );
-        setLocalStorageItem('earn_transactions', JSON.stringify(updatedTransactions));
-        loadTransactions(); // Reload to show updated status
-        updateOverallSummary();
-    };
-
-
-    // --- Existing UPI confirmation popup logic (keep as is) ---
-    const upiSetupPopup = document.getElementById('upiSetupPopup');
-    const upiSetupForm = document.getElementById('upiSetupForm');
-    const upiIdInput = document.getElementById('upiId');
-    const usernameInput = document.getElementById('username');
-    const upiIdError = document.getElementById('upiIdError');
-    const usernameError = document.getElementById('usernameError');
-    const upiConfirmationNotification = document.getElementById('upiConfirmationNotification');
-    const upiConfirmationTitle = document.getElementById('upiConfirmationTitle');
-    const upiConfirmationAmount = document.getElementById('upiConfirmationAmount');
-    const upiConfirmationDescription = document.getElementById('upiConfirmationDescription');
-    const upiConfirmCancelButton = document.getElementById('upiConfirmCancelButton');
-    const upiConfirmButton = document.getElementById('upiConfirmButton');
-
-     // --- Helper Functions (Keep your existing ones) ---
-    const validateUPIId = (upiId) => {
-        if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,}@[a-zA-Z]{2,}$/.test(upiId)) return 'Invalid UPI ID format.';
-        const domain = upiId.split('@')[1];
-        const validDomains = [
-            'ybl',          // Paytm
-            'upi',          // General UPI
-            'okhdfcbank',   // HDFC Bank
-            'hdfcbank',     // HDFC Bank New
-            'icici',        // ICICI Bank (direct)
-            'axisbank',     // Axis Bank
-            'oksbi',        // SBI
-            'paytm',        // Paytm
-            'fbl',          // Federal Bank
-            'okicici',      // ICICI Bank (via Google Pay)
-            'kotak',        // Kotak Mahindra Bank
-            'yesbank',      // YES Bank
-            'idbi',         // IDBI Bank
-            'canarabank',   // Canara Bank
-            'pnb',          // Punjab National Bank
-            'airtel',       // Airtel Payments Bank
-            'barodapay',    // Bank of Baroda
-            'hsbc',         // HSBC Bank
-            'rbl',          // RBL Bank
-            'indus',        // IndusInd Bank
-            'ubi',          // Union Bank of India
-            'standardchartered', // Standard Chartered Bank
-            'cbin',         // Central Bank of India
-            'iob',          // Indian Overseas Bank
-            'sib',          // South Indian Bank
-            'tjsb',         // TJSB (Co-operative Bank)
-            'kbl',          // Karnataka Bank
-            'dbs',          // DBS Bank India
-            'bandhan',      // Bandhan Bank
-            'nsdl',         // NSDL Payments Bank
-            'jio',          // Jio Payments Bank
-            'lvbank',       // Laxmi Vilas Bank
-            'punjabandsindh', // Punjab & Sind Bank
-            'idfcfirst',    // IDFC First Bank
-            'csb',          // Catholic Syrian Bank
-            'citi',         // Citibank India
-            'dlb',          // Dhanlaxmi Bank
-            'kvbank',       // Karur Vysya Bank
-            'jandkbank',    // Jammu and Kashmir Bank
-            'equitas',      // Equitas Small Finance Bank
-            'dcb',          // DCB Bank
-            'aubank'        // AU Small Finance Bank
-        ];
-        return validDomains.includes(domain) ? '' : 'Invalid UPI ID domain.';
-    };
-
-    const getCategoryIcon = (category) => ({
-        'cash': 'assets/icons/cash.svg',
-        'rent': 'assets/icons/rent.svg',
-        'salary': 'assets/icons/salary.svg',
-        'gift': 'assets/icons/gift.svg',
-        'investment': 'assets/icons/investment.svg',
-        'other': 'assets/icons/other.svg',
-        'food': 'assets/icons/food.svg',
-        'shopping': 'assets/icons/shopping-bag.svg',
-        'entertainment': 'assets/icons/entertainment.svg',
-        'travel': 'assets/icons/travel.svg',
-        'others': 'assets/icons/others.svg',
-    })[category] || '';
-
-
-    const filterTransactions = (transactions, filters) => {
-        let filteredTransactions = [...transactions];
-
-        if (filters.type) {
-            filteredTransactions = filteredTransactions.filter(t => t.type === filters.type);
-        }
-
-        if (filters.category) {
-            filteredTransactions = filteredTransactions.filter(t => t.category === filters.category);
-        }
-
-        if (filters.startDate && filters.endDate) {
-            filteredTransactions = filteredTransactions.filter(t => t.date >= filters.startDate && t.date <= filters.endDate);
-        } else if (filters.startDate) {
-            filteredTransactions = filteredTransactions.filter(t => t.date >= filters.startDate);
-        } else if (filters.endDate) {
-            filteredTransactions = filteredTransactions.filter(t => t.date <= filters.endDate);
-        }
-
-        if (filters.search) {
-            filteredTransactions = filteredTransactions.filter(t => t.description && t.description.toLowerCase().includes(filters.search));
-        }
-
-        return filteredTransactions;
-    };
-
-    const loadTransactions = () => {
-        console.log("loadTransactions called");
-        const storedTransactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-        allTransactions = storedTransactions.filter(t => t.status !== 'pending');
-        console.log("Transactions loaded (excluding pending):", allTransactions);
-        const filters = {
-            type: filterType.value,
-            category: categoryFilter.value,
-            startDate: startDateInput.value,
-            endDate: endDateInput.value,
-            search: searchBox.value ? searchBox.value.toLowerCase() : ''
-        };
-        const displayedTransactions = filterTransactions(allTransactions, filters).slice(0, 50);
-        transactionsTableBody.innerHTML = '';
-        displayedTransactions.forEach(transaction => {
-            const row = transactionsTableBody.insertRow();
-            const typeCell = row.insertCell();
-            const categoryCell = row.insertCell();
-            const descriptionCell = row.insertCell();
-            const amountCell = row.insertCell();
-            const dateCell = row.insertCell();
-            const timeCell = row.insertCell();
-            const statusCell = row.insertCell();
-
-            if (transaction.type === 'expense') {
-                typeCell.innerHTML = '<img src="assets/icons/arrow-up-expense.svg" alt="Expense" class="transaction-icon">';
-            } else if (transaction.type === 'income') {
-                typeCell.innerHTML = '<img src="assets/icons/arrow-down-income.svg" alt="Income" class="transaction-icon">';
-            } else {
-                typeCell.textContent = transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1); // Fallback
-            }
-
-            const icon = getCategoryIcon(transaction.category) || 'assets/icons/default.svg';
-            categoryCell.innerHTML = `<img src="${icon}" alt="${transaction.category}">`;
-            descriptionCell.textContent = transaction.description || '-';
-            const formattedAmount = `₹${parseFloat(transaction.amount).toFixed(2)}`;
-            amountCell.textContent = transaction.type === 'expense' ? `- ${formattedAmount}` : `+ ${formattedAmount}`;
-            amountCell.classList.add(transaction.type === 'expense' ? 'expense' : 'income');
-            dateCell.textContent = transaction.date;
-            timeCell.textContent = transaction.time;
-            statusCell.textContent = transaction.status || '';
-        });
-        updateFilteredSummary(displayedTransactions, filters);
-        updateCategoryFilterByType(filterType.value);
-    };
-
-    const updateFilteredSummary = (transactions, filters) => {
-        let totalIncome = 0;
-        let totalExpenses = 0;
-        let isFilterActive = Object.values(filters).some(value => value && value !== '');
-
-        if (isFilterActive && filteredSummaryContainer) {
-            transactions.forEach(t => {
-                if (t.type === 'income') {
-                    totalIncome += parseFloat(t.amount);
-                } else if (t.type === 'expense') {
-                    totalExpenses += parseFloat(t.amount);
-                }
-            });
-            filteredSummaryContainer.innerHTML = `
-                <p><b><b>Filtered Income:</b></b> ₹${totalIncome.toFixed(2)}</p>
-                <p><b><b>Filtered Expenses:</b></b> ₹${totalExpenses.toFixed(2)}</p>
-            `;
-            filteredSummaryContainer.style.display = 'block';
-        } else if (filteredSummaryContainer) {
-            filteredSummaryContainer.style.display = 'none';
-            filteredSummaryContainer.innerHTML = '';
-        }
-    };
-
-    const updateOverallSummary = () => {
-        const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-        let totalIncome = 0;
-        let totalExpenses = 0;
-
-        transactions.forEach(t => {
-            if (t.type === 'income') {
-                totalIncome += parseFloat(t.amount);
-            } else if (t.type === 'expense') {
-                totalExpenses += parseFloat(t.amount);
-            }
-        });
-
-        totalIncomeDisplay.textContent = `₹${totalIncome.toFixed(2)}`;
-        totalExpensesDisplay.textContent = `₹${totalExpenses.toFixed(2)}`;
-    };
-
-    const handleUPISetupSubmit = (event) => {
-        event.preventDefault();
-        const upiId = upiIdInput.value.trim();
-        const username = usernameInput.value.trim();
-
-        const upiIdErrorMessage = validateUPIId(upiId);
-        upiIdError.textContent = upiIdErrorMessage;
-        usernameError.textContent = username ? '' : 'Please enter your name.';
-
-        if (!upiIdErrorMessage && username) {
-            setLocalStorageItem('earn_upiId', upiId);
-            setLocalStorageItem('earn_username', username);
-            hideUPISetupPopup();
-            loadTransactions();
-            updateOverallSummary();
-        }
-    };
-
-    const updateCategoryFilterByType = (selectedType) => {
-        const categoryOptions = categoryFilter.options;
-        for (let i = 1; i < categoryOptions.length; i++) {
-            const option = categoryOptions[i];
-            const expenseCategories = ['food', 'shopping', 'entertainment', 'travel', 'others'];
-            const incomeCategories = ['salary', 'gift', 'investment', 'cash', 'other'];
-
-            if (selectedType === 'income') {
-                option.style.display = incomeCategories.includes(option.value) ? 'block' : 'none';
-            } else if (selectedType === 'expense') {
-                option.style.display = expenseCategories.includes(option.value) ? 'block' : 'none';
-            } else {
-                option.style.display = 'block';
-            }
-        }
-        categoryFilter.value = '';
-    };
-
-    const populateCategoryFilter = () => {
-        const categories = ['food', 'shopping', 'entertainment', 'travel', 'others', 'salary', 'gift', 'investment', 'cash', 'other'];
-        const categorySelect = document.getElementById('categoryFilter');
-        categories.forEach(category => {
-            const option = document.createElement('option');
-            option.value = category;
-            option.textContent = category.charAt(0).toUpperCase() + category.slice(1);
-            categorySelect.appendChild(option);
-        });
-    };
-
-    const triggerConfirmationPopup = () => {
-        const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-        if (transactions.length > 0 && transactions[0].status === 'pending') {
-            const latestPendingTransaction = transactions[0];
-            upiConfirmationTitle.textContent = 'Confirm Pending Payment';
-            upiConfirmationAmount.textContent = `Amount: ₹${parseFloat(latestPendingTransaction.amount).toFixed(2)}`;
-            upiConfirmationDescription.textContent = latestPendingTransaction.description || 'No description provided.';
-            upiConfirmationNotification.classList.add('show');
-
-            upiConfirmButton.onclick = () => {
-                console.log("Confirm button clicked for transaction ID:", latestPendingTransaction.id);
-                updateTransactionStatus(latestPendingTransaction.id, 'success');
-                upiConfirmationNotification.classList.remove('show');
-            };
-
-            upiConfirmCancelButton.onclick = () => {
-                upiConfirmationNotification.classList.remove('show');
-                alert('Payment confirmation cancelled.');
-                // DO NOT call updateTransactionStatus here
-            };
-        } else {
-            upiConfirmationNotification.classList.remove('show'); // Ensure it's hidden if no pending transaction
-        }
-    };
-
-    const updateTransactionStatus = (transactionId, newStatus) => {
-        console.log("updateTransactionStatus called with ID:", transactionId, "and status:", newStatus);
-        const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-        const updatedTransactions = transactions.map(t =>
-            t.id === transactionId ? { ...t, status: newStatus } : t
-        );
-        setLocalStorageItem('earn_transactions', JSON.stringify(updatedTransactions));
-        loadTransactions(); // Reload to show updated status
-        updateOverallSummary();
-    };
-
-
-    // --- Existing UPI confirmation popup logic (keep as is) ---
-    const upiSetupPopup = document.getElementById('upiSetupPopup');
-    const upiSetupForm = document.getElementById('upiSetupForm');
-    const upiIdInput = document.getElementById('upiId');
-    const usernameInput = document.getElementById('username');
-    const upiIdError = document.getElementById('upiIdError');
-    const usernameError = document.getElementById('usernameError');
-    const upiConfirmationNotification = document.getElementById('upiConfirmationNotification');
-    const upiConfirmationTitle = document.getElementById('upiConfirmationTitle');
-    const upiConfirmationAmount = document.getElementById('upiConfirmationAmount');
-    const upiConfirmationDescription = document.getElementById('upiConfirmationDescription');
-    const upiConfirmCancelButton = document.getElementById('upiConfirmCancelButton');
-    const upiConfirmButton = document.getElementById('upiConfirmButton');
-
-     // --- Helper Functions (Keep your existing ones) ---
-    const validateUPIId = (upiId) => {
-        if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,}@[a-zA-Z]{2,}$/.test(upiId)) return 'Invalid UPI ID format.';
-        const domain = upiId.split('@')[1];
-        const validDomains = [
-            'ybl',          // Paytm
-            'upi',          // General UPI
-            'okhdfcbank',   // HDFC Bank
-            'hdfcbank',     // HDFC Bank New
-            'icici',        // ICICI Bank (direct)
-            'axisbank',     // Axis Bank
-            'oksbi',        // SBI
-            'paytm',        // Paytm
-            'fbl',          // Federal Bank
-            'okicici',      // ICICI Bank (via Google Pay)
-            'kotak',        // Kotak Mahindra Bank
-            'yesbank',      // YES Bank
-            'idbi',         // IDBI Bank
-            'canarabank',   // Canara Bank
-            'pnb',          // Punjab National Bank
-            'airtel',       // Airtel Payments Bank
-            'barodapay',    // Bank of Baroda
-            'hsbc',         // HSBC Bank
-            'rbl',          // RBL Bank
-            'indus',        // IndusInd Bank
-            'ubi',          // Union Bank of India
-            'standardchartered', // Standard Chartered Bank
-            'cbin',         // Central Bank of India
-            'iob',          // Indian Overseas Bank
-            'sib',          // South Indian Bank
-            'tjsb',         // TJSB (Co-operative Bank)
-            'kbl',          // Karnataka Bank
-            'dbs',          // DBS Bank India
-            'bandhan',      // Bandhan Bank
-            'nsdl',         // NSDL Payments Bank
-            'jio',          // Jio Payments Bank
-            'lvbank',       // Laxmi Vilas Bank
-            'punjabandsindh', // Punjab & Sind Bank
-            'idfcfirst',    // IDFC First Bank
-            'csb',          // Catholic Syrian Bank
-            'citi',         // Citibank India
-            'dlb',          // Dhanlaxmi Bank
-            'kvbank',       // Karur Vysya Bank
-            'jandkbank',    // Jammu and Kashmir Bank
-            'equitas',      // Equitas Small Finance Bank
-            'dcb',          // DCB Bank
-            'aubank'        // AU Small Finance Bank
-        ];
-        return validDomains.includes(domain) ? '' : 'Invalid UPI ID domain.';
-    };
-
-    const getCategoryIcon = (category) => ({
-        'cash': 'assets/icons/cash.svg',
-        'rent': 'assets/icons/rent.svg',
-        'salary': 'assets/icons/salary.svg',
-        'gift': 'assets/icons/gift.svg',
-        'investment': 'assets/icons/investment.svg',
-        'other': 'assets/icons/other.svg',
-        'food': 'assets/icons/food.svg',
-        'shopping': 'assets/icons/shopping-bag.svg',
-        'entertainment': 'assets/icons/entertainment.svg',
-        'travel': 'assets/icons/travel.svg',
-        'others': 'assets/icons/others.svg',
-    })[category] || '';
-
-
-    const filterTransactions = (transactions, filters) => {
-        let filteredTransactions = [...transactions];
-
-        if (filters.type) {
-            filteredTransactions = filteredTransactions.filter(t => t.type === filters.type);
-        }
-
-        if (filters.category) {
-            filteredTransactions = filteredTransactions.filter(t => t.category === filters.category);
-        }
-
-        if (filters.startDate && filters.endDate) {
-            filteredTransactions = filteredTransactions.filter(t => t.date >= filters.startDate && t.date <= filters.endDate);
-        } else if (filters.startDate) {
-            filteredTransactions = filteredTransactions.filter(t => t.date >= filters.startDate);
-        } else if (filters.endDate) {
-            filteredTransactions = filteredTransactions.filter(t => t.date <= filters.endDate);
-        }
-
-        if (filters.search) {
-            filteredTransactions = filteredTransactions.filter(t => t.description && t.description.toLowerCase().includes(filters.search));
-        }
-
-        return filteredTransactions;
-    };
-
-    const loadTransactions = () => {
-        console.log("loadTransactions called");
-        const storedTransactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-        allTransactions = storedTransactions.filter(t => t.status !== 'pending');
-        console.log("Transactions loaded (excluding pending):", allTransactions);
-        const filters = {
-            type: filterType.value,
-            category: categoryFilter.value,
-            startDate: startDateInput.value,
-            endDate: endDateInput.value,
-            search: searchBox.value ? searchBox.value.toLowerCase() : ''
-        };
-        const displayedTransactions = filterTransactions(allTransactions, filters).slice(0, 50);
-        transactionsTableBody.innerHTML = '';
-        displayedTransactions.forEach(transaction => {
-            const row = transactionsTableBody.insertRow();
-            const typeCell = row.insertCell();
-            const categoryCell = row.insertCell();
-            const descriptionCell = row.insertCell();
-            const amountCell = row.insertCell();
-            const dateCell = row.insertCell();
-            const timeCell = row.insertCell();
-            const statusCell = row.insertCell();
-
-            if (transaction.type === 'expense') {
-                typeCell.innerHTML = '<img src="assets/icons/arrow-up-expense.svg" alt="Expense" class="transaction-icon">';
-            } else if (transaction.type === 'income') {
-                typeCell.innerHTML = '<img src="assets/icons/arrow-down-income.svg" alt="Income" class="transaction-icon">';
-            } else {
-                typeCell.textContent = transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1); // Fallback
-            }
-
-            const icon = getCategoryIcon(transaction.category) || 'assets/icons/default.svg';
-            categoryCell.innerHTML = `<img src="${icon}" alt="${transaction.category}">`;
-            descriptionCell.textContent = transaction.description || '-';
-            const formattedAmount = `₹${parseFloat(transaction.amount).toFixed(2)}`;
-            amountCell.textContent = transaction.type === 'expense' ? `- ${formattedAmount}` : `+ ${formattedAmount}`;
-            amountCell.classList.add(transaction.type === 'expense' ? 'expense' : 'income');
-            dateCell.textContent = transaction.date;
-            timeCell.textContent = transaction.time;
-            statusCell.textContent = transaction.status || '';
-        });
-        updateFilteredSummary(displayedTransactions, filters);
-        updateCategoryFilterByType(filterType.value);
-    };
-
-    const updateFilteredSummary = (transactions, filters) => {
-        let totalIncome = 0;
-        let totalExpenses = 0;
-        let isFilterActive = Object.values(filters).some(value => value && value !== '');
-
-        if (isFilterActive && filteredSummaryContainer) {
-            transactions.forEach(t => {
-                if (t.type === 'income') {
-                    totalIncome += parseFloat(t.amount);
-                } else if (t.type === 'expense') {
-                    totalExpenses += parseFloat(t.amount);
-                }
-            });
-            filteredSummaryContainer.innerHTML = `
-                <p><b><b>Filtered Income:</b></b> ₹${totalIncome.toFixed(2)}</p>
-                <p><b><b>Filtered Expenses:</b></b> ₹${totalExpenses.toFixed(2)}</p>
-            `;
-            filteredSummaryContainer.style.display = 'block';
-        } else if (filteredSummaryContainer) {
-            filteredSummaryContainer.style.display = 'none';
-            filteredSummaryContainer.innerHTML = '';
-        }
-    };
-
-    const updateOverallSummary = () => {
-        const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-        let totalIncome = 0;
-        let totalExpenses = 0;
-
-        transactions.forEach(t => {
-            if (t.type === 'income') {
-                totalIncome += parseFloat(t.amount);
-            } else if (t.type === 'expense') {
-                totalExpenses += parseFloat(t.amount);
-            }
-        });
-
-        totalIncomeDisplay.textContent = `₹${totalIncome.toFixed(2)}`;
-        totalExpensesDisplay.textContent = `₹${totalExpenses.toFixed(2)}`;
-    };
-
-    const handleUPISetupSubmit = (event) => {
-        event.preventDefault();
-        const upiId = upiIdInput.value.trim();
-        const username = usernameInput.value.trim();
-
-        const upiIdErrorMessage = validateUPIId(upiId);
-        upiIdError.textContent = upiIdErrorMessage;
-        usernameError.textContent = username ? '' : 'Please enter your name.';
-
-        if (!upiIdErrorMessage && username) {
-            setLocalStorageItem('earn_upiId', upiId);
-            setLocalStorageItem('earn_username', username);
-            hideUPISetupPopup();
-            loadTransactions();
-            updateOverallSummary();
-        }
-    };
-
-    const updateCategoryFilterByType = (selectedType) => {
-        const categoryOptions = categoryFilter.options;
-        for (let i = 1; i < categoryOptions.length; i++) {
-            const option = categoryOptions[i];
-            const expenseCategories = ['food', 'shopping', 'entertainment', 'travel', 'others'];
-            const incomeCategories = ['salary', 'gift', 'investment', 'cash', 'other'];
-
-            if (selectedType === 'income') {
-                option.style.display = incomeCategories.includes(option.value) ? 'block' : 'none';
-            } else if (selectedType === 'expense') {
-                option.style.display = expenseCategories.includes(option.value) ? 'block' : 'none';
-            } else {
-                option.style.display = 'block';
-            }
-        }
-        categoryFilter.value = '';
-    };
-
-    const populateCategoryFilter = () => {
-        const categories = ['food', 'shopping', 'entertainment', 'travel', 'others', 'salary', 'gift', 'investment', 'cash', 'other'];
-        const categorySelect = document.getElementById('categoryFilter');
-        categories.forEach(category => {
-            const option = document.createElement('option');
-            option.value = category;
-            option.textContent = category.charAt(0).toUpperCase() + category.slice(1);
-            categorySelect.appendChild(option);
-        });
-    };
-
-    const triggerConfirmationPopup = () => {
-        const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-        if (transactions.length > 0 && transactions[0].status === 'pending') {
-            const latestPendingTransaction = transactions[0];
-            upiConfirmationTitle.textContent = 'Confirm Pending Payment';
-            upiConfirmationAmount.textContent = `Amount: ₹${parseFloat(latestPendingTransaction.amount).toFixed(2)}`;
-            upiConfirmationDescription.textContent = latestPendingTransaction.description || 'No description provided.';
-            upiConfirmationNotification.classList.add('show');
-
-            upiConfirmButton.onclick = () => {
-                console.log("Confirm button clicked for transaction ID:", latestPendingTransaction.id);
-                updateTransactionStatus(latestPendingTransaction.id, 'success');
-                upiConfirmationNotification.classList.remove('show');
-            };
-
-            upiConfirmCancelButton.onclick = () => {
-                upiConfirmationNotification.classList.remove('show');
-                alert('Payment confirmation cancelled.');
-                // DO NOT call updateTransactionStatus here
-            };
-        } else {
-            upiConfirmationNotification.classList.remove('show'); // Ensure it's hidden if no pending transaction
-        }
-    };
-
-    const updateTransactionStatus = (transactionId, newStatus) => {
-        console.log("updateTransactionStatus called with ID:", transactionId, "and status:", newStatus);
-        const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-        const updatedTransactions = transactions.map(t =>
-            t.id === transactionId ? { ...t, status: newStatus } : t
-        );
-        setLocalStorageItem('earn_transactions', JSON.stringify(updatedTransactions));
-        loadTransactions(); // Reload to show updated status
-        updateOverallSummary();
-    };
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-
+    // Logic for hiding transaction details using nth-child (from previous request)
     const showDetailsState = localStorage.getItem('showDetails');
     if (showDetailsState === 'false') {
         document.body.classList.add('hide-transaction-details');
@@ -1033,20 +469,19 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Error: #upiSetupPopup element not found in index.html.');
       }
     }
-  });
 
-  // You'll also likely need a way to close the popup on index.html
-  function closeUpiSetupPopup() {
-    const upiSetupPopup = document.getElementById('upiSetupPopup');
-    if (upiSetupPopup) {
-      upiSetupPopup.style.display = 'none';
+    // You'll also likely need a way to close the popup on index.html
+    function closeUpiSetupPopup() {
+        const upiSetupPopup = document.getElementById('upiSetupPopup');
+        if (upiSetupPopup) {
+            upiSetupPopup.style.display = 'none';
+        }
     }
-  }
 
-  // Attach the close function to a button within the popup (example):
-  document.addEventListener('DOMContentLoaded', () => {
+    // Attach the close function to a button within the popup (example):
     const closeUpiSetupButton = document.getElementById('closeUpiSetup');
     if (closeUpiSetupButton) {
       closeUpiSetupButton.addEventListener('click', closeUpiSetupPopup);
     }
+
 });
