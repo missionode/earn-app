@@ -198,3 +198,13 @@ h1 {
     padding: 20px 40px;
     border-radius: 14px;
 }
+
+/* css/send.css */
+.scanner-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+}
