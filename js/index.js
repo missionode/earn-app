@@ -48,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
   'paytm',        // Paytm
   'fbl',          // Federal Bank
   'okicici',      // ICICI Bank (via Google Pay)
-  // Newly added domains
   'kotak',        // Kotak Mahindra Bank
   'yesbank',      // YES Bank
   'idbi',         // IDBI Bank
@@ -75,7 +74,12 @@ document.addEventListener('DOMContentLoaded', () => {
   'idfcfirst',    // IDFC First Bank
   'csb',          // Catholic Syrian Bank
   'citi',         // Citibank India
-  'dlb'           // Dhanlaxmi Bank
+  'dlb',          // Dhanlaxmi Bank
+  'kvbank',       // Karur Vysya Bank
+  'jandkbank',    // Jammu and Kashmir Bank
+  'equitas',      // Equitas Small Finance Bank
+  'dcb',          // DCB Bank
+  'aubank'        // AU Small Finance Bank
 ];
         return validDomains.includes(domain) ? '' : 'Invalid UPI ID domain.';
     };
