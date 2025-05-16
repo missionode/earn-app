@@ -136,12 +136,17 @@
 }
 
 .adsSpace {
-    height: auto;
-    overflow: hidden;
-    border-radius: 5px;
+    background-repeat: no-repeat;
+    position: relative;
+    width: 85%;
+    max-height: 128px;
+    margin-left: auto;
+    margin-right: auto;
+    background-position: center center;
     background-size: cover;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    background-position: center;
+    border-radius: 5px;
+    overflow: hidden;
 }
 
 .wallet .filter {
