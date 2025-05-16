@@ -127,13 +127,12 @@
     background: #FAB972; */
 }
 .wallet {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    display: flex;
+    width: 100%;
     gap: 15px;
     text-align: center;
     margin-top: 10px;
-    width: 100%;
-    border: 1px solid var(--border-color-light);
+    justify-content: space-between;
 }
 
 .wallet .filter {

@@ -1,20 +1,20 @@
 :root {
     /* Color Palette */
 
---background-primary: #f4f7fb;    /* Soft, light blue-gray for a clean background */
---background-secondary: #ffffff;   /* Pure white for cards or secondary sections */
---background-light: #fafbff;      /* Ultra-light blue for subtle highlights */
---text-primary: #1a2634;          /* Soft dark navy for high readability */
---text-secondary: #64748b;        /* Muted slate for secondary text */
---text-on-accent: #ffffff;        /* White for text on accent backgrounds */
---text-link: #3b82f6;             /* Bright, futuristic blue for links */
---accent-color: #60a5fa;          /* Soft, vibrant blue for buttons and highlights */
---accent-hover-color: #3b82f6;    /* Slightly darker blue for hover states */
---border-color: #e2e8f0;          /* Light gray for subtle borders */
---border-color-light: #edf2f7;    /* Even lighter gray for minimal borders */
---income-color: #34d399;          /* Fresh mint green for income */
---expense-color: #f87171;         /* Soft coral red for expenses */
---error-color: #f87171;           /* Same as expense for consistency, softer than original */;
+    --background-primary: #f4f7fb;    /* Soft, light blue-gray for a clean background */
+    --background-secondary: #ffffff;   /* Pure white for cards or secondary sections */
+    --background-light: #fafbff;      /* Ultra-light blue for subtle highlights */
+    --text-primary: #1a2634;          /* Soft dark navy for high readability */
+    --text-secondary: #64748b;        /* Muted slate for secondary text */
+    --text-on-accent: #ffffff;        /* White for text on accent backgrounds */
+    --text-link: #3b82f6;             /* Bright, futuristic blue for links */
+    --accent-color: #60a5fa;          /* Soft, vibrant blue for buttons and highlights */
+    --accent-hover-color: #3b82f6;    /* Slightly darker blue for hover states */
+    --border-color: #e2e8f0;          /* Light gray for subtle borders */
+    --border-color-light: #edf2f7;    /* Even lighter gray for minimal borders */
+    --income-color: #34d399;          /* Fresh mint green for income */
+    --expense-color: #f87171;         /* Soft coral red for expenses */
+    --error-color: #f87171;           /* Same as expense for consistency, softer than original */;
 
     /* Typography */
     --font-family-base: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
