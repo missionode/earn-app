@@ -14,37 +14,47 @@
     <div class="container">
         <h1>Add Expense</h1>
         <form id="sendForm">
-            
-            <div class="form-group">
-                <label>Category:</label>
-                <div class="icon-grid">
-                    <input type="radio" id="categoryFood" name="category" value="food">
-                    <label for="categoryFood"><img src="assets/icons/food.svg" alt="Food"><span>Food</span></label>
-
-                    <input type="radio" id="categoryShopping" name="category" value="shopping">
-                    <label for="categoryShopping"><img src="assets/icons/shopping-bag.svg" alt="Shopping"><span>Shopping</span></label>
-
-                    <input type="radio" id="categoryEntertainment" name="category" value="entertainment">
-                    <label for="categoryEntertainment"><img src="assets/icons/entertainment.svg" alt="Entertainment"><span>Entertainment</span></label>
-
-                    <input type="radio" id="categoryTravel" name="category" value="travel">
-                    <label for="categoryTravel"><img src="assets/icons/travel.svg" alt="Travel"><span>Travel</span></label>
-
-                    <input type="radio" id="categoryOthers" name="category" value="others">
-                    <label for="categoryOthers"><img src="assets/icons/others.svg" alt="Others"><span>Others</span></label>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="description">Description (Optional):</label>
-                <textarea placeholder="Enter Description" id="description" name="description"></textarea>
-            </div>
 
             <div class="form-group">
                 <label for="amount">Amount:</label>
                 <input placeholder="Enter Amount" type="number" id="amount" name="amount" required>
             </div>
-            
+
+            <div class="form-group switch-container">
+                <label class="switch">
+                    <input type="checkbox" id="toggleDetails">
+                    <span class="slider round"></span>
+                </label>
+                <label for="toggleDetails" class="toggle-label">Show Category & Description</label>
+            </div>
+
+            <div id="detailsFields">
+                <div class="form-group">
+                    <label>Category:</label>
+                    <div class="icon-grid">
+                        <input type="radio" id="categoryFood" name="category" value="food">
+                        <label for="categoryFood"><img src="assets/icons/food.svg" alt="Food"><span>Food</span></label>
+
+                        <input type="radio" id="categoryShopping" name="category" value="shopping">
+                        <label for="categoryShopping"><img src="assets/icons/shopping-bag.svg" alt="Shopping"><span>Shopping</span></label>
+
+                        <input type="radio" id="categoryEntertainment" name="category" value="entertainment">
+                        <label for="categoryEntertainment"><img src="assets/icons/entertainment.svg" alt="Entertainment"><span>Entertainment</span></label>
+
+                        <input type="radio" id="categoryTravel" name="category" value="travel">
+                        <label for="categoryTravel"><img src="assets/icons/travel.svg" alt="Travel"><span>Travel</span></label>
+
+                        <input type="radio" id="categoryOthers" name="category" value="others">
+                        <label for="categoryOthers"><img src="assets/icons/others.svg" alt="Others"><span>Others</span></label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description (Optional):</label>
+                    <textarea placeholder="Enter Description" id="description" name="description"></textarea>
+                </div>
+            </div>
+
             <div class="intoaction-buttons">
                 <button type="button" id="addExpenseBtn" class="button secondary">Add Expense</button>
                 <button type="submit" class="button primary">Pay with UPI</button>

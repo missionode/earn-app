@@ -39,49 +39,49 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,}@[a-zA-Z]{2,}$/.test(upiId)) return 'Invalid UPI ID format.';
         const domain = upiId.split('@')[1];
         const validDomains = [
-  'ybl',          // Paytm
-  'upi',          // General UPI
-  'okhdfcbank',   // HDFC Bank
-  'hdfcbank',     // HDFC Bank New
-  'icici',        // ICICI Bank (direct)
-  'axisbank',     // Axis Bank
-  'oksbi',        // SBI
-  'paytm',        // Paytm
-  'fbl',          // Federal Bank
-  'okicici',      // ICICI Bank (via Google Pay)
-  'kotak',        // Kotak Mahindra Bank
-  'yesbank',      // YES Bank
-  'idbi',         // IDBI Bank
-  'canarabank',   // Canara Bank
-  'pnb',          // Punjab National Bank
-  'airtel',       // Airtel Payments Bank
-  'barodapay',    // Bank of Baroda
-  'hsbc',         // HSBC Bank
-  'rbl',          // RBL Bank
-  'indus',        // IndusInd Bank
-  'ubi',          // Union Bank of India
-  'standardchartered', // Standard Chartered Bank
-  'cbin',         // Central Bank of India
-  'iob',          // Indian Overseas Bank
-  'sib',          // South Indian Bank
-  'tjsb',         // TJSB (Co-operative Bank)
-  'kbl',          // Karnataka Bank
-  'dbs',          // DBS Bank India
-  'bandhan',      // Bandhan Bank
-  'nsdl',         // NSDL Payments Bank
-  'jio',          // Jio Payments Bank
-  'lvbank',       // Laxmi Vilas Bank
-  'punjabandsindh', // Punjab & Sind Bank
-  'idfcfirst',    // IDFC First Bank
-  'csb',          // Catholic Syrian Bank
-  'citi',         // Citibank India
-  'dlb',          // Dhanlaxmi Bank
-  'kvbank',       // Karur Vysya Bank
-  'jandkbank',    // Jammu and Kashmir Bank
-  'equitas',      // Equitas Small Finance Bank
-  'dcb',          // DCB Bank
-  'aubank'        // AU Small Finance Bank
-];
+            'ybl',          // Paytm
+            'upi',          // General UPI
+            'okhdfcbank',   // HDFC Bank
+            'hdfcbank',     // HDFC Bank New
+            'icici',        // ICICI Bank (direct)
+            'axisbank',     // Axis Bank
+            'oksbi',        // SBI
+            'paytm',        // Paytm
+            'fbl',          // Federal Bank
+            'okicici',      // ICICI Bank (via Google Pay)
+            'kotak',        // Kotak Mahindra Bank
+            'yesbank',      // YES Bank
+            'idbi',         // IDBI Bank
+            'canarabank',   // Canara Bank
+            'pnb',          // Punjab National Bank
+            'airtel',       // Airtel Payments Bank
+            'barodapay',    // Bank of Baroda
+            'hsbc',         // HSBC Bank
+            'rbl',          // RBL Bank
+            'indus',        // IndusInd Bank
+            'ubi',          // Union Bank of India
+            'standardchartered', // Standard Chartered Bank
+            'cbin',         // Central Bank of India
+            'iob',          // Indian Overseas Bank
+            'sib',          // South Indian Bank
+            'tjsb',         // TJSB (Co-operative Bank)
+            'kbl',          // Karnataka Bank
+            'dbs',          // DBS Bank India
+            'bandhan',      // Bandhan Bank
+            'nsdl',         // NSDL Payments Bank
+            'jio',          // Jio Payments Bank
+            'lvbank',       // Laxmi Vilas Bank
+            'punjabandsindh', // Punjab & Sind Bank
+            'idfcfirst',    // IDFC First Bank
+            'csb',          // Catholic Syrian Bank
+            'citi',         // Citibank India
+            'dlb',          // Dhanlaxmi Bank
+            'kvbank',       // Karur Vysya Bank
+            'jandkbank',    // Jammu and Kashmir Bank
+            'equitas',      // Equitas Small Finance Bank
+            'dcb',          // DCB Bank
+            'aubank'        // AU Small Finance Bank
+        ];
         return validDomains.includes(domain) ? '' : 'Invalid UPI ID domain.';
     };
 
@@ -348,6 +348,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+
+    const showDetailsState = localStorage.getItem('showDetails');
+    if (showDetailsState === 'false') {
+        document.body.classList.add('hide-transaction-details');
+    }
+    
     // Function to get the value of a specific query parameter from the URL
     function getQueryParam(name) {
       const urlParams = new URLSearchParams(window.location.search);
@@ -385,4 +391,4 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeUpiSetupButton) {
       closeUpiSetupButton.addEventListener('click', closeUpiSetupPopup);
     }
-  });
+});

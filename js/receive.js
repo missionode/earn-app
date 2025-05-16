@@ -1,11 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-  setTimeout(() => {
-    const input = document.getElementById("amount");
-    input.focus();
-    input.select(); // optional
-  }, 300); // delay ensures mobile keyboard show
-    
+    setTimeout(() => {
+        const input = document.getElementById("amount");
+        input.focus();
+        input.select(); // optional
+    }, 300); // delay ensures mobile keyboard show
+
     const receiveForm = document.getElementById('receiveForm');
     const amountInput = document.getElementById('amount');
     const descriptionInput = document.getElementById('description');
@@ -14,18 +14,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const categorySalary = document.getElementById('categorySalary');
     const categoryOther = document.getElementById('categoryOther');
     const customReceiptButton = document.getElementById('customReceiptButton'); // Get the custom receipt button
+    const toggleDetailsSwitchReceive = document.getElementById('toggleDetailsReceive');
+    const detailsFieldsReceive = document.getElementById('detailsFieldsReceive');
+
+    // Load the saved switch state from local storage for receive page
+    const savedDetailsStateReceive = localStorage.getItem('showDetailsReceive');
+    if (savedDetailsStateReceive === 'false') {
+        toggleDetailsSwitchReceive.checked = false;
+        detailsFieldsReceive.classList.add('hidden');
+    } else {
+        toggleDetailsSwitchReceive.checked = true;
+        detailsFieldsReceive.classList.remove('hidden');
+    }
+
+    // Event listener for the toggle switch on receive page
+    toggleDetailsSwitchReceive.addEventListener('change', () => {
+        detailsFieldsReceive.classList.toggle('hidden');
+        localStorage.setItem('showDetailsReceive', toggleDetailsSwitchReceive.checked);
+    });
 
     receiveForm.addEventListener('submit', (event) => {
         event.preventDefault();
 
         const amount = parseFloat(amountInput.value);
-        const description = descriptionInput.value;
+        const description = toggleDetailsSwitchReceive.checked ? descriptionInput.value : '';
         let category = '';
-
-        if (categoryCash.checked) category = 'cash';
-        if (categoryRent.checked) category = 'rent';
-        if (categorySalary.checked) category = 'salary';
-        if (categoryOther.checked) category = 'other';
+        if (toggleDetailsSwitchReceive.checked) {
+            if (categoryCash.checked) category = 'cash';
+            if (categoryRent.checked) category = 'rent';
+            if (categorySalary.checked) category = 'salary';
+            if (categoryOther.checked) category = 'other';
+        }
 
         if (isNaN(amount) || amount <= 0) {
             alert('Please enter a valid amount.');
@@ -50,13 +69,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Event listener for the "Add Custom Receipt" button
     customReceiptButton.addEventListener('click', () => {
         const amount = parseFloat(amountInput.value);
-        const description = descriptionInput.value;
+        const description = toggleDetailsSwitchReceive.checked ? descriptionInput.value : '';
         let category = '';
-
-        if (categoryCash.checked) category = 'cash';
-        if (categoryRent.checked) category = 'rent';
-        if (categorySalary.checked) category = 'salary';
-        if (categoryOther.checked) category = 'other';
+        if (toggleDetailsSwitchReceive.checked) {
+            if (categoryCash.checked) category = 'cash';
+            if (categoryRent.checked) category = 'rent';
+            if (categorySalary.checked) category = 'salary';
+            if (categoryOther.checked) category = 'other';
+        }
 
         if (isNaN(amount) || amount <= 0) {
             alert('Please enter a valid amount.');

@@ -318,3 +318,19 @@ img {
       margin-top: 10px;
     }
   }
+
+
+
+
+
+body.hide-transaction-details #transactionsTable th:nth-child(2),
+body.hide-transaction-details #transactionsTable td:nth-child(2), /* Category */
+body.hide-transaction-details #transactionsTable th:nth-child(3),
+body.hide-transaction-details #transactionsTable td:nth-child(3), /* Description */
+body.hide-transaction-details #transactionsTable th:nth-child(6),
+body.hide-transaction-details #transactionsTable td:nth-child(6), /* Time */
+body.hide-transaction-details #transactionsTable th:nth-child(7),
+body.hide-transaction-details #transactionsTable td:nth-child(7)  /* Status */
+{
+    display: none !important;
+}

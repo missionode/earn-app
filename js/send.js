@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
         input.focus();
         input.select(); // optional
     }, 300); // delay ensures mobile keyboard show
-    document.getElementById('amount').focus();
+
     const sendForm = document.getElementById('sendForm');
     const amountInput = document.getElementById('amount');
     const descriptionInput = document.getElementById('description');
@@ -18,6 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeScannerButton = document.getElementById('closeScanner');
     const addExpenseBtn = document.getElementById('addExpenseBtn');
     const toggleFlashButton = document.getElementById('toggleFlash');
+    const toggleDetailsSwitch = document.getElementById('toggleDetails');
+    const detailsFields = document.getElementById('detailsFields');
+
     let flashEnabled = false;
     let videoTrack = null;
     let streamGlobal;
@@ -26,12 +29,28 @@ document.addEventListener('DOMContentLoaded', () => {
     let html5QrCode = null; // To hold the instance
     let qrCodeDetected = false;
 
+    // Load the saved switch state from local storage
+    const savedDetailsState = localStorage.getItem('showDetails');
+    if (savedDetailsState === 'false') {
+        toggleDetailsSwitch.checked = false;
+        detailsFields.classList.add('hidden');
+    } else {
+        toggleDetailsSwitch.checked = true;
+        detailsFields.classList.remove('hidden');
+    }
+
+    // Event listener for the toggle switch
+    toggleDetailsSwitch.addEventListener('change', () => {
+        detailsFields.classList.toggle('hidden');
+        localStorage.setItem('showDetails', toggleDetailsSwitch.checked);
+    });
+
     sendForm.addEventListener('submit', (event) => {
         event.preventDefault();
 
         amount = parseFloat(amountInput.value);
-        description = descriptionInput.value;
-        category = getSelectedCategory();
+        const category = toggleDetailsSwitch.checked ? getSelectedCategory() : '';
+        const description = toggleDetailsSwitch.checked ? descriptionInput.value : '';
 
         if (isNaN(amount) || amount <= 0) {
             alert('Please enter a valid amount.');
@@ -55,8 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     addExpenseBtn.addEventListener('click', () => {
         const manualExpenseAmount = parseFloat(amountInput.value);
-        const manualExpenseDescription = descriptionInput.value;
-        const manualExpenseCategory = getSelectedCategory();
+        const manualExpenseDescription = toggleDetailsSwitch.checked ? descriptionInput.value : '';
+        const manualExpenseCategory = toggleDetailsSwitch.checked ? getSelectedCategory() : '';
 
         if (isNaN(manualExpenseAmount) || manualExpenseAmount <= 0) {
             alert('Please enter a valid expense amount.');
@@ -100,20 +119,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 extractedUPIID = qrData.upiId;
                 extractedMerchantName = qrData.merchantName;
                 if (extractedUPIID) {
+                    const category = toggleDetailsSwitch.checked ? getSelectedCategory() : '';
+                    const description = toggleDetailsSwitch.checked ? descriptionInput.value : '';
                     initiateUpiPayment(extractedUPIID, amount, description, category, extractedMerchantName);
                 } else {
                     alert('Invalid UPI QR code.');
                 }
             }
         };
-    
+
         Html5Qrcode.getCameras().then(devices => {
             if (devices && devices.length > 0) {
                 const rearCamera = devices.find(device => device.label.toLowerCase().includes('back') || device.label.toLowerCase().includes('rear'));
                 const cameraId = rearCamera ? rearCamera.id : devices[0].id;
-    
+
                 const initialZoomFactor = 2.0; // Adjust this value based on testing
-    
+
                 const config = {
                     fps: 10,
                     qrbox: 300,
@@ -122,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         advanced: [{ zoom: initialZoomFactor }]
                     }
                 };
-    
+
                 html5QrCode.start(cameraId, config, qrCodeSuccessCallback)
                     .catch(err => {
                         console.error('Error starting QR scanner with initial zoom:', err);
@@ -133,22 +154,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                 alert('Error starting QR scanner.');
                             });
                     });
-    
-                // We are now pre-zooming, so the delayed zoom attempt might not be needed
-                // You can remove the setTimeout block if pre-zoom is the primary strategy.
-                // However, you might keep it as a fallback with a lower zoom level.
-                // setTimeout(() => {
-                //     if (html5QrCode && !qrCodeDetected && html5QrCode.isScanning) {
-                //         try {
-                //             html5QrCode.applyVideoConstraints({ advanced: [{ zoom: 1.5 }] });
-                //             console.log("Attempted to apply zoom.");
-                //         } catch (error) {
-                //             console.error("Error applying zoom:", error);
-                //             alert("Could not automatically zoom. Please try moving closer.");
-                //         }
-                //     }
-                // }, 3000);
-    
             } else {
                 alert("No cameras found on this device.");
             }
@@ -231,14 +236,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (videoTrack) {
             const imageCapture = new ImageCapture(videoTrack);
             imageCapture.getPhotoCapabilities()
-               .then(capabilities => {
+                .then(capabilities => {
                     if (capabilities.torch) {
                         flashEnabled =!flashEnabled;
                         videoTrack.applyConstraints({ advanced: [{ torch: flashEnabled }] })
-                           .then(() => {
+                            .then(() => {
                                 toggleFlashButton.textContent = flashEnabled? 'Disable Flash' : 'Enable Flash';
                             })
-                           .catch(err => {
+                            .catch(err => {
                                 console.error('Error toggling flash:', err);
                                 alert('Error toggling flash.');
                             });
@@ -246,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         alert('Flash control is not supported on this device.');
                     }
                 })
-               .catch(err => {
+                .catch(err => {
                     console.error('Error getting camera capabilities:', err);
                     alert('Error accessing camera capabilities.');
                 });
