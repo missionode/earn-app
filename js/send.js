@@ -100,39 +100,49 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         };
-
+    
         Html5Qrcode.getCameras().then(devices => {
             if (devices && devices.length > 0) {
                 const rearCamera = devices.find(device => device.label.toLowerCase().includes('back') || device.label.toLowerCase().includes('rear'));
-                const cameraId = rearCamera ? rearCamera.id : devices[0].id; // Default to first camera if rear not found
-
+                const cameraId = rearCamera ? rearCamera.id : devices[0].id;
+    
+                const initialZoomFactor = 2.0; // Adjust this value based on testing
+    
                 const config = {
                     fps: 10,
                     qrbox: 300,
                     videoConstraints: {
-                        facingMode: "environment", // Might be redundant with cameraId
-                        advanced: [{ zoom: 1.3 }]
+                        facingMode: "environment",
+                        advanced: [{ zoom: initialZoomFactor }]
                     }
                 };
-
+    
                 html5QrCode.start(cameraId, config, qrCodeSuccessCallback)
                     .catch(err => {
-                        console.error('Error starting QR scanner:', err);
-                        alert('Error starting QR scanner.');
+                        console.error('Error starting QR scanner with initial zoom:', err);
+                        // If initial zoom fails, try starting without it
+                        html5QrCode.start(cameraId, { fps: 10, qrbox: 300 }, qrCodeSuccessCallback)
+                            .catch(err2 => {
+                                console.error('Error starting QR scanner without zoom:', err2);
+                                alert('Error starting QR scanner.');
+                            });
                     });
-
-                // Attempt to apply zoom after a short delay if no detection
-                setTimeout(() => {
-                    if (html5QrCode && !qrCodeDetected && html5QrCode.isScanning) {
-                        try {
-                            html5QrCode.applyVideoConstraints({ advanced: [{ zoom: 1.5 }] });
-                            console.log("Attempted to apply zoom.");
-                        } catch (error) {
-                            console.error("Error applying zoom:", error);
-                            alert("Could not automatically zoom. Please try moving closer.");
-                        }
-                    }
-                }, 3000);
+    
+                // We are now pre-zooming, so the delayed zoom attempt might not be needed
+                // You can remove the setTimeout block if pre-zoom is the primary strategy.
+                // However, you might keep it as a fallback with a lower zoom level.
+                // setTimeout(() => {
+                //     if (html5QrCode && !qrCodeDetected && html5QrCode.isScanning) {
+                //         try {
+                //             html5QrCode.applyVideoConstraints({ advanced: [{ zoom: 1.5 }] });
+                //             console.log("Attempted to apply zoom.");
+                //         } catch (error) {
+                //             console.error("Error applying zoom:", error);
+                //             alert("Could not automatically zoom. Please try moving closer.");
+                //         }
+                //     }
+                // }, 3000);
+    
             } else {
                 alert("No cameras found on this device.");
             }
