@@ -11,13 +11,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const qrScannerView = document.getElementById('qrScannerView');
     const closeScannerButton = document.getElementById('closeScanner');
     const addExpenseBtn = document.getElementById('addExpenseBtn');
-
-    let amount;
-    let description;
-    let category = '';
+    const toggleFlashButton = document.getElementById('toggleFlash');
+    let flashEnabled = false;
+    let videoTrack = null;
     let streamGlobal;
     let extractedUPIID;
     let extractedMerchantName;
+    let html5QrCode = null; // To hold the instance
 
     sendForm.addEventListener('submit', (event) => {
         event.preventDefault();
@@ -26,7 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
         description = descriptionInput.value;
         category = getSelectedCategory();
 
-        if (isNaN(amount) || amount <= 0) {
+        if (isNaN(amount) |
+| amount <= 0) {
             alert('Please enter a valid amount.');
             return;
         }
@@ -38,6 +39,11 @@ document.addEventListener('DOMContentLoaded', () => {
     closeScannerButton.addEventListener('click', () => {
         qrScannerPopup.style.display = 'none';
         stopCamera();
+        if (html5QrCode) {
+            html5QrCode.stop();
+            html5QrCode.clear();
+            html5QrCode = null;
+        }
     });
 
     addExpenseBtn.addEventListener('click', () => {
@@ -45,7 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const manualExpenseDescription = descriptionInput.value;
         const manualExpenseCategory = getSelectedCategory();
 
-        if (isNaN(manualExpenseAmount) || manualExpenseAmount <= 0) {
+        if (isNaN(manualExpenseAmount) |
+| manualExpenseAmount <= 0) {
             alert('Please enter a valid expense amount.');
             return;
         }
@@ -56,8 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
             amount: manualExpenseAmount,
             category: manualExpenseCategory,
             description: manualExpenseDescription,
-            date: new Date().toISOString().split('T')[0],
-            time: new Date().toTimeString().split(' ')[0],
+            date: new Date().toISOString().split('T'),
+            time: new Date().toTimeString().split(' '),
             status: 'success' // Manual entry is directly added as success
         };
 
@@ -81,75 +88,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
         qrScannerView.innerHTML = '';
 
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-            .then(stream => {
-                streamGlobal = stream;
-                video.srcObject = stream;
-                video.setAttribute('playsinline', true);
-                video.play();
+        html5QrCode = new Html5Qrcode("qrScannerView");
+        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+            stopCamera();
+            qrScannerPopup.style.display = 'none';
+            const qrData = extractDataFromQRCode(decodedText);
+            extractedUPIID = qrData.upiId;
+            extractedMerchantName = qrData.merchantName;
+            if (extractedUPIID) {
+                initiateUpiPayment(extractedUPIID, amount, description, category, extractedMerchantName);
+            } else {
+                alert('Invalid UPI QR code.');
+            }
+        };
 
-                video.addEventListener('loadedmetadata', () => {
-                    const aspectRatioVideo = video.videoWidth / video.videoHeight || 1;
-                    const aspectRatioCanvas = window.innerWidth / window.innerHeight;
-                    let width, height;
+        const config = { fps: 10, qrbox: 250 };
 
-                    if (aspectRatioCanvas > aspectRatioVideo) {
-                        height = window.innerHeight;
-                        width = height * aspectRatioVideo;
-                    } else {
-                        width = window.innerWidth;
-                        height = width / aspectRatioVideo;
-                    }
-
-                    canvas.width = window.innerWidth;
-                    canvas.height = window.innerHeight;
-                    qrScannerView.appendChild(canvas);
-
-                    context.fillStyle = 'black';
-                    context.fillRect(0, 0, canvas.width, canvas.height);
-
-                    const offsetX = (canvas.width - width) / 2;
-                    const offsetY = (canvas.height - height) / 2;
-
-                    function scan() {
-                        context.drawImage(video, offsetX, offsetY, width, height);
-                        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-                        const code = jsQR(imageData.data, canvas.width, canvas.height);
-
-                        if (code) {
-                            stopCamera(stream);
-                            qrScannerPopup.style.display = 'none';
-                            const qrData = extractDataFromQRCode(code.data);
-                            extractedUPIID = qrData.upiId;
-                            extractedMerchantName = qrData.merchantName;
-                            if (extractedUPIID) {
-                                initiateUpiPayment(extractedUPIID, amount, description, category, extractedMerchantName);
-                            } else {
-                                alert('Invalid UPI QR code.');
-                            }
-                        } else {
-                            requestAnimationFrame(scan);
-                        }
-                    }
-
-                    scan();
-                });
-            })
-            .catch(err => {
-                console.error('Error accessing camera:', err);
-                alert('Error accessing camera.');
+        html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
+           .catch(err => {
+                console.error('Error starting QR scanner:', err);
+                alert('Error starting QR scanner.');
             });
+
+        // Attempt to apply zoom after a short delay if no detection
+        setTimeout(() => {
+            if (html5QrCode) {
+                try {
+                    html5QrCode.applyVideoConstraints({ advanced: [{ zoom: 1.5 }] }); // Adjust zoom level
+                    console.log("Attempted to apply zoom.");
+                } catch (error) {
+                    console.error("Error applying zoom:", error);
+                    alert("Could not automatically zoom. Please try moving closer.");
+                }
+            }
+        }, 3000);
     }
 
-    function stopCamera(stream) {
-        if (!stream && streamGlobal) {
-            stream = streamGlobal;
-        }
-        if (stream) {
-            stream.getTracks().forEach(track => track.stop());
-        }
-        if (qrScannerView.firstChild) {
-            qrScannerView.removeChild(qrScannerView.firstChild);
+    function stopCamera() {
+        if (streamGlobal) {
+            streamGlobal.getTracks().forEach(track => track.stop());
+            streamGlobal = null;
         }
     }
 
@@ -180,7 +158,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function initiateUpiPayment(recipientVPA, amount, description, category, merchantNameFromQR) {
         const transactionId = generateUniqueId();
-        const payeeName = merchantNameFromQR || localStorage.getItem('earn_username') || 'Recipient Name';
+        const payeeName = merchantNameFromQR |
+| localStorage.getItem('earn_username') |
+| 'Recipient Name';
         const merchantCategoryCode = '0000';
         const successUrl = encodeURIComponent(`https://missionode.github.io/earn-app/index.html?status=success&transactionId=${transactionId}`);
 
@@ -195,8 +175,8 @@ document.addEventListener('DOMContentLoaded', () => {
             amount: parseFloat(amount),
             category: category,
             description: description,
-            date: new Date().toISOString().split('T')[0],
-            time: new Date().toTimeString().split(' ')[0],
+            date: new Date().toISOString().split('T'),
+            time: new Date().toTimeString().split(' '),
             status: 'pending'
         };
 
@@ -206,7 +186,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function saveTransaction(transaction) {
-        let transactions = JSON.parse(localStorage.getItem('earn_transactions') || '[]');
+        let transactions = JSON.parse(localStorage.getItem('earn_transactions') |
+| '');
         transactions.unshift(transaction);
         localStorage.setItem('earn_transactions', JSON.stringify(transactions));
     }
@@ -214,4 +195,30 @@ document.addEventListener('DOMContentLoaded', () => {
     function generateUniqueId() {
         return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     }
+
+    toggleFlashButton.addEventListener('click', () => {
+        if (videoTrack) {
+            const imageCapture = new ImageCapture(videoTrack);
+            imageCapture.getPhotoCapabilities()
+               .then(capabilities => {
+                    if (capabilities.torch) {
+                        flashEnabled =!flashEnabled;
+                        videoTrack.applyConstraints({ advanced: [{ torch: flashEnabled }] })
+                           .then(() => {
+                                toggleFlashButton.textContent = flashEnabled? 'Disable Flash' : 'Enable Flash';
+                            })
+                           .catch(err => {
+                                console.error('Error toggling flash:', err);
+                                alert('Error toggling flash.');
+                            });
+                    } else {
+                        alert('Flash control is not supported on this device.');
+                    }
+                })
+               .catch(err => {
+                    console.error('Error getting camera capabilities:', err);
+                    alert('Error accessing camera capabilities.');
+                });
+        }
+    });
 });
