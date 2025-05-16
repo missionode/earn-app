@@ -420,3 +420,73 @@ h1 {
 }
 
 /* ... other styles ... */
+
+/* css/transactions.css */
+/* ... other styles ... */
+
+#allTransactionsTable td:last-child { /* Target the last cell (Actions) */
+    display: flex;
+    align-items: center; /* Vertically align items in the center */
+    justify-content: flex-start; /* Align icons to the start with spacing */
+    gap: 5px; /* Add some space between the icons */
+    padding-top: 0.5em; /* Adjust vertical padding as needed */
+    padding-bottom: 0.5em;
+}
+
+.edit-icon, .delete-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    display: inline-block; /* Or flex if you need more control */
+    vertical-align: middle; /* Try this for initial alignment */
+}
+
+/* Optional: If you wrapped the icons in a div with class 'action-icon-wrapper' */
+/* .action-icon-wrapper {
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.action-icon-wrapper:first-child {
+    margin-left: 0;
+}
+
+.action-icon-wrapper img {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    vertical-align: middle;
+} */
+
+/* Adjust table cell padding if needed */
+#allTransactionsTable td {
+    padding: 0.5em; /* Adjust as needed */
+}
+
+/* Ensure images inside table cells don't distort the cell height too much */
+#allTransactionsTable img {
+    max-height: 2em; /* Adjust as needed */
+    vertical-align: middle; /* Helps with alignment relative to text */
+}
+
+/* Specific styling for action icons to ensure they align well */
+#allTransactionsTable td img.edit-icon,
+#allTransactionsTable td img.delete-icon {
+    width: 1.2em; /* Adjust size as needed */
+    height: 1.2em;
+    vertical-align: middle;
+    margin-right: 0.3em; /* Add a little space to the right if needed */
+}
+
+/* If you only have icons in the last column, you might simplify */
+#allTransactionsTable td:last-child img {
+    width: 1.2em;
+    height: 1.2em;
+    vertical-align: middle;
+    margin-left: 0; /* Reset any general image margins */
+    margin-right: 0.3em;
+}
+
+#allTransactionsTable td:last-child img:first-child {
+    margin-left: 0; /* Ensure no extra left margin for the first icon */
+}
