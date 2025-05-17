@@ -13,3 +13,4 @@ function generateUniqueId() {
 }
 
 // You can add more global functions here as needed
+

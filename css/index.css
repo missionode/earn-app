@@ -353,7 +353,7 @@
     margin-bottom: 15px;
     opacity: 0.6;
     font-size: 1.2rem;
-    margin: 15px auto 30px auto;
+    margin: px auto 30px auto;
 }
 
 .filter-controls {
@@ -431,14 +431,21 @@
 }
 
 .bodymass {
-    margin-top: 20px;
+    /* margin-top: 20px;
     text-align: center;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: 5px;
-    margin-top: 10px;
+    margin-top: 10px; */
+}
+
+.footer_arranged {
+    display: flex;
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
 }
 
 body:has(> .popup)

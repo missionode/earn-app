@@ -6,6 +6,11 @@ body {
     margin-top: 30px;
 }
 
+h2 {
+    opacity: 0.5;
+    text-align: center;
+}
+
 .faq-widget {
     margin-bottom: 20px;
     border-radius: 12px; /* More pronounced rounded corners */
