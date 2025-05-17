@@ -24,10 +24,11 @@
 .namaste {
     padding-top:10px;
     text-align:center;
-    color: #fefefe;
+    color: #CBCBCB;
 }
 .namaste.devi {
-    font-size: 23px;
+    font-size: 20px;
+    margin-bottom: 20px;
 }
 
 .filter-research {
