@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const upiConfirmationTitle = document.getElementById('upiConfirmationTitle');
     const upiConfirmationAmount = document.getElementById('upiConfirmationAmount');
     const upiConfirmationDescription = document.getElementById('upiConfirmationDescription');
+    const upiConfirmationCloseButton = document.getElementById('upiConfirmationCloseButton');
     const upiConfirmCancelButton = document.getElementById('upiConfirmCancelButton');
     const upiConfirmButton = document.getElementById('upiConfirmButton');
 
@@ -268,6 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
             upiConfirmationDescription.textContent = latestPendingTransaction.description || 'No description provided.';
             upiConfirmationNotification.classList.add('show');
 
+
             upiConfirmButton.onclick = () => {
                 console.log("Confirm button clicked for transaction ID:", latestPendingTransaction.id);
                 updateTransactionStatus(latestPendingTransaction.id, 'success');
@@ -278,6 +280,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 upiConfirmationNotification.classList.remove('show');
                 alert('Payment confirmation cancelled.');
                 // DO NOT call updateTransactionStatus here
+                const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
+                if (transactions.length > 0 && transactions[0].status === 'pending') {
+                    transactions[0].status = 'cancelled';
+                    setLocalStorageItem('earn_transactions', JSON.stringify(transactions));
+                    loadTransactions(); // Reload to update the transaction list
+                }
+
+
             };
         } else {
             upiConfirmationNotification.classList.remove('show'); // Ensure it's hidden if no pending transaction

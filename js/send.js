@@ -133,11 +133,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const rearCamera = devices.find(device => device.label.toLowerCase().includes('back') || device.label.toLowerCase().includes('rear'));
                 const cameraId = rearCamera ? rearCamera.id : devices[0].id;
 
-                const initialZoomFactor = 2.0; // Adjust this value based on testing
+                const initialZoomFactor = 3.0; // Adjust this value based on testing
 
                 const config = {
-                    fps: 10,
-                    qrbox: 300,
+                    fps: 20,
+                    qrbox: { width: 250, height: 250 },
                     videoConstraints: {
                         facingMode: "environment",
                         advanced: [{ zoom: initialZoomFactor }]
@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     .catch(err => {
                         console.error('Error starting QR scanner with initial zoom:', err);
                         // If initial zoom fails, try starting without it
-                        html5QrCode.start(cameraId, { fps: 10, qrbox: 300 }, qrCodeSuccessCallback)
+                        html5QrCode.start(cameraId, { fps: 20, qrbox: 250 }, qrCodeSuccessCallback)
                             .catch(err2 => {
                                 console.error('Error starting QR scanner without zoom:', err2);
                                 alert('Error starting QR scanner.');
