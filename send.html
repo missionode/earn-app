@@ -72,12 +72,16 @@
     <div id="qrScannerPopup" class="popup qr-scanner-popup">
         <div id="qrScannerView" class="qr-scanner-view">
             <div id="qrScannerLoading" class="qr-scanner-loading">Loading Camera...</div>
+            <div id="scannerOverlay" class="qr-scanner-overlay">
+                <div class="qr-scanner-laser"></div>
+            </div>
         </div>
         <button id="closeScanner" class="button secondary qr-scanner-close">Close Scanner</button>
         <button id="toggleFlash" class="button qr-scanner-flash">Enable Flash</button>
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
     </div>
-    
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <script src="js/send.js"></script>
 </body>

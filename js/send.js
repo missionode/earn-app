@@ -1,10 +1,17 @@
-document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-        const input = document.getElementById("amount");
-        input.focus();
-        input.select(); // optional
-    }, 300); // delay ensures mobile keyboard show
+/**
+ * @file send.js - Handles expense sending with manual entry and QR code scanning (Flash support improved).
+ * @author Your Name & Gemini AI Collaboration
+ * @version 1.3 (Flash Handling Enhancement)
+ */
 
+document.addEventListener('DOMContentLoaded', () => {
+    // --- Initial Focus ---
+    setTimeout(() => {
+        document.getElementById("amount")?.focus();
+        document.getElementById("amount")?.select();
+    }, 300);
+
+    // --- DOM Element References ---
     const sendForm = document.getElementById('sendForm');
     const amountInput = document.getElementById('amount');
     const descriptionInput = document.getElementById('description');
@@ -20,270 +27,249 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleFlashButton = document.getElementById('toggleFlash');
     const toggleDetailsSwitch = document.getElementById('toggleDetails');
     const detailsFields = document.getElementById('detailsFields');
+    const scannerOverlay = document.getElementById('scannerOverlay');
+    const errorMessage = document.getElementById('errorMessage');
 
-    let activeCameraId = null;
-    let lastScanTime = 0;
-    const scanDebounceDelay = 200; // milliseconds
-    let scannerOverlay;
-    let scanSuccessTimeout;
+    // --- State Variables ---
+    let flashEnabled = false;
+    let videoTrack = null;
     let html5QrCode = null;
     let qrCodeDetected = false;
+    let lastDetectedTime = 0;
 
-    // --- Unified Switch Logic ---
+    // --- Unified Details Toggle ---
     const hideDetailsState = localStorage.getItem('hideDetails');
     const showDetails = hideDetailsState === null ? true : hideDetailsState === 'true';
-
     toggleDetailsSwitch.checked = showDetails;
-    if (!showDetails) {
-        detailsFields.classList.add('hidden');
-    } else {
-        detailsFields.classList.remove('hidden');
-    }
+    detailsFields.classList.toggle('hidden', !showDetails);
 
     toggleDetailsSwitch.addEventListener('change', () => {
         const currentState = toggleDetailsSwitch.checked;
         detailsFields.classList.toggle('hidden', !currentState);
         localStorage.setItem('hideDetails', currentState);
     });
-    // --- End Unified Switch Logic ---
 
+    // --- Form Submission (Manual Entry) ---
     sendForm.addEventListener('submit', (event) => {
         event.preventDefault();
-
         const amount = parseFloat(amountInput.value);
-        const category = toggleDetailsSwitch.checked ? getSelectedCategory() : '';
-        const description = toggleDetailsSwitch.checked ? descriptionInput.value : '';
-
         if (isNaN(amount) || amount <= 0) {
-            alert('Please enter a valid amount.');
+            showError('Please enter a valid amount.');
             return;
         }
-
         qrScannerPopup.style.display = 'block';
         startQrScanner();
     });
 
+    // --- Close QR Scanner ---
     closeScannerButton.addEventListener('click', () => {
         qrScannerPopup.style.display = 'none';
         stopQrScanner();
+        errorMessage.style.display = 'none';
     });
 
+    // --- Add Expense (Manual) ---
     addExpenseBtn.addEventListener('click', () => {
         const manualExpenseAmount = parseFloat(amountInput.value);
         const manualExpenseDescription = toggleDetailsSwitch.checked ? descriptionInput.value : '';
         const manualExpenseCategory = toggleDetailsSwitch.checked ? getSelectedCategory() : '';
 
         if (isNaN(manualExpenseAmount) || manualExpenseAmount <= 0) {
-            alert('Please enter a valid expense amount.');
+            showError('Please enter a valid expense amount.');
             return;
         }
 
-        const newExpenseTransaction = {
-            id: generateUniqueId(),
-            type: 'expense',
-            amount: manualExpenseAmount,
-            category: manualExpenseCategory,
-            description: manualExpenseDescription,
-            date: new Date().toISOString().split('T')[0],
-            time: new Date().toTimeString().split(' ')[0],
-            status: 'success'
-        };
+        const newExpenseTransaction = createExpenseTransaction(
+            manualExpenseAmount,
+            manualExpenseCategory,
+            manualExpenseDescription,
+            'success'
+        );
 
         saveTransaction(newExpenseTransaction);
         window.location.href = 'index.html';
     });
 
+    // --- Category Selection Helper ---
     function getSelectedCategory() {
-        if (categoryFood.checked) return 'food';
-        if (categoryShopping.checked) return 'shopping';
-        if (categoryEntertainment.checked) return 'entertainment';
-        if (categoryTravel.checked) return 'travel';
-        if (categoryOthers.checked) return 'others';
+        if (categoryFood?.checked) return 'food';
+        if (categoryShopping?.checked) return 'shopping';
+        if (categoryEntertainment?.checked) return 'entertainment';
+        if (categoryTravel?.checked) return 'travel';
+        if (categoryOthers?.checked) return 'others';
         return '';
     }
 
-    function initializeScannerOverlay() {
-        scannerOverlay = document.createElement('div');
-        scannerOverlay.classList.add('qr-scanner-overlay');
-        const laserLine = document.createElement('div');
-        laserLine.classList.add('qr-scanner-laser');
-        scannerOverlay.appendChild(laserLine);
-        qrScannerView.appendChild(scannerOverlay);
-    }
-
-    function showSuccessAnimation() {
-        const successIndicator = document.createElement('div');
-        successIndicator.classList.add('qr-scan-success');
-        successIndicator.innerHTML = '&#10004;'; // Checkmark
-        qrScannerView.appendChild(successIndicator);
-        clearTimeout(scanSuccessTimeout);
-        scanSuccessTimeout = setTimeout(() => {
-            if (successIndicator && successIndicator.parentNode) {
-                successIndicator.parentNode.removeChild(successIndicator);
-            }
-        }, 1000);
-    }
-
-    function handleCameraStart() {
-        const loadingIndicator = document.getElementById('qrScannerLoading');
-        if (loadingIndicator) {
-            loadingIndicator.style.display = 'none';
-        }
-    }
-
-    function handleCameraError(err) {
-        console.error('Camera error:', err);
-        const loadingIndicator = document.getElementById('qrScannerLoading');
-        if (loadingIndicator) {
-            loadingIndicator.style.display = 'none';
-        }
-        showNotification('Camera Error', 'Failed to access the camera.', 'error');
-    }
-
-    function showNotification(title, message, type = 'info') {
-        // Implement your in-app notification logic here (e.g., toast or modal)
-        alert(`${title}: ${message}`); // Placeholder
-    }
-
+    // --- QR Scanner Initialization and Handling ---
     function startQrScanner() {
-        qrScannerView.innerHTML = '<div id="qrScannerLoading">Loading Camera...</div>';
+        qrScannerView.innerHTML = '';
         qrCodeDetected = false;
         html5QrCode = new Html5Qrcode("qrScannerView");
 
-        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-            const currentTime = Date.now();
-            if (!qrCodeDetected && (currentTime - lastScanTime > scanDebounceDelay)) {
+        scannerOverlay.classList.add('loading');
+        errorMessage.style.display = 'none';
+
+        const qrCodeSuccessCallback = async (decodedText, decodedResult) => {
+            const now = Date.now();
+            if (!qrCodeDetected && now - lastDetectedTime > 1000) {
                 qrCodeDetected = true;
-                lastScanTime = currentTime;
+                lastDetectedTime = now;
+                scannerOverlay.classList.add('success');
+                if (navigator.vibrate) navigator.vibrate(200);
+
+                await new Promise(resolve => setTimeout(resolve, 500));
+
                 stopQrScanner();
                 qrScannerPopup.style.display = 'none';
+
                 const qrData = extractDataFromQRCode(decodedText);
-                extractedUPIID = qrData.upiId;
-                extractedMerchantName = qrData.merchantName;
-                if (extractedUPIID) {
+                if (qrData?.upiId) {
                     const category = toggleDetailsSwitch.checked ? getSelectedCategory() : '';
                     const description = toggleDetailsSwitch.checked ? descriptionInput.value : '';
-                    initiateUpiPayment(extractedUPIID, amount, description, category, extractedMerchantName);
-                    showSuccessAnimation();
-                    if ("vibrate" in navigator) {
-                        navigator.vibrate(100);
-                    }
+                    initiateUpiPayment(qrData.upiId, amountInput.value, description, category, qrData.merchantName);
                 } else {
-                    showNotification('QR Code Error', 'Invalid UPI QR code.', 'error');
+                    showError('Invalid UPI QR code.');
+                    qrCodeDetected = false;
+                    scannerOverlay.classList.remove('success');
                 }
             }
         };
 
         Html5Qrcode.getCameras().then(devices => {
-            if (devices && devices.length > 0) {
-                const rearCamera = devices.find(device => device.label.toLowerCase().includes('back') || device.label.toLowerCase().includes('rear'));
-                activeCameraId = rearCamera ? rearCamera.id : devices[0].id;
-                const selectedDeviceId = activeCameraId; // Use the determined device ID
-
-                const initialZoomFactor = 2.0;
-                const preferredFps = 15;
+            if (devices?.length > 0) {
+                const rearCamera = devices.find(device => /back|rear/i.test(device.label));
+                const cameraId = rearCamera?.id || devices[0].id;
+                localStorage.setItem('preferredCameraId', cameraId);
 
                 const config = {
-                    deviceId: selectedDeviceId, // Directly pass deviceId
-                    facingMode: rearCamera ? "environment" : undefined // Conditionally set facingMode
+                    fps: 15,
+                    qrbox: { width: 250, height: 250 },
+                    videoConstraints: {
+                        facingMode: "environment",
+                        advanced: [{ zoom: 1.5 }]
+                    },
+                    experimentalFeatures: {
+                        useBarCodeDetectorIfSupported: true
+                    }
                 };
 
-                html5QrCode.start(config, qrCodeSuccessCallback, handleCameraError)
+                html5QrCode.start(cameraId, config, qrCodeSuccessCallback)
                     .then(() => {
-                        handleCameraStart();
-                        // Attempt to apply advanced constraints *after* starting
-                        const advancedConstraints = { advanced: [{ zoom: initialZoomFactor }], frameRate: preferredFps };
-                        html5QrCode.applyVideoConstraints(advancedConstraints)
-                            .catch(err => {
-                                console.warn("Error applying advanced video constraints (zoom/fps):", err);
-                                // Continue even if applying advanced constraints fails (might not be supported)
-                            });
+                        scannerOverlay.classList.remove('loading');
+                        try {
+                            videoTrack = html5QrCode.getRunningTrack();
+                            toggleFlashButton.disabled = !videoTrack;
+                            toggleFlashButton.textContent = videoTrack ? 'Enable Flash' : 'Flash Not Available';
+                            toggleFlashButton.classList.remove('active');
+                        } catch (error) {
+                            console.warn("getRunningTrack not supported or failed:", error);
+                            videoTrack = null;
+                            toggleFlashButton.disabled = true;
+                            toggleFlashButton.textContent = 'Flash Not Available';
+                            toggleFlashButton.classList.remove('active');
+                        }
                     })
-                    .catch(err => {
+                    .catch(async (err) => {
                         console.error('Error starting QR scanner:', err);
-                        handleCameraError(err);
-                        // Fallback - try starting with facingMode only
-                        html5QrCode.start({ facingMode: "environment", frameRate: 10 }, qrCodeSuccessCallback, handleCameraError)
-                            .then(handleCameraStart)
-                            .catch(err2 => {
-                                console.error('Fallback error starting QR scanner:', err2);
-                                handleCameraError(err2);
-                            });
+                        try {
+                            if (html5QrCode) {
+                                await html5QrCode.stop();
+                                html5QrCode.clear();
+                            }
+                            await html5QrCode.start(cameraId, { fps: 15, qrbox: { width: 250, height: 250 } }, qrCodeSuccessCallback);
+                            scannerOverlay.classList.remove('loading');
+                            try {
+                                videoTrack = html5QrCode.getRunningTrack();
+                                toggleFlashButton.disabled = !videoTrack;
+                                toggleFlashButton.textContent = videoTrack ? 'Enable Flash' : 'Flash Not Available';
+                                toggleFlashButton.classList.remove('active');
+                            } catch (error) {
+                                console.warn("getRunningTrack not supported or failed in fallback:", error);
+                                videoTrack = null;
+                                toggleFlashButton.disabled = true;
+                                toggleFlashButton.textContent = 'Flash Not Available';
+                                toggleFlashButton.classList.remove('active');
+                            }
+                        } catch (err2) {
+                            console.error('Error in fallback QR scanner:', err2);
+                            showError('Unable to start QR scanner.');
+                        }
                     });
-
-                initializeScannerOverlay();
             } else {
-                showNotification('Camera Error', 'No cameras found on this device.', 'error');
+                showError('No cameras found on this device.');
             }
         }).catch(err => {
-            console.error("Error getting camera devices:", err);
-            showNotification('Camera Error', 'Error accessing camera devices.', 'error');
+            console.error('Error getting camera devices:', err);
+            showError('Error accessing camera.');
         });
     }
 
     function stopQrScanner() {
         if (html5QrCode) {
-            html5QrCode.stop().catch(err => console.error("Error stopping QR scanner:", err));
-            html5QrCode.clear();
-            html5QrCode = null;
-            qrCodeDetected = false;
+            html5QrCode.stop().then(() => {
+                html5QrCode.clear();
+                html5QrCode = null;
+            }).catch(err => console.error("Error stopping QR scanner:", err));
         }
+        scannerOverlay.classList.remove('loading', 'success');
+        videoTrack = null; // Reset videoTrack on stop
+        toggleFlashButton.disabled = true;
+        toggleFlashButton.textContent = 'Enable Flash'; // Reset button text
+        toggleFlashButton.classList.remove('active');
     }
 
+    // --- QR Code Data Extraction ---
     function extractDataFromQRCode(qrCodeText) {
-        let upiId = null;
-        let merchantName = null;
+        const upiRegex = /pa=([^&]+)/;
+        const nameRegex = /pn=([^&]+)/;
+        const upiMatch = qrCodeText.match(upiRegex);
+        const nameMatch = qrCodeText.match(nameRegex);
 
-        if (qrCodeText && qrCodeText.includes("pa=")) {
-            const vpaStart = qrCodeText.indexOf("pa=") + 3;
-            let vpaEnd = qrCodeText.indexOf("&", vpaStart);
-            if (vpaEnd === -1) {
-                vpaEnd = qrCodeText.length;
-            }
-            upiId = qrCodeText.substring(vpaStart, vpaEnd);
-        }
-
-        if (qrCodeText && qrCodeText.includes("pn=")) {
-            const nameStart = qrCodeText.indexOf("pn=") + 3;
-            let nameEnd = qrCodeText.indexOf("&", nameStart);
-            if (nameEnd === -1) {
-                nameEnd = qrCodeText.length;
-            }
-            merchantName = qrCodeText.substring(nameStart, nameEnd);
-        }
-
-        return { upiId, merchantName };
+        return {
+            upiId: upiMatch ? decodeURIComponent(upiMatch[1]) : null,
+            merchantName: nameMatch ? decodeURIComponent(nameMatch[1]) : null,
+        };
     }
 
+    // --- UPI Payment Initiation ---
     function initiateUpiPayment(recipientVPA, amount, description, category, merchantNameFromQR) {
         const transactionId = generateUniqueId();
-        const payeeName = merchantNameFromQR || localStorage.getItem('earn_username') || 'Recipient Name';
+        const payeeName = merchantNameFromQR || localStorage.getItem('earn_username') || 'Recipient';
         const merchantCategoryCode = '0000';
         const successUrl = encodeURIComponent(`https://missionode.github.io/earn-app/index.html?status=success&transactionId=${transactionId}`);
+        const encodedDescription = encodeURIComponent(description).replace(/%20/g, '%');
+        const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(recipientVPA)}&pn=${encodeURIComponent(payeeName)}&am=${parseFloat(amount).toFixed(2)}&cu=INR&tr=${encodeURIComponent(transactionId)}&tn=${encodedDescription}&mc=${merchantCategoryCode}&url=${successUrl}`;
 
-        let encodedDescription = encodeURIComponent(description);
-        const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(recipientVPA)}&pn=${encodeURIComponent(payeeName)}&am=${parseFloat(amount).toFixed(2)}&cu=INR&tr=${encodeURIComponent(transactionId)}&tn=${encodedDescription.replace(/%20/g, '%')}&mc=${merchantCategoryCode}&url=${successUrl}`;
-
-        console.log("Generated UPI Intent URL:", upiIntentUrl);
-
-        const pendingTransaction = {
-            id: transactionId,
-            type: 'expense',
-            amount: parseFloat(amount),
-            category: category,
-            description: description,
-            date: new Date().toISOString().split('T')[0],
-            time: new Date().toTimeString().split(' ')[0],
-            status: 'pending'
-        };
+        const pendingTransaction = createExpenseTransaction(
+            parseFloat(amount),
+            category,
+            description,
+            'pending',
+            transactionId
+        );
 
         saveTransaction(pendingTransaction);
         localStorage.setItem('pending_upi_confirmation', JSON.stringify(pendingTransaction));
         window.location.href = upiIntentUrl;
     }
 
+    // --- Helper Function to Create Expense Transaction Object ---
+    function createExpenseTransaction(amount, category = '', description = '', status = 'success', id = generateUniqueId()) {
+        return {
+            id,
+            type: 'expense',
+            amount,
+            category,
+            description,
+            date: new Date().toISOString().split('T')[0],
+            time: new Date().toTimeString().split(' ')[0],
+            status
+        };
+    }
+
+    // --- Local Storage Management ---
     function saveTransaction(transaction) {
-        let transactions = JSON.parse(localStorage.getItem('earn_transactions') || '[]');
+        const transactions = JSON.parse(localStorage.getItem('earn_transactions') || '[]');
         transactions.unshift(transaction);
         localStorage.setItem('earn_transactions', JSON.stringify(transactions));
     }
@@ -292,19 +278,66 @@ document.addEventListener('DOMContentLoaded', () => {
         return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     }
 
-    toggleFlashButton.addEventListener('click', () => {
-        if (!html5QrCode) return;
+    // --- Error Display ---
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorMessage.style.display = 'block';
+        setTimeout(() => {
+            errorMessage.style.display = 'none';
+        }, 3000);
+    }
 
-        html5QrCode.isTorchOn().then(isTorchOn => {
-            html5QrCode.toggleTorch().then(() => {
-                toggleFlashButton.textContent = isTorchOn ? 'Enable Flash' : 'Disable Flash';
-            }).catch(err => {
-                console.error('Error toggling torch:', err);
-                showNotification('Flash Error', 'Error toggling flash.', 'error');
+    // --- Flash Toggle ---
+    toggleFlashButton.addEventListener('click', async () => {
+        if (!videoTrack) {
+            showError('Camera not active or flash control not available.');
+            return;
+        }
+        try {
+            flashEnabled = !flashEnabled;
+            await videoTrack.applyConstraints({ advanced: [{ torch: flashEnabled }] });
+            toggleFlashButton.textContent = flashEnabled ? 'Disable Flash' : 'Enable Flash';
+            toggleFlashButton.classList.toggle('active', flashEnabled);
+        } catch (err) {
+            console.error('Error toggling flash:', err);
+            showError('Flash not supported on this device or browser.');
+            flashEnabled = false;
+            toggleFlashButton.classList.remove('active');
+        }
+    });
+
+    // --- Pinch-to-Zoom and Tap-to-Focus ---
+    let initialPinchDistance = null;
+    qrScannerView.addEventListener('touchstart', (event) => {
+        if (event.touches.length === 2) {
+            initialPinchDistance = Math.hypot(
+                event.touches[0].pageX - event.touches[1].pageX,
+                event.touches[0].pageY - event.touches[1].pageY
+            );
+        } else if (event.touches.length === 1 && videoTrack) {
+            const touchX = event.touches[0].clientX / qrScannerView.offsetWidth;
+            const touchY = event.touches[0].clientY / qrScannerView.offsetHeight;
+            videoTrack.applyConstraints({ advanced: [{ focusMode: 'once', focusPointX: touchX, focusPointY: touchY }] }).catch(err => {
+                console.warn("Error applying tap-to-focus:", err);
             });
-        }).catch(err => {
-            console.error('Error checking torch status:', err);
-            showNotification('Flash Error', 'Error checking flash status.', 'error');
-        });
+        }
+    });
+
+    qrScannerView.addEventListener('touchmove', (event) => {
+        if (event.touches.length === 2 && initialPinchDistance !== null && videoTrack) {
+            const currentPinchDistance = Math.hypot(
+                event.touches[0].pageX - event.touches[1].pageX,
+                event.touches[0].pageY - event.touches[1].pageY
+            );
+            const scaleFactor = currentPinchDistance / initialPinchDistance;
+            const newZoom = Math.min(Math.max(scale * scaleFactor, 1), 3);
+            videoTrack.applyConstraints({ advanced: [{ zoom: newZoom }] }).catch(err => {
+                console.warn("Error applying pinch-to-zoom:", err);
+            });
+        }
+    });
+
+    qrScannerView.addEventListener('touchend', () => {
+        initialPinchDistance = null;
     });
 });

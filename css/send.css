@@ -409,11 +409,3 @@ input:checked + .slider:before {
     background-color: #007bff; /* Primary color */
     color: white;
 }
-
-/* Responsive adjustments */
-@media (max-width: 480px) {
-    .qr-scanner-view {
-        width: 95%;
-        max-width: none;
-    }
-    .qr
