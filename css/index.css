@@ -273,7 +273,7 @@
     #transactionsTable tr th:nth-child(5), 
     #transactionsTable tr td:nth-child(5){
         /* border: 1px solid red; */
-        display: none;
+        /* display: none; */
     }
     
     #transactionsTable tr th:nth-child(2), 
