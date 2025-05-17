@@ -24,6 +24,7 @@
 .namaste {
     padding-top:10px;
     text-align:center;
+    color: var(--text-secondary);
 }
 .namaste.devi {
     font-size: 29px;
