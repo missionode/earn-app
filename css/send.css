@@ -296,3 +296,124 @@ input:checked + .slider:before {
 #detailsFields.hidden {
     display: none;
 }
+
+/* QR Scanner Styles */
+.qr-scanner-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* Ensure it's on top */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.qr-scanner-popup.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.qr-scanner-view {
+    position: relative;
+    width: 80%; /* Adjust as needed for responsiveness */
+    max-width: 400px;
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.qr-scanner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid #007bff; /* Example accent color */
+    box-sizing: border-box;
+    pointer-events: none;
+    animation: pulse-border 2s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-border {
+    0% { border-color: #007bff; }
+    100% { border-color: #66aaff; }
+}
+
+.qr-scanner-laser {
+    position: absolute;
+    left: 10%;
+    top: 50%;
+    width: 80%;
+    height: 2px;
+    background-color: #ff4d4d; /* Example laser color */
+    animation: laser-move 1.5s linear infinite;
+}
+
+@keyframes laser-move {
+    0% { top: 15%; }
+    50% { top: 85%; }
+    100% { top: 15%; }
+}
+
+.qr-scan-success {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4em;
+    color: #28a745; /* Success color */
+    opacity: 0;
+    animation: fade-in-out 0.8s ease-in-out forwards;
+}
+
+@keyframes fade-in-out {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.qr-scanner-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-size: 1.2em;
+}
+
+.qr-scanner-close,
+.qr-scanner-flash {
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.qr-scanner-close {
+    background-color: #dc3545; /* Danger color */
+    color: white;
+}
+
+.qr-scanner-flash {
+    background-color: #007bff; /* Primary color */
+    color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .qr-scanner-view {
+        width: 95%;
+        max-width: none;
+    }
+    .qr
