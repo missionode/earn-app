@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeScannerButton = document.getElementById('closeScanner');
     const addExpenseBtn = document.getElementById('addExpenseBtn');
     const toggleFlashButton = document.getElementById('toggleFlash');
+    // Get the switch and the details container for Send page
     const toggleDetailsSwitch = document.getElementById('toggleDetails');
     const detailsFields = document.getElementById('detailsFields');
 
@@ -29,26 +30,34 @@ document.addEventListener('DOMContentLoaded', () => {
     let html5QrCode = null; // To hold the instance
     let qrCodeDetected = false;
 
-    // Load the saved switch state from local storage
-    const savedDetailsState = localStorage.getItem('showDetails');
-    if (savedDetailsState === 'false') {
-        toggleDetailsSwitch.checked = false;
+    // --- Unified Switch Logic ---
+    // Load the saved switch state from local storage (using a single key)
+    const hideDetailsState = localStorage.getItem('hideDetails');
+    // Default to showing details if state is not set
+    const showDetails = hideDetailsState === null ? true : hideDetailsState === 'true';
+
+    toggleDetailsSwitch.checked = showDetails;
+    if (!showDetails) {
         detailsFields.classList.add('hidden');
     } else {
-        toggleDetailsSwitch.checked = true;
         detailsFields.classList.remove('hidden');
     }
 
     // Event listener for the toggle switch
     toggleDetailsSwitch.addEventListener('change', () => {
-        detailsFields.classList.toggle('hidden');
-        localStorage.setItem('showDetails', toggleDetailsSwitch.checked);
+        const currentState = toggleDetailsSwitch.checked;
+        detailsFields.classList.toggle('hidden', !currentState);
+        // Save the state using the unified key
+        localStorage.setItem('hideDetails', currentState);
     });
+    // --- End Unified Switch Logic ---
+
 
     sendForm.addEventListener('submit', (event) => {
         event.preventDefault();
 
         amount = parseFloat(amountInput.value);
+        // Only get category and description if details are shown
         const category = toggleDetailsSwitch.checked ? getSelectedCategory() : '';
         const description = toggleDetailsSwitch.checked ? descriptionInput.value : '';
 
@@ -74,8 +83,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     addExpenseBtn.addEventListener('click', () => {
         const manualExpenseAmount = parseFloat(amountInput.value);
+         // Only get category and description if details are shown
         const manualExpenseDescription = toggleDetailsSwitch.checked ? descriptionInput.value : '';
         const manualExpenseCategory = toggleDetailsSwitch.checked ? getSelectedCategory() : '';
+
 
         if (isNaN(manualExpenseAmount) || manualExpenseAmount <= 0) {
             alert('Please enter a valid expense amount.');
@@ -119,6 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 extractedUPIID = qrData.upiId;
                 extractedMerchantName = qrData.merchantName;
                 if (extractedUPIID) {
+                    // Only get category and description if details are shown
                     const category = toggleDetailsSwitch.checked ? getSelectedCategory() : '';
                     const description = toggleDetailsSwitch.checked ? descriptionInput.value : '';
                     initiateUpiPayment(extractedUPIID, amount, description, category, extractedMerchantName);

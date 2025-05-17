@@ -327,10 +327,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Logic for hiding transaction details using nth-child (from previous request)
-    const showDetailsState = localStorage.getItem('showDetails');
-    if (showDetailsState === 'false') {
+    const hideDetailsState = localStorage.getItem('hideDetails');
+    if (hideDetailsState === 'false') { // Check for 'false' string
         document.body.classList.add('hide-transaction-details');
+    } else {
+         document.body.classList.remove('hide-transaction-details'); // Ensure class is removed if state is true or not set
     }
+
 
     // Function to get the value of a specific query parameter from the URL
     function getQueryParam(name) {
@@ -369,18 +372,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // (Optional) Handle callback URL parameters for transaction status (keep this)
-    const urlParams = new URLSearchParams(window.location.search);
-    const paymentStatus = urlParams.get('status'); // Using 'status' for transaction callbacks
-    const returnedTransactionId = urlParams.get('transactionId');
+    const urlParamsTransaction = new URLSearchParams(window.location.search); // Use a different variable name
+    const paymentStatusTransaction = urlParamsTransaction.get('status'); // Using 'status' for transaction callbacks
+    const returnedTransactionIdTransaction = urlParamsTransaction.get('transactionId');
 
-    if (paymentStatus === 'success' && returnedTransactionId) {
+    if (paymentStatusTransaction === 'success' && returnedTransactionIdTransaction) {
         // Find the 'pending' transaction with the matching transactionId and update its status to 'success'
         const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-        const transactionToUpdate = transactions.find(t => t.id === returnedTransactionId && t.type === 'expense' && t.status === 'pending');
+        const transactionToUpdate = transactions.find(t => t.id === returnedTransactionIdTransaction && t.type === 'expense' && t.status === 'pending');
         if (transactionToUpdate) {
             transactionToUpdate.status = 'success';
             localStorage.setItem('earn_transactions', JSON.stringify(transactions));
-            alert(`Payment successful for Transaction ID: ${returnedTransactionId}`);
+            alert(`Payment successful for Transaction ID: ${returnedTransactionIdTransaction}`);
             // Optionally update the transactions table immediately
             loadTransactions();
         }

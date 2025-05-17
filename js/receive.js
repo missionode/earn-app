@@ -14,29 +14,38 @@ document.addEventListener('DOMContentLoaded', () => {
     const categorySalary = document.getElementById('categorySalary');
     const categoryOther = document.getElementById('categoryOther');
     const customReceiptButton = document.getElementById('customReceiptButton'); // Get the custom receipt button
+    // Get the switch and the details container for Receive page
     const toggleDetailsSwitchReceive = document.getElementById('toggleDetailsReceive');
     const detailsFieldsReceive = document.getElementById('detailsFieldsReceive');
 
-    // Load the saved switch state from local storage for receive page
-    const savedDetailsStateReceive = localStorage.getItem('showDetailsReceive');
-    if (savedDetailsStateReceive === 'false') {
-        toggleDetailsSwitchReceive.checked = false;
+    // --- Unified Switch Logic ---
+    // Load the saved switch state from local storage (using a single key)
+    const hideDetailsState = localStorage.getItem('hideDetails');
+    // Default to showing details if state is not set
+    const showDetails = hideDetailsState === null ? true : hideDetailsState === 'true';
+
+    toggleDetailsSwitchReceive.checked = showDetails;
+    if (!showDetails) {
         detailsFieldsReceive.classList.add('hidden');
     } else {
-        toggleDetailsSwitchReceive.checked = true;
         detailsFieldsReceive.classList.remove('hidden');
     }
 
-    // Event listener for the toggle switch on receive page
+    // Event listener for the toggle switch
     toggleDetailsSwitchReceive.addEventListener('change', () => {
-        detailsFieldsReceive.classList.toggle('hidden');
-        localStorage.setItem('showDetailsReceive', toggleDetailsSwitchReceive.checked);
+        const currentState = toggleDetailsSwitchReceive.checked;
+        detailsFieldsReceive.classList.toggle('hidden', !currentState);
+        // Save the state using the unified key
+        localStorage.setItem('hideDetails', currentState);
     });
+    // --- End Unified Switch Logic ---
+
 
     receiveForm.addEventListener('submit', (event) => {
         event.preventDefault();
 
         const amount = parseFloat(amountInput.value);
+        // Only get category and description if details are shown
         const description = toggleDetailsSwitchReceive.checked ? descriptionInput.value : '';
         let category = '';
         if (toggleDetailsSwitchReceive.checked) {
@@ -69,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Event listener for the "Add Custom Receipt" button
     customReceiptButton.addEventListener('click', () => {
         const amount = parseFloat(amountInput.value);
+         // Only get category and description if details are shown
         const description = toggleDetailsSwitchReceive.checked ? descriptionInput.value : '';
         let category = '';
         if (toggleDetailsSwitchReceive.checked) {
