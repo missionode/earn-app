@@ -21,6 +21,14 @@
     margin-right: auto;
 }
 
+.namaste {
+    padding-top:10px;
+    text-align:center;
+}
+.namaste.devi {
+    font-size: 29px;
+}
+
 .filter-research {
     margin-bottom: 15px;
     margin-top: 15px;
