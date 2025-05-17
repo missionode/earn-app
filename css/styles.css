@@ -366,7 +366,7 @@ body.hide-transaction-details #transactionsTable td:nth-child(7)  /* Status */
 #dailyCounter {
     font-size: 1.5em;
     font-weight: bold;
-    color: gold;
+    color: #d4be4d;
     font-size: 1rem;
 }
 
