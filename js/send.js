@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const rearCamera = devices.find(device => device.label.toLowerCase().includes('back') || device.label.toLowerCase().includes('rear'));
                 const cameraId = rearCamera ? rearCamera.id : devices[0].id;
 
-                const initialZoomFactor = 7.0; // Adjust this value based on testing
+                const initialZoomFactor = 9.0; // Adjust this value based on testing
 
                 const config = {
                     fps: 20,
