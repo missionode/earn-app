@@ -22,13 +22,13 @@
 }
 
 .namaste {
-    padding-top:10px;
     text-align:center;
     color: #bdcbe0;
+    padding: 9px;
 }
 .namaste.devi {
-    font-size: 20px;
-    margin-bottom: 20px;
+    font-size: 19px;
+    margin-top: 20px;
 }
 
 .filter-research {
@@ -44,7 +44,7 @@
     position: absolute;
     top: 0px;
     left: 0px;
-    background-color: var(--background-secondary); /* Using a CSS variable */
+    background: var(--background-secondary); /* Using a CSS variable */
     padding: 30px;
     border-radius: 0px;
     z-index: 1000;
@@ -122,6 +122,7 @@
 .action-buttons {
     display: flex;
     margin-bottom: 20px;
+    /* margin-top: 10px; */
     gap: 20px;
    /* z-index: 999;
    
@@ -168,10 +169,10 @@
     border-radius: 8px;
     cursor: pointer;
     color: var(--background-light);
-    background-color: var(--accent-color);
+    background: var(--accent-color);
     font-weight: bold;
     font-size: 1.2rem;
-    transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+    transition: border-color 0.15s ease-in-out, background 0.15s ease-in-out;
 }
 
 .wallet .filter h3 {
@@ -180,10 +181,10 @@
 }
 
 .header-logo-section {
-    display: flex
-;
+    display: flex;
     align-items: center;
     gap: 3px;
+    font-weight: 300;
     align-content: center;
     justify-content: center;
     flex-direction: row;
@@ -214,7 +215,7 @@
   }
 
 .action-buttons .button {
-    background-color: (--background-primary);
+    background: (--background-primary);
     flex: 1;
     display: flex;
     align-items: center;
@@ -222,22 +223,22 @@
     padding: 15px 20px;
     border: none;
     border-radius: 8px;
-    background-color: var(--accent-color); /* Using a CSS variable */
+    background: var(--accent-color); /* Using a CSS variable */
     color: var(--text-on-accent); /* Using a CSS variable */
     font-weight: bold;
     font-size:.8rem;
     text-transform: uppercase;
     gap: 3px;
     cursor: pointer;
-    transition: background-color 0.15s ease-in-out, transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    transition: background 0.15s ease-in-out, transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
 #receiveMoneyBtn {
-    background-color: var(--income-color);
+    background: var(--income-color);
 }
 
 #sendMoneyBtn {
-    background-color: var(--expense-color);
+    background: var(--expense-color);
 }
 
 .popup-help {
@@ -268,7 +269,7 @@
 }
 
 .action-buttons .button:hover {
-    background-color: var(--accent-hover-color); /* Using a CSS variable */
+    background: var(--accent-hover-color); /* Using a CSS variable */
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -311,7 +312,7 @@
 }
 
 .summary-item {
-    background-color: var(--background-secondary); /* Using a CSS variable */
+    background: var(--background-secondary); /* Using a CSS variable */
     padding: 20px;
     border-radius: 15px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -335,6 +336,7 @@
     margin-bottom: 5px;
     text-transform: uppercase;
     font-size: 1rem;
+    opacity: 0.6;
 }
 
 .summary-item.income p strong {
@@ -355,7 +357,7 @@
 }
 
 .filter-controls {
-    display: flex;
+    display: grid;
     flex-wrap: wrap;
     gap: 15px;
     margin-bottom: 20px;
@@ -374,6 +376,14 @@
     padding: 8px;
     border: 1px solid var(--border-color); /* Using a CSS variable */
     border-radius: 5px;
+    width: 100%;
+}
+
+
+.date-filter {
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 
 .table_wrap {
@@ -388,7 +398,7 @@
     width: 100%;
     border-collapse: collapse;
     /* margin-top: 10px; */
-    background-color: var(--background-secondary); /* Using a CSS variable */
+    background: var(--background-secondary); /* Using a CSS variable */
     border-radius: 8px;
     overflow: auto;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -404,7 +414,7 @@
 }
 
 #transactionsTable th {
-    background-color: var(--background-light); /* Using a CSS variable */
+    background: var(--background-light); /* Using a CSS variable */
     font-weight: bold;
     color: var(--text-primary); /* Using a CSS variable */
 }
@@ -428,7 +438,7 @@
     align-items: center;
     justify-content: center;
     gap: 5px;
-    margin-top: 25px;
+    margin-top: 20px;
 }
 
 body:has(> .popup)
@@ -440,7 +450,7 @@ body:has(> .popup)
     padding: 12px 16px; /* Increased padding */
     border: 1px solid #e0e0e0; /* Softer border color */
     border-radius: 8px; /* Slightly more rounded corners */
-    background-color: #ffffff; /* Lighter background */
+    background: #ffffff; /* Lighter background */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow */
     width: fit-content; /* Adjust width to content */
     margin-bottom: 20px;
@@ -473,7 +483,7 @@ body:has(> .popup)
 }
 
 .responsive-image {
-    width: 151px;
+    width: 128px;
     height: auto;
 }
 
@@ -489,7 +499,7 @@ body:has(> .popup)
     bottom: 0;
     left: 0;
     width: 100%;
-    background-color: #f8f8f8;
+    background: #f8f8f8;
     color: #333;
     padding: 15px;
     border-top: 1px solid #ddd;
@@ -527,7 +537,7 @@ body:has(> .popup)
     top: 0;
     left: 0;
     width: 100%;
-    background-color: #f0f9ff; /* Light blue background */
+    background: #f0f9ff; /* Light blue background */
     color: #1e3a8a; /* Dark blue text */
     padding: 16px 20px;
     display: flex;
@@ -550,7 +560,7 @@ body:has(> .popup)
 
 #skipNotification,
 #paynowheader {
-    background-color: #4f46e5; /* Indigo button */
+    background: #4f46e5; /* Indigo button */
     color: white;
     border: none;
     padding: 10px 15px;
@@ -558,7 +568,7 @@ body:has(> .popup)
     cursor: pointer;
     font-size: 14px;
     font-weight: 600;
-    transition: background-color 0.2s ease-in-out;
+    transition: background 0.2s ease-in-out;
     text-decoration: none; /* Remove underline from the link */
     display: inline-block; /* To allow padding and margin */
     margin-left: 10px; /* Space between buttons */
@@ -566,7 +576,7 @@ body:has(> .popup)
 
 #skipNotification:hover,
 #paynowheader:hover {
-    background-color: #6366f1; /* Lighter indigo on hover */
+    background: #6366f1; /* Lighter indigo on hover */
 }
 
 /* Optional: Add a close button for more control */
@@ -600,9 +610,9 @@ body:has(> .popup)
 
 /* Slightly different style for Pay Now to make it stand out */
 #paynowheader {
-    background-color: #22c55e; /* Green Pay Now button */
+    background: #22c55e; /* Green Pay Now button */
 }
 
 #paynowheader:hover {
-    background-color: #4ade80; /* Lighter green on hover */
+    background: #4ade80; /* Lighter green on hover */
 }

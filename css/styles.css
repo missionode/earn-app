@@ -1,20 +1,20 @@
 :root {
     /* Color Palette */
 
---background-primary: linear-gradient(135deg, #f4f7fb 0%, #e9eff5 100%); /* Soft blue-gray gradient */
---background-secondary: #ffffff; /* Pure white for cards */
---background-light: linear-gradient(135deg, #fafbff 0%, #f1f5ff 100%); /* Ultra-light blue gradient */
---text-primary: #1a2634; /* Solid navy for readability */
---text-secondary: #64748b; /* Solid muted slate */
---text-on-accent: #ffffff; /* Solid white for text on accents */
---text-link: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%); /* Blue gradient for links */
---accent-color: linear-gradient(135deg, #60a5fa 0%, #93c5fd 100%); /* Soft blue gradient */
---accent-hover-color: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); /* Darker blue gradient */
---border-color: linear-gradient(90deg, #e2e8f0 0%, #d1dae6 100%); /* Subtle gray gradient */
---border-color-light: linear-gradient(90deg, #edf2f7 0%, #e2e8f0 100%); /* Lighter gray gradient */
---income-color: #4ade80; /* Solid vibrant mint green for income */
---expense-color: #f87171; /* Solid soft coral red for expenses */
---error-color: #f87171; /* Solid coral red, same as expense */
+    --background-primary: linear-gradient(135deg, #f4f7fb 0%, #e9eff5 100%); /* Soft blue-gray gradient */
+    --background-secondary: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); /* Subtle white to light gray */
+    --background-light: linear-gradient(135deg, #fafbff 0%, #f1f5ff 100%); /* Ultra-light blue gradient */
+    --text-primary: #1a2634; /* Soft dark navy */
+    --text-secondary: #64748b; /* Muted slate */
+    --text-on-accent: #ffffff; /* Pure white */
+    --text-link: #3b82f6; /* Vibrant blue */
+    --accent-color: #60a5fa; /* Soft blue */
+    --accent-hover-color: #3b82f6; /* Darker blue */
+    --border-color: #e2e8f0; /* Light gray */
+    --border-color-light: #edf2f7; /* Lighter gray */
+    --income-color: #4ade80; /* Vibrant mint green */
+    --expense-color: #f87171; /* Soft coral red */
+    --error-color: #f87171; /* Same as expense */
     
     /* Typography */
     --font-family-base: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -49,12 +49,16 @@
     padding: 0;
 }
 
+html {
+    height: 100vh;
+}
+
 body {
     font-family: var(--font-family-base);
     font-size: var(--font-size-base);
     line-height: var(--line-height-base);
     color: var(--text-primary);
-    background-color: var(--background-primary);
+    background: var(--background-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     padding: 0 var(--container-padding);
@@ -71,7 +75,7 @@ body {
     padding: 10px 15px;
     border: none;
     border-radius: var(--border-radius-button);
-    background-color: var(--background-light);
+    background: var(--background-light);
     color: var(--text-primary);
     cursor: pointer;
     font-weight: bold;
@@ -92,17 +96,17 @@ body {
 }
 
 .button.primary {
-    background-color: var(--accent-color);
+    background: var(--accent-color);
     color: var(--text-on-accent);
 }
 
 .button.primary:hover {
-    background-color: var(--accent-hover-color);
+    background: var(--accent-hover-color);
 }
 
 /* Cards */
 .card {
-    background-color: var(--background-secondary);
+    background: var(--background-secondary);
     border-radius: var(--border-radius-card);
     box-shadow: var(--box-shadow-card);
     transition: box-shadow var(--transition-duration) var(--transition-easing),
@@ -145,6 +149,10 @@ body {
     margin-bottom: 1rem;
 }
 
+input[type="number"], textarea {
+    border: 1px solid red;
+}
+
 /* Interactive Elements */
 a {
     color: var(--text-link);
@@ -171,7 +179,7 @@ select {
     font-size: inherit;
     font-family: inherit;
     color: var(--text-primary);
-    background-color: var(--background-secondary);
+    background: var(--background-secondary);
 }
 
 input:focus,
@@ -227,7 +235,7 @@ img {
     bottom: 20px;
     left: 20px;
     right: 20px;
-    background-color: #333; /* Dark background */
+    background: #333; /* Dark background */
     color: #eee; /* Light text */
     border-radius: 12px;
     padding: 20px;
@@ -252,7 +260,7 @@ img {
     height: 60px;
     border-radius: 8px;
     object-fit: contain;
-    background-color: #444; /* Slightly lighter background for logo container */
+    background: #444; /* Slightly lighter background for logo container */
     padding: 5px; /* Add some padding around the logo */
   }
   
@@ -272,27 +280,27 @@ img {
   #installPrompt button {
     flex-shrink: 0; /* Prevent buttons from shrinking */
     margin-left: 10px;
-    background-color: #555; /* Dark button background */
+    background: #555; /* Dark button background */
     color: #eee; /* Light button text */
     border: none;
     padding: 8px 15px;
     border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
+    transition: background 0.2s ease-in-out;
     margin-right: 10px;
   }
   
   #installPrompt button.primary {
-    background-color: var(--background-primary); 
+    background: var(--background-primary); 
     color: var(--text-primary);
   }
   
   #installPrompt button.secondary {
-    background-color: #444; /* Slightly lighter dark for secondary */
+    background: #444; /* Slightly lighter dark for secondary */
   }
   
   #installPrompt button:hover {
-    background-color: #777; /* Slightly lighter dark on hover */
+    background: #777; /* Slightly lighter dark on hover */
   }
   
   /* Responsive adjustments */
@@ -319,7 +327,12 @@ img {
     }
   }
 
-
+.back-link img {
+    border-radius: 100px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
 
 
 

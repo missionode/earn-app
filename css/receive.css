@@ -36,7 +36,9 @@ h1 {
     border: 1px solid var(--border-color); /* Using a CSS variable */
     border-radius: 4px;
     box-sizing: border-box;
-    background: #f1f1f1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    /* background: #f1f1f1; */
 }
 
 .radio-group {
@@ -239,3 +241,20 @@ input:checked + .slider:before {
 }
 
 /* Any other specific styles for receive.html */
+
+.footer-Adv {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.footer-Adv figure {
+    display: flex;
+    gap: 2px;
+    /* width: 220px; */
+    overflow: visible;
+    padding: 20px 10px 20px 20px;
+    align-content: space-around;
+    align-items: center;
+    justify-content: flex-end;
+}
