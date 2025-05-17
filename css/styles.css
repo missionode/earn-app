@@ -360,7 +360,7 @@ body.hide-transaction-details #transactionsTable td:nth-child(7)  /* Status */
     display: flex;
     align-items: center;
     gap: 10px;
-    margin: 20px;
+    /* margin: 20px; */
 }
 
 #dailyCounter {
