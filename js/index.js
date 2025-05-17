@@ -1,11 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Variables (Declared only once) ---
-    const homePage = document.getElementById('homepage');
-    const subscriptionNotification = document.getElementById('subscriptionNotification');
-    const skipNotificationButton = document.getElementById('skipNotification');
-    const manualConfirmationPopup = document.getElementById('manualConfirmationPopup');
-    const confirmPaidButton = document.getElementById('confirmPaidButton');
-    const confirmNotPaidButton = document.getElementById('confirmNotPaidButton');
+    // --- Variables ---
+    const homePage = document.getElementById('homepage'); // Keep this as it's used for other logic
     const upiSetupPopup = document.getElementById('upiSetupPopup');
     const upiSetupForm = document.getElementById('upiSetupForm');
     const upiIdInput = document.getElementById('upiId');
@@ -31,20 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const upiConfirmCancelButton = document.getElementById('upiConfirmCancelButton');
     const upiConfirmButton = document.getElementById('upiConfirmButton');
 
-
-    const subscriptionDay = 17; // Set the day of the month for subscription trigger
-    const notificationMaxDisplay = 5;
-
-    let isUserSubscribed = localStorage.getItem('earnapp_subscription') === 'paid';
-    let notificationDisplayCount = parseInt(localStorage.getItem('notificationCount')) || 0;
-    let lastNotificationDay = parseInt(localStorage.getItem('lastNotificationDay')) || 0;
-
-    const today = new Date();
-    const currentDay = today.getDate();
-
     let allTransactions = [];
 
-    // --- Helper Functions (Defined before they are called) ---
+    // --- Helper Functions ---
     const getLocalStorageItem = (key) => localStorage.getItem(key);
     const setLocalStorageItem = (key, value) => localStorage.setItem(key, value);
     const isFirstTimeUser = () => !getLocalStorageItem('earn_upiId') || !getLocalStorageItem('earn_username');
@@ -114,46 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
         'travel': 'assets/icons/travel.svg',
         'others': 'assets/icons/others.svg',
     })[category] || '';
-
-    // Function to redirect to the subscription page
-    function redirectToSubscription() {
-        window.location.href = 'subscription.html'; // Replace with your actual subscription page URL
-    }
-
-    // Function to show the notification
-    function showNotification() {
-        subscriptionNotification.style.display = 'flex';
-        // Only increment count and update day if it's a new day for notification
-        if (lastNotificationDay !== currentDay) {
-            localStorage.setItem('notificationCount', notificationDisplayCount + 1);
-            localStorage.setItem('lastNotificationDay', currentDay);
-            notificationDisplayCount++; // Update in-memory count
-            lastNotificationDay = currentDay; // Update in-memory day
-        }
-    }
-
-    // Function to hide the notification
-    function hideNotification() {
-        subscriptionNotification.style.display = 'none';
-    }
-
-    // Function to restrict access
-    function restrictAccess() {
-        homePage.innerHTML = '<div style="text-align:center; padding: 50px;"><h1>Subscription Required</h1><p>Please pay your subscription to access the app.</p><a href="subscription.html" class="button primary">Go to Subscription</a></div>';
-    }
-
-    // Function to show manual confirmation popup
-    function showManualConfirmationPopup() {
-         // Only show if not subscribed and not already restricted
-        if (!isUserSubscribed && homePage.querySelector('h1') !== 'Subscription Required') {
-             manualConfirmationPopup.style.display = 'block';
-        }
-    }
-
-    // Function to hide manual confirmation popup
-    function hideManualConfirmationPopup() {
-        manualConfirmationPopup.style.display = 'none';
-    }
 
     const filterTransactions = (transactions, filters) => {
         let filteredTransactions = [...transactions];
@@ -351,44 +295,12 @@ document.addEventListener('DOMContentLoaded', () => {
         updateOverallSummary();
     };
 
-    // --- Initialization and Billing Cycle Logic ---
+    // --- Initialization ---
     // Check for UPI setup first
     if (isFirstTimeUser()) {
         displayUPISetupPopup();
-    } else if (!isUserSubscribed) {
-        // User is not subscribed
-        if (currentDay < subscriptionDay) {
-            // User is in the trial period before the subscription day
-            loadTransactions();
-            updateOverallSummary();
-             // Check for pending transaction confirmation popup (if any)
-            setTimeout(triggerConfirmationPopup, 500);
-        } else if (currentDay === subscriptionDay) {
-            // It's the subscription day
-            if (notificationDisplayCount < notificationMaxDisplay) {
-                 showNotification();
-                 loadTransactions(); // Still allow access on the first day with notification
-                 updateOverallSummary();
-                 setTimeout(triggerConfirmationPopup, 500);
-            } else {
-                 // Notification limit reached on subscription day, restrict access
-                 restrictAccess();
-            }
-        } else if (currentDay > subscriptionDay) {
-            // It's after the subscription day
-            if (notificationDisplayCount < notificationMaxDisplay) {
-                 // Still within the notification period (less than 5 times shown)
-                 showNotification();
-                 loadTransactions(); // Allow access with notification
-                 updateOverallSummary();
-                 setTimeout(triggerConfirmationPopup, 500);
-            } else {
-                 // Notification limit reached, restrict access
-                 restrictAccess();
-            }
-        }
     } else {
-        // User is subscribed, load content normally
+        // User is not a first-time user, load content normally
         loadTransactions();
         updateOverallSummary();
         // Check for pending transaction confirmation popup (if any)
@@ -396,35 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // --- Manual Confirmation Button Listeners ---
-    confirmPaidButton.addEventListener('click', () => {
-        localStorage.setItem('earnapp_subscription', 'paid');
-        isUserSubscribed = true; // Update in-memory status
-        localStorage.removeItem('pending_subscription_payment'); // Clear pending status
-        hideManualConfirmationPopup();
-        alert('Subscription payment confirmed!');
-        // Reload or re-render the page content
-        window.location.reload(); // Simple reload to show full content
-    });
-
-    confirmNotPaidButton.addEventListener('click', () => {
-        localStorage.removeItem('pending_subscription_payment'); // Clear pending status
-        hideManualConfirmationPopup();
-        alert('Please subscribe to continue.');
-        // The billing logic on next load will handle restriction if applicable
-    });
-
-
     // --- Event Listeners ---
-    skipNotificationButton.addEventListener('click', () => {
-        hideNotification();
-        // The count and last day are updated in showNotification, but ensure it's done if skipped before the timeout
-         if (lastNotificationDay !== currentDay) {
-            localStorage.setItem('notificationCount', notificationDisplayCount + 1);
-            localStorage.setItem('lastNotificationDay', currentDay);
-        }
-    });
-
     upiSetupForm.addEventListener('submit', handleUPISetupSubmit);
     receiveMoneyBtn.addEventListener('click', () => window.location.href = 'receive.html');
     sendMoneyBtn.addEventListener('click', () => window.location.href = 'send.html');
@@ -483,5 +367,29 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeUpiSetupButton) {
       closeUpiSetupButton.addEventListener('click', closeUpiSetupPopup);
     }
+
+    // (Optional) Handle callback URL parameters for transaction status (keep this)
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentStatus = urlParams.get('status'); // Using 'status' for transaction callbacks
+    const returnedTransactionId = urlParams.get('transactionId');
+
+    if (paymentStatus === 'success' && returnedTransactionId) {
+        // Find the 'pending' transaction with the matching transactionId and update its status to 'success'
+        const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
+        const transactionToUpdate = transactions.find(t => t.id === returnedTransactionId && t.type === 'expense' && t.status === 'pending');
+        if (transactionToUpdate) {
+            transactionToUpdate.status = 'success';
+            localStorage.setItem('earn_transactions', JSON.stringify(transactions));
+            alert(`Payment successful for Transaction ID: ${returnedTransactionId}`);
+            // Optionally update the transactions table immediately
+            loadTransactions();
+        }
+        // Clear the status and transactionId parameters from the URL
+        const newUrl = window.location.pathname + window.location.hash;
+        window.history.replaceState({}, document.title, newUrl);
+    }
+
+    // Keep populateCategoryFilter call here as it depends on DOM being loaded
+    populateCategoryFilter();
 
 });
