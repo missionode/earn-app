@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const coinsFolder = 'assets/coins/';
     const audioFolder = 'assets/sounds/'; // Assuming you put the sound in an 'assets/sounds' folder
     const coinDropSound = new Audio(`${audioFolder}coin_drop.mp3`); // Create an Audio object
-    const initialDate = new Date('2025-01-17'); // Hardcoded start date
+    const initialDate = new Date('2025-05-11'); // Hardcoded start date
     const coinImages = [
         'gold_coin_1.png',
         'gold_coin_2.png',
@@ -13,7 +13,36 @@ document.addEventListener('DOMContentLoaded', () => {
         'gold_coin_4.png',
         'gold_coin_5.png',
         'gold_coin_6.png',
-        'gold_coin_7.png'
+        'gold_coin_7.png',
+        'copper_coin_.png',
+        'platinum_coin_.png',
+        'gold_coin_.png',
+        'jewel_1_.png',
+        'jewel_2_.png',
+        'jewel_3_.png',
+        'jewel_4_.png',
+        'jewel_5_.png',
+        'jewel_6_.png',
+        'jewel_7_.png',
+        'jewel_8_.png',
+        'jewel_9_.png',
+        'jewel_10_.png',
+        'jewel_11_.png',
+        'jewel_12_.png',
+        'jewel_13_.png',
+        'jewel_14_.png',
+        'jewel_15_.png',
+        'jewel_nav_1_.png',
+        'jewel_nav_2_.png',
+        'jewel_nav_3_.png',
+        'jewel_nav_4_.png',
+        'jewel_nav_5_.png',
+        'jewel_nav_6_.png',
+        'jewel_nav_7_.png',
+        'jewel_nav_8_.png',
+        'jewel_nav_9_.png',
+        'jewel_16_.png',
+        'silver_coin_.png'
         // Add ALL your coin image filenames here
     ];
     const animationSpeed = 5; // Adjust for faster/slower speed (higher is faster)

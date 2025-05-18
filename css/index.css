@@ -29,6 +29,10 @@
 .namaste.devi {
     font-size: 19px;
     margin-top: 20px;
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, #ff0000 0%, #fd4f5c 100%);
+    border-radius: 40px;
+    font-weight: 500;
 }
 
 .filter-research {
@@ -183,7 +187,7 @@
 .header-logo-section {
     display: flex;
     align-items: center;
-    gap: 3px;
+    gap: 10px;
     font-weight: 300;
     align-content: center;
     justify-content: center;
@@ -323,6 +327,14 @@
     text-align: center;
 }
 
+.summary-item:first-child {
+    background: linear-gradient(135deg, #e6f9ed 0%, #d1f2e0 100%);
+}
+
+.summary-item:nth-child(2) {
+    background: linear-gradient(135deg, #e6f9ed 0%, #fceeee 100%);
+}
+
 .summary-item p {
     font-size: 18px;
     font-weight: bold;
@@ -343,6 +355,15 @@
     opacity: 0.6;
 }
 
+.summary-item:first-child h3 {
+    color: #3da76d;
+}
+
+.summary-item:nth-child(2) h3 {
+ color: #d39a96;
+}
+
+
 .summary-item.income p strong {
     color: var(--income-color); /* Using a CSS variable */
 }
@@ -357,7 +378,7 @@
     margin-bottom: 15px;
     opacity: 0.6;
     font-size: 1.2rem;
-    margin: px auto 30px auto;
+    margin: 10px auto 30px auto;
 }
 
 .filter-controls {
@@ -506,6 +527,8 @@ body:has(> .popup)
     align-items: center;
     color: var(--income-color);
     font-weight: 600;
+    padding-right: 10px;
+    padding-left: 10px;
 }
 
 .upi-confirmation-notification {
