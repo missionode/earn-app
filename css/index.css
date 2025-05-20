@@ -30,7 +30,7 @@
     font-size: 19px;
     margin-top: 20px;
     margin-bottom: 15px;
-    background: linear-gradient(135deg, #ff0000 0%, #fd4f5c 100%);
+    background: linear-gradient(135deg, #ff0000 0%, #17d35c 100%);
     border-radius: 40px;
     font-weight: 500;
 }
@@ -192,6 +192,11 @@
     align-content: center;
     justify-content: center;
     flex-direction: row;
+    text-decoration: none;
+}
+
+.header-logo-section:hover {
+    text-decoration: none;
 }
 
 .header-logo-section p {

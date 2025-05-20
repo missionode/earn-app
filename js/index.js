@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const startDateInput = document.getElementById('startDate');
     const endDateInput = document.getElementById('endDate');
     const filterType = document.getElementById('filterType');
-    const clearFilterButton = document.getElementById('clearFilter');
+    const clearFilterButton = document = document.getElementById('clearFilter');
     const filteredSummaryContainer = document.getElementById('filteredSummaryContainer');
     const upiConfirmationNotification = document.getElementById('upiConfirmationNotification');
     const upiConfirmationTitle = document.getElementById('upiConfirmationTitle');
@@ -129,8 +129,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadTransactions = () => {
         console.log("loadTransactions called");
         const storedTransactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-        allTransactions = storedTransactions.filter(t => t.status !== 'pending');
-        console.log("Transactions loaded (excluding pending):", allTransactions);
+        // Filter transactions for display: show 'success' and 'cancelled', exclude 'pending'
+        allTransactions = storedTransactions.filter(t => t.status === 'success' || t.status === 'cancelled');
+        console.log("Transactions loaded (excluding pending for display):", allTransactions);
         const filters = {
             type: filterType.value,
             category: categoryFilter.value,
@@ -170,6 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         updateFilteredSummary(displayedTransactions, filters);
         updateCategoryFilterByType(filterType.value);
+        updateOverallSummary(); // Call this here to ensure it's always up-to-date after loading transactions
     };
 
     const updateFilteredSummary = (transactions, filters) => {
@@ -179,10 +181,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (isFilterActive && filteredSummaryContainer) {
             transactions.forEach(t => {
-                if (t.type === 'income') {
-                    totalIncome += parseFloat(t.amount);
-                } else if (t.type === 'expense') {
-                    totalExpenses += parseFloat(t.amount);
+                // Only count successful transactions for filtered summary
+                if (t.status === 'success') {
+                    if (t.type === 'income') {
+                        totalIncome += parseFloat(t.amount);
+                    } else if (t.type === 'expense') {
+                        totalExpenses += parseFloat(t.amount);
+                    }
                 }
             });
             filteredSummaryContainer.innerHTML = `
@@ -201,11 +206,14 @@ document.addEventListener('DOMContentLoaded', () => {
         let totalIncome = 0;
         let totalExpenses = 0;
 
+        // CRITICAL FIX: Only sum transactions with 'success' status for overall summary
         transactions.forEach(t => {
-            if (t.type === 'income') {
-                totalIncome += parseFloat(t.amount);
-            } else if (t.type === 'expense') {
-                totalExpenses += parseFloat(t.amount);
+            if (t.status === 'success') { // ONLY count successful transactions
+                if (t.type === 'income') {
+                    totalIncome += parseFloat(t.amount);
+                } else if (t.type === 'expense') {
+                    totalExpenses += parseFloat(t.amount);
+                }
             }
         });
 
@@ -226,8 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setLocalStorageItem('earn_upiId', upiId);
             setLocalStorageItem('earn_username', username);
             hideUPISetupPopup();
-            loadTransactions();
-            updateOverallSummary();
+            loadTransactions(); // This will now correctly update the overall summary
         }
     };
 
@@ -262,8 +269,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const triggerConfirmationPopup = () => {
         const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-        if (transactions.length > 0 && transactions[0].status === 'pending') {
-            const latestPendingTransaction = transactions[0];
+        // Find the latest pending transaction. It's usually the first one if added chronologically.
+        const latestPendingTransaction = transactions.find(t => t.status === 'pending');
+
+        if (latestPendingTransaction) {
             upiConfirmationTitle.textContent = 'Confirm Pending Payment';
             upiConfirmationAmount.textContent = `Amount: ₹${parseFloat(latestPendingTransaction.amount).toFixed(2)}`;
             upiConfirmationDescription.textContent = latestPendingTransaction.description || 'No description provided.';
@@ -277,17 +286,12 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             upiConfirmCancelButton.onclick = () => {
+                console.log("Cancel button clicked for transaction ID:", latestPendingTransaction.id);
                 upiConfirmationNotification.classList.remove('show');
                 alert('Payment confirmation cancelled.');
-                // DO NOT call updateTransactionStatus here
-                const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-                if (transactions.length > 0 && transactions[0].status === 'pending') {
-                    transactions[0].status = 'cancelled';
-                    setLocalStorageItem('earn_transactions', JSON.stringify(transactions));
-                    loadTransactions(); // Reload to update the transaction list
-                }
-
-
+                // Corrected: Call updateTransactionStatus to explicitly set 'cancelled'
+                // This replaces the manual modification block that was here before.
+                updateTransactionStatus(latestPendingTransaction.id, 'cancelled');
             };
         } else {
             upiConfirmationNotification.classList.remove('show'); // Ensure it's hidden if no pending transaction
@@ -301,8 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
             t.id === transactionId ? { ...t, status: newStatus } : t
         );
         setLocalStorageItem('earn_transactions', JSON.stringify(updatedTransactions));
-        loadTransactions(); // Reload to show updated status
-        updateOverallSummary();
+        loadTransactions(); // Reload to show updated status and refresh summaries
     };
 
     // --- Initialization ---
@@ -311,8 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
         displayUPISetupPopup();
     } else {
         // User is not a first-time user, load content normally
-        loadTransactions();
-        updateOverallSummary();
+        loadTransactions(); // This will now correctly update overall summary as well
         // Check for pending transaction confirmation popup (if any)
         setTimeout(triggerConfirmationPopup, 500);
     }
@@ -391,11 +393,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
         const transactionToUpdate = transactions.find(t => t.id === returnedTransactionIdTransaction && t.type === 'expense' && t.status === 'pending');
         if (transactionToUpdate) {
-            transactionToUpdate.status = 'success';
-            localStorage.setItem('earn_transactions', JSON.stringify(transactions));
+            // Use updateTransactionStatus to ensure consistency
+            updateTransactionStatus(returnedTransactionIdTransaction, 'success');
             alert(`Payment successful for Transaction ID: ${returnedTransactionIdTransaction}`);
-            // Optionally update the transactions table immediately
-            loadTransactions();
         }
         // Clear the status and transactionId parameters from the URL
         const newUrl = window.location.pathname + window.location.hash;
