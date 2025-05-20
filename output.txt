@@ -1,0 +1,5425 @@
+-e 
+
+=== FILE: ./reset.html ===
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Earn App</title>
+    <meta name="theme-color" content="#f0f4f8">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/reset.css">
+</head>
+<body>
+    <header>
+        <h1>Reset Earn App</h1>
+    </header>
+    <main>
+        <section id="reset-warning">
+            <p class="warning">
+                <strong>Warning!</strong> This action will reset the Earn app to its factory settings.
+                All your recorded transactions, UPI ID, and username will be permanently deleted.
+                This action cannot be undone.
+            </p>
+            <p>Are you sure you want to continue?</p>
+        </section>
+
+        <section id="reset-actions">
+            <button id="resetButton">Yes, Reset App</button>
+            <button id="cancelButton">No, Go Back</button>
+            <p id="reset-message" class="hidden"></p>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Earn App</p>
+    </footer>
+    <script src="js/reset.js"></script>
+</body>
+</html>
+-e 
+
+=== FILE: ./index.html ===
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta name="google" content="notranslate">
+    <meta name="theme-color" content="#f0f4f8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earn - Just keep earning</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="manifest" href="manifest.json">
+    </head>
+<body id="homepage">
+
+    <div class="container">
+
+        <section class="action-buttons into the logo">
+            <p class="namaste" align="center;">☪ ♰ ॐ <span>🪬</span></p>
+            <img src="./assets/images/logofull.svg" class="responsive-image" alt="Earn logo">
+            <section>
+                <a class="header-logo-section" class="" href="faq.html"><p>HELP</p><img src="assets/icons/help.svg" alt="Help icon"></a>
+            </section>
+        </section>
+        <img class="earn-logo" src="assets/icons/icon-96x96.png" alt="earn logo">
+        <div id="upiSetupPopup" class="popup">
+            <img src="assets/images/logofull.svg" class="app-olog" alt="">
+            <h3>Earn with Earn App!</h3>
+            <p>Please set up your correct UPI ID and name to continue.</p>
+            <form id="upiSetupForm">
+                <div class="form-group">
+                    <label for="upiId">UPI ID:</label>
+                    <input type="text" id="upiId" name="upiId" placeholder="eg:johndoe@fbl" autocomplete="username">
+                    <span class="popup-help">Enter your Correct UPI ID</span>
+                    <div class="error-message" id="upiIdError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="username">Name:</label>
+                    <input type="text" placeholder="eg:John Doe" id="username" name="username" autocomplete="name">
+                    <span class="popup-help">Enter your Fullname </span>
+                    <div class="error-message" id="usernameError"></div>
+                </div>
+                <button type="submit" class="button primary">Start Earn</button>
+            </form>
+        </div>
+
+
+        <section class="summary">
+            <div class="summary-item income">
+                <img src="assets/icons/wallet.svg" alt="Income">
+                <h3>Total Income</h3>
+                <p><strong id="totalIncome">₹0.00</strong></p>
+            </div>
+            <div class="summary-item expense">
+                <img src="assets/icons/money-bill-stack.svg" alt="Expenses">
+                <h3>Total Expenses</h3>
+                <p><strong id="totalExpenses">₹0.00</strong></p>
+            </div>
+        </section>
+        <section  class="wallet">
+            <section id="walletfilter" class="filter">
+                <label>
+                    <img style="max-width: 25px;" src="assets/icons/Audit.svg" alt="Audit">
+                </label>
+            </section>
+            <figure class="adsSpace" style="background-image: url(./assets/images/Banner.jpg);">
+                <img style="opacity: 0;" src="assets/images/young-girl-red-shirt-feels-positive.jpg" alt="Free Ads Campaign">
+            </figure>
+            <section class="action-buttons ux-actions">
+                <button id="sendMoneyBtn" class="button">
+                    Expense <img src="assets/icons/arrow-up.svg" alt="Send">
+                </button>
+                <button id="receiveMoneyBtn" class="button">
+                    Incomes <img src="assets/icons/arrow-down.svg" alt="Receive">
+                </button>
+            </section>
+        </section>
+
+
+
+        <section class="transactions">
+            <section id="toggleWalletFilter" class="wallet-filter hidden">
+                <b class="filter-research">Start Analysis by filtering with the below form</b>
+                <div class="filter-controls">
+
+                    <div class="filter-group">
+                        <select id="filterType">
+                            <option value="">All Types</option>
+                            <option value="income">Income</option>
+                            <option value="expense">Expense</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <select id="categoryFilter">
+                            <option value="">All Categories</option>
+                            <option value="cash">Cash</option>
+                            <option value="rent">Rent</option>
+                            <option value="salary">Salary</option>
+                            <option value="other">Other</option>
+                            <option value="food">Food</option>
+                            <option value="shopping">Shopping</option>
+                            <option value="entertainment">Entertainment</option>
+                            <option value="travel">Travel</option>
+                        </select>
+                    </div>
+                    <div class="filter-group date-filter">
+                        <input type="date" placeholder="From date" id="startDate">
+                        <span>to</span>
+                        <input type="date" placeholder="To date" id="endDate">
+                    </div>
+                    <div class="filter-group">
+                        <input style="" type="text" id="searchBox" placeholder="Search by Keywords">
+                    </div>
+                </div>
+
+                <div id="filteredSummaryContainer" class="filtered-summary"></div>
+                <button style="margin-bottom: 5px;" id="clearFilter" class="button">Clear Filters</button>
+            </section>
+
+
+            <h2 align="center">Transactions</h2>
+            <div class="table_wrap">
+                <table id="transactionsTable">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                </table>
+            </div>
+
+        </section>
+        <p class="namaste devi" align="center;">
+            ॐ श्रीं महालक्ष्म्यै नमः
+        </p>
+        <div class="footer_arranged">
+            <div class="prosperity-container">
+                <div id="dailyCounter">0</div>
+                <img id="coinRainTrigger" src="assets/icons/coin.svg" alt="Click for Coin Rain" style="cursor: pointer; width: 30px; height: 30px;">
+            </div>
+            <p class="bodymass" display: flex;"><img src="assets/images/auralogo.png" alt=""></p>
+        </div>
+        
+    </div>
+
+    <div id="paymentConfirmationModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>Payment Status Confirmation</h3>
+            <p>Was your payment for:</p>
+            <p><strong>Amount:</strong> <span id="confirmAmount">₹0.00</span></p>
+            <p><strong>Description:</strong> <span id="confirmDescription">N/A</span></p>
+            <p><strong>Category:</strong> <span id="confirmCategory">N/A</span></p>
+            <p><strong>To:</strong> <span id="confirmMerchant">N/A</span></p>
+            <p class="status-message" id="paymentStatusMessage"></p>
+            <div class="modal-actions">
+                <button id="confirmPaymentSuccessBtn" class="button primary">Yes, it was successful</button>
+                <button id="confirmPaymentCancelBtn" class="button secondary">No, cancel it</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="coinRainContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: -webkit-fill-available; pointer-events: none;">
+    </div>
+
+   
+    
+    <script src="js/prosperity.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+        const button = document.getElementById('walletfilter');
+        const section = document.getElementById('toggleWalletFilter');
+
+        button.addEventListener('click', () => {
+        section.classList.toggle('visible');
+        });
+
+    </script>
+</body>
+</html>
+-e 
+
+=== FILE: ./css/reset.css ===
+/* css/reset.css */
+
+/* Basic styles for the reset page */
+body {
+    font-family: sans-serif;
+    line-height: 1.6;
+    margin: 20px;
+    /* background-color: #f4f4f4; */
+    color: #333;
+}
+
+header {
+    background-color: #333;
+    color: white;
+    padding: 1em 0;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    margin: 0;
+}
+
+main {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#reset-warning {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #ffe0b2; /* Light orange/amber */
+    border: 1px solid #ffb300; /* Amber */
+    border-radius: 4px;
+    color: #795548; /* Brownish */
+}
+
+#reset-warning .warning {
+    color: #d32f2f; /* Dark red */
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+#reset-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+#resetButton {
+    background-color: #d32f2f; /* Red */
+    color: white;
+}
+
+#resetButton:hover {
+    background-color: #b71c1c; /* Darker red */
+}
+
+#cancelButton {
+    background-color: #4CAF50; /* Green */
+    color: white;
+}
+
+#cancelButton:hover {
+    background-color: #388E3C; /* Darker green */
+}
+
+#reset-message {
+    margin-top: 20px;
+    font-weight: bold;
+    color: green;
+}
+
+.hidden {
+    display: none;
+}
+
+footer {
+    text-align: center;
+    margin-top: 20px;
+    color: #777;
+    font-size: 0.9em;
+}
+-e 
+
+=== FILE: ./css/styles.css ===
+:root {
+    /* Color Palette */
+
+    --background-primary: linear-gradient(135deg, #f4f7fb 0%, #e9eff5 100%); /* Soft blue-gray gradient */
+    --background-secondary: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); /* Subtle white to light gray */
+    --background-light: linear-gradient(135deg, #fafbff 0%, #f1f5ff 100%); /* Ultra-light blue gradient */
+    --text-primary: #1a2634; /* Soft dark navy */
+    --text-secondary: #64748b; /* Muted slate */
+    --text-on-accent: #ffffff; /* Pure white */
+    --text-link: #3b82f6; /* Vibrant blue */
+    --accent-color: #60a5fa; /* Soft blue */
+    --accent-hover-color: #3b82f6; /* Darker blue */
+    --border-color: #e2e8f0; /* Light gray */
+    --border-color-light: #edf2f7; /* Lighter gray */
+    --income-color: #4ade80; /* Vibrant mint green */
+    --expense-color: #f87171; /* Soft coral red */
+    --error-color: #f87171; /* Same as expense */
+    
+    /* Typography */
+    --font-family-base: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    --font-size-base: 1rem;
+    --line-height-base: 1.5;
+
+    /* Spacing */
+    --grid-gutter: 24px;
+    --grid-gutter-mobile: 16px;
+    --container-max-width: 1440px;
+    --container-padding: 2vw;
+
+    /* Border Radius */
+    --border-radius-card: 12px;
+    --border-radius-button: 8px;
+
+    /* Box Shadow */
+    --box-shadow-card: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --box-shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    /* Transition */
+    --transition-duration: 150ms;
+    --transition-easing: ease-in-out;
+}
+
+/* Reset and Base Styles */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    height: 100vh;
+}
+
+body {
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    color: var(--text-primary);
+    background: var(--background-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    padding: 0 var(--container-padding);
+}
+
+/* Container */
+.container {
+    max-width: var(--container-max-width);
+    margin-inline: auto; /* Logical property for left/right margin */
+}
+
+/* Buttons */
+.button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: var(--border-radius-button);
+    background: var(--background-light);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-weight: bold;
+    transition: opacity var(--transition-duration) var(--transition-easing),
+                transform var(--transition-duration) var(--transition-easing),
+                box-shadow var(--transition-duration) var(--transition-easing);
+}
+
+.button:hover {
+    opacity: 0.9;
+    transform: translateY(-2%);
+    box-shadow: var(--box-shadow-card);
+}
+
+.button:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+.button.primary {
+    background: var(--accent-color);
+    color: var(--text-on-accent);
+}
+
+.button.primary:hover {
+    background: var(--accent-hover-color);
+}
+
+/* Cards */
+.card {
+    background: var(--background-secondary);
+    border-radius: var(--border-radius-card);
+    box-shadow: var(--box-shadow-card);
+    transition: box-shadow var(--transition-duration) var(--transition-easing),
+                transform var(--transition-duration) var(--transition-easing);
+}
+
+.card:hover {
+    box-shadow: var(--box-shadow-card-hover);
+    transform: translateY(-2%);
+}
+
+/* Grid Layout */
+.grid {
+    display: grid;
+    gap: var(--grid-gutter);
+}
+
+@media (max-width: 768px) {
+    .grid {
+        gap: var(--grid-gutter-mobile);
+    }
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--grid-gutter);
+}
+
+@media (max-width: 768px) {
+    .card-grid {
+        gap: var(--grid-gutter-mobile);
+    }
+}
+
+/* Typography Enhancements (where() for specificity control) */
+:where(h1, h2, h3, h4, h5, h6) {
+    color: var(--text-primary);
+    line-height: 1.2;
+    margin-bottom: 1rem;
+}
+
+input[type="number"], textarea {
+    border: 1px solid red;
+}
+
+/* Interactive Elements */
+a {
+    color: var(--text-link);
+    text-decoration: none;
+    transition: opacity var(--transition-duration) var(--transition-easing);
+}
+
+a:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-button);
+    box-sizing: border-box;
+    font-size: inherit;
+    font-family: inherit;
+    color: var(--text-primary);
+    background: var(--background-secondary);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 1px;
+}
+
+/* Responsive Images */
+img {
+    max-width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-delay: -1ms !important;
+        animation-duration: 1ms !important;
+        transition-delay: -1ms !important;
+        transition-duration: 1ms !important;
+    }
+}
+
+/* Layer Styles (for cascade management - conceptual here, can be expanded) */
+/*
+@layer base {
+    body { ... }
+}
+
+@layer layout {
+    .container { ... }
+    .grid { ... }
+}
+
+@layer components {
+    .button { ... }
+    .card { ... }
+}
+
+@layer utilities {
+    .text-center { ... }
+}
+*/
+
+/* for css/install-prompt */
+#installPrompt {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    background: #333; /* Dark background */
+    color: #eee; /* Light text */
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Slightly darker shadow */
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transform: translateY(100%); /* Start off-screen */
+    opacity: 0;
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    border: 1px solid #555; /* Darker border */
+  }
+  
+  #installPrompt.show-install-prompt {
+    transform: translateY(0); /* Slide in */
+    opacity: 1;
+  }
+  
+  .install-logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: contain;
+    background: #444; /* Slightly lighter background for logo container */
+    padding: 5px; /* Add some padding around the logo */
+  }
+  
+  #installPrompt h3 {
+    margin: 0 0 5px 0;
+    font-size: 1.1em;
+    color: #fff; /* White text for heading */
+  }
+  
+  #installPrompt p {
+    margin: 0 0 10px 0;
+    font-size: 0.9em;
+    color: #ccc; /* Light grey description text */
+    flex-grow: 1; /* Allows description to take up available space */
+  }
+  
+  #installPrompt button {
+    flex-shrink: 0; /* Prevent buttons from shrinking */
+    margin-left: 10px;
+    background: #555; /* Dark button background */
+    color: #eee; /* Light button text */
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+    margin-right: 10px;
+  }
+  
+  #installPrompt button.primary {
+    background: var(--background-primary); 
+    color: var(--text-primary);
+  }
+  
+  #installPrompt button.secondary {
+    background: #444; /* Slightly lighter dark for secondary */
+  }
+  
+  #installPrompt button:hover {
+    background: #777; /* Slightly lighter dark on hover */
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    #installPrompt {
+      flex-direction: column;
+      align-items: stretch;
+      text-align: center;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+      gap: 10px;
+    }
+  
+    .install-logo {
+      width: 40px;
+      height: 40px;
+      margin: 0 auto;
+    }
+  
+    #installPrompt button {
+      margin-left: 0;
+      margin-top: 10px;
+    }
+  }
+
+.back-link img {
+    border-radius: 100px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+
+body {
+    min-height: 100vh;
+    margin: 0; /* Reset default body margin to avoid scrollbar issues */
+    padding-bottom: 20px; /* Optional: Add some padding at the bottom for visual spacing */
+    box-sizing: border-box; /* Recommended for consistent padding/margin behavior */
+}
+
+
+body.hide-transaction-details #transactionsTable th:nth-child(2),
+body.hide-transaction-details #transactionsTable td:nth-child(2), /* Category */
+body.hide-transaction-details #transactionsTable th:nth-child(3),
+body.hide-transaction-details #transactionsTable td:nth-child(3), /* Description */
+body.hide-transaction-details #transactionsTable th:nth-child(6),
+body.hide-transaction-details #transactionsTable td:nth-child(6), /* Time */
+body.hide-transaction-details #transactionsTable th:nth-child(7),
+body.hide-transaction-details #transactionsTable td:nth-child(7)  /* Status */
+{
+    display: none !important;
+}
+
+
+.prosperity-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* margin: 20px; */
+}
+
+#dailyCounter {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #d4be4d;
+    font-size: 1rem;
+}
+
+.coin {
+    pointer-events: none; /* Make sure clicks pass through the coins */
+}
+
+
+body {
+    /* ... other body styles ... */
+    transition: opacity 1s ease-in-out; /* Apply transition to opacity */
+    opacity: 1; /* Ensure it starts fully visible */
+}
+
+body.fade-out {
+    opacity: 0;
+}
+
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+    min-height: 100vh;
+    box-sizing: border-box;
+    position: relative; /* Needed to position the pseudo-element */
+}
+
+body::after {
+    content: "";
+    position: fixed; /* Stay at the bottom of the viewport */
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 50px; /* Adjust the height of the fade area */
+    background: linear-gradient(to top, rgba(244, 244, 244, 1), rgba(244, 244, 244, 0)); /* Gradient from solid to transparent */
+    pointer-events: none; /* Allow interaction with elements underneath */
+}
+
+.main-content {
+    padding: 20px;
+}
+
+.coin {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    pointer-events: none;
+}-e 
+
+=== FILE: ./css/subscription.css ===
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f8; /* Light gray background */
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.subscription-container {
+    background-color: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 600px;
+    text-align: center;
+}
+
+h1 {
+    color: #2c3e50; /* Dark blue heading */
+    margin-bottom: 20px;
+    font-size: 2.5em;
+    font-weight: 600;
+}
+
+p {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    font-size: 1.1em;
+}
+
+.plan-options {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.plan-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    padding: 30px;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.plan-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+.plan-title {
+    color: #3498db; /* Blue plan title */
+    font-size: 1.8em;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.plan-price {
+    color: #27ae60; /* Green price */
+    font-size: 2em;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.plan-features {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.plan-features li {
+    color: #777;
+    margin-bottom: 8px;
+    font-size: 1em;
+}
+
+.subscribe-button {
+    background-color: #2ecc71; /* Green subscribe button */
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: background-color 0.2s ease-in-out;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.subscribe-button:hover {
+    background-color: #27ae60; /* Darker green on hover */
+}
+
+.payment-methods {
+    margin-top: 30px;
+    color: #777;
+    font-size: 0.9em;
+}
+
+.payment-icons {
+    margin-top: 10px;
+}
+
+.payment-icons img {
+    width: 40px;
+    height: auto;
+    margin: 0 5px;
+    vertical-align: middle;
+    opacity: 0.8;
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+    .plan-options {
+        flex-direction: row;
+        justify-content: space-around;
+    }
+
+    .plan-card {
+        width: 45%;
+    }
+}-e 
+
+=== FILE: ./css/receive.css ===
+body {
+    background-color: var(--background-secondary);
+}
+.container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    /*background-color: var(--background-secondary); Using a CSS variable */
+    border-radius: 8px;
+}
+
+h1 {
+    color: var(--text-primary); /* Using a CSS variable */
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.6rem;
+    margin-bottom: 40px;
+    opacity: 0.5;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    color: var(--text-secondary); /* Using a CSS variable */
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input[type="number"],
+.form-group textarea {
+    width: 100%;
+    padding: 20px 20px;
+    border: 1px solid var(--border-color); /* Using a CSS variable */
+    border-radius: 4px;
+    box-sizing: border-box;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    /* background: #f1f1f1; */
+}
+
+.radio-group {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.radio-group label {
+    margin-left: 5px;
+    font-weight: normal;
+}
+
+.button.primary {
+    background-color: var(--income-color);
+    color: var(--text-on-accent); /* Using a CSS variable */
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.button.primary:hover {
+    background-color: var(--accent-hover-color); /* Using a CSS variable */
+}
+
+.back-link {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: var(--text-link); /* Using a CSS variable */
+    text-decoration: none;
+    margin-top: 21px;
+    text-align: right;
+    padding: 13px;
+    display: inline-block;
+}
+
+.back-link:hover {
+    text-decoration: none;
+}
+
+
+.icon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 15px;
+    text-align: center;
+    margin-top: 10px; /* Adjust margin as needed */
+}
+
+.icon-grid input[type="radio"] {
+    display: none; /* Hide the default radio button */
+}
+
+.icon-grid label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border: 1px solid var(--border-color-light); /* Using a CSS variable */
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+}
+
+.icon-grid label:hover,
+.icon-grid input[type="radio"]:checked + label {
+    border-color: var(--accent-color); /* Using a CSS variable */
+    background-color: var(--background-light); /* Using a CSS variable */
+}
+
+.icon-grid label img {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 5px;
+    opacity: 0.3;
+}
+
+.icon-grid label span {
+    color: var(--text-secondary); /* Using a CSS variable */
+    font-size: 0.9rem;
+}
+
+.button.secondary {
+    background-color: var(--background-secondary); /* Lighter background */
+    color: var(--income-color);
+    box-shadow: inset 0px 0px 0px 4px var(--income-color);
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.button.secondary:hover {
+    background-color: #e0e0e0;
+}
+
+#customReceiptButton {
+    margin-left: 10px;
+    border-radius: 100px;
+}
+
+.intoaction-buttons {
+    display: flex;
+    justify-content: col;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 15px;
+}
+
+.intoaction-buttons button.primary {
+    font-size: 1.2rem;
+    padding: 20px 40px;
+    border-radius: 14px;
+}
+
+/* css/receive.css */
+
+/* You can copy the switch styles from css/send.css */
+.switch-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(16px);
+    -ms-transform: translateX(16px);
+    transform: translateX(16px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.toggle-label {
+    font-size: 0.9em;
+    color: #555;
+}
+
+#detailsFieldsReceive.hidden {
+    display: none;
+}
+
+/* Any other specific styles for receive.html */
+
+.footer-Adv {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.footer-Adv figure {
+    display: flex;
+    gap: 2px;
+    /* width: 220px; */
+    overflow: visible;
+    padding: 20px 10px 20px 20px;
+    align-content: space-around;
+    align-items: center;
+    justify-content: flex-end;
+}-e 
+
+=== FILE: ./css/transactions.css ===
+/* css/transactions.css */
+/* Add your styles here */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination button {
+    padding: 8px 15px;
+    margin: 0 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#pageNumbers {
+    margin: 0 10px;
+}
+
+.edit-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    vertical-align: middle;
+    margin-left: 5px;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.popup h3 {
+    margin-top: 0;
+}
+
+.popup .form-group {
+    margin-bottom: 15px;
+}
+
+.popup label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.popup input[type="text"],
+.popup input[type="number"],
+.popup input[type="date"],
+.popup input[type="time"],
+.popup select,
+.popup textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+}
+
+.popup .button {
+    margin-right: 10px;
+}
+
+
+/* css/transactions.css */
+
+body {
+    font-family: sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 1200px;
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.table_wrap {
+    overflow-x: auto;
+    margin-bottom: 20px;
+}
+
+#allTransactionsTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+#allTransactionsTable th,
+#allTransactionsTable td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+#allTransactionsTable th {
+    background-color: #f8f8f8;
+    font-weight: bold;
+    color: #555;
+}
+
+
+#allTransactionsTable td:nth-child(1),
+#allTransactionsTable th:nth-child(1),
+#allTransactionsTable td:nth-child(2),
+#allTransactionsTable th:nth-child(2) {
+    display: none;
+}
+
+#allTransactionsTable td img {
+    margin-right: 10px;
+}
+
+#allTransactionsTable tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+#allTransactionsTable .transaction-icon {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+#allTransactionsTable .edit-icon {
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    vertical-align: middle;
+    margin-left: 10px;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+#allTransactionsTable .edit-icon:hover {
+    opacity: 1;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+    align-items: center;
+}
+
+.pagination button {
+    padding: 10px 20px;
+    margin: 0 8px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    color: #555;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+    background-color: #f0f0f0;
+    border-color: #ccc;
+}
+
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#pageNumbers {
+    margin: 0 15px;
+    display: flex;
+    gap: 5px;
+}
+
+#pageNumbers button {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    color: #555;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+#pageNumbers button.active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+#pageNumbers button:hover:not(.active) {
+    background-color: #f0f0f0;
+    border-color: #ccc;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 30px;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+}
+
+.popup h3 {
+    color: #333;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.popup .form-group {
+    margin-bottom: 20px;
+}
+
+.popup label {
+    display: block;
+    margin-bottom: 8px;
+    color: #555;
+    font-weight: bold;
+}
+
+.popup input[type="text"],
+.popup input[type="number"],
+.popup input[type="date"],
+.popup input[type="time"],
+.popup select,
+.popup textarea {
+    width: calc(100% - 16px);
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 16px;
+    color: #333;
+}
+
+.popup textarea {
+    min-height: 80px;
+}
+
+.popup .button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.popup .button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.popup .button.primary {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.popup .button.primary:hover {
+    background-color: #0056b3;
+}
+
+.popup .button.secondary {
+    background-color: #f0f0f0;
+    color: #555;
+    border: 1px solid #ddd;
+}
+
+.popup .button.secondary:hover {
+    background-color: #e0e0e0;
+    border-color: #ccc;
+}
+
+.footer-Adv {
+    text-align: center;
+    margin-top: 30px;
+    color: #777;
+}
+
+.footer-Adv a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.footer-Adv a:hover {
+    text-decoration: underline;
+}
+
+/* css/transactions.css */
+
+/* Existing styles ... */
+
+.filter-controls {
+    display: grid;
+    grid-template-columns: auto auto auto auto auto; /* Adjust number of columns based on filter fields */
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+@media (max-width: 768px) {
+    .filter-controls {
+        grid-template-columns: auto auto; /* Adjust for smaller screens */
+    }
+
+    .filter-group {
+        width: 100%; /* Make filter groups take full width on smaller screens */
+    }
+}
+
+@media (max-width: 576px) {
+    .filter-controls {
+        grid-template-columns: auto; /* Single column layout for very small screens */
+    }
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    margin-bottom: 5px;
+    color: #555;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.filter-group select,
+.filter-group input[type="date"] {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    color: #333;
+    box-sizing: border-box;
+}
+
+.filter-controls .button.small {
+    padding: 10px 15px;
+    font-size: 0.9em;
+    grid-column: 1 / -1; /* Make the button span across all columns */
+    text-align: center;
+}
+
+@media (min-width: 769px) {
+    .filter-controls .button.small {
+        grid-column: auto; /* Reset grid column span on larger screens if needed */
+        text-align: left; /* Adjust button alignment on larger screens */
+    }
+}
+
+
+/* css/transactions.css */
+/* ... other styles ... */
+
+.edit-icon, .delete-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    /* Remove vertical-align: middle; */
+    margin-left: 5px;
+    display: inline-block; /* Or inline-flex */
+}
+
+#allTransactionsTable td:last-child { /* Target the last cell (Actions) in each row */
+    display: flex;
+    align-items: center;
+}
+
+#allTransactionsTable td:last-child img {
+    margin-left: 5px;
+}
+
+/* If you want spacing between the icons */
+#allTransactionsTable td:last-child img:first-child {
+    margin-left: 0; /* Remove left margin for the first icon */
+}
+
+/* ... other styles ... */
+
+/* css/transactions.css */
+/* ... other styles ... */
+
+#allTransactionsTable td:last-child { /* Target the last cell (Actions) */
+    display: flex;
+    align-items: center; /* Vertically align items in the center */
+    justify-content: flex-start; /* Align icons to the start with spacing */
+    gap: 30px; /* Add some space between the icons */
+    padding-top: 0.5em; /* Adjust vertical padding as needed */
+    padding-bottom: 0.5em;
+}
+
+.edit-icon, .delete-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    display: inline-block; /* Or flex if you need more control */
+    vertical-align: middle; /* Try this for initial alignment */
+}
+
+/* Optional: If you wrapped the icons in a div with class 'action-icon-wrapper' */
+/* .action-icon-wrapper {
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.action-icon-wrapper:first-child {
+    margin-left: 0;
+}
+
+.action-icon-wrapper img {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    vertical-align: middle;
+} */
+
+/* Adjust table cell padding if needed */
+#allTransactionsTable td {
+    padding: 0.5em; /* Adjust as needed */
+}
+
+/* Ensure images inside table cells don't distort the cell height too much */
+#allTransactionsTable img {
+    max-height: 2em; /* Adjust as needed */
+    vertical-align: middle; /* Helps with alignment relative to text */
+}
+
+/* Specific styling for action icons to ensure they align well */
+#allTransactionsTable td img.edit-icon,
+#allTransactionsTable td img.delete-icon {
+    width: 1.2em; /* Adjust size as needed */
+    height: 1.2em;
+    vertical-align: middle;
+    margin-right: 0.3em; /* Add a little space to the right if needed */
+}
+
+/* If you only have icons in the last column, you might simplify */
+#allTransactionsTable td:last-child img {
+    width: 1.2em;
+    height: 1.2em;
+    vertical-align: middle;
+    margin-left: 0; /* Reset any general image margins */
+    margin-right: 0.3em;
+}
+
+#allTransactionsTable td:last-child img:first-child {
+    margin-left: 0; /* Ensure no extra left margin for the first icon */
+}-e 
+
+=== FILE: ./css/index.css ===
+.container {
+    padding: 15px 10px 20px 10px;
+    /* height: 100vh */
+    position: relative;
+}
+
+.earn-logo {
+    position: absolute;
+    width:33px;
+    border-radius: 100%;
+    margin: -20px auto 1px auto;
+    left: 0;
+    right: 0;
+    display: none;
+}
+
+.app-olog {
+    /* margin-top: 50px; */
+    margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.namaste {
+    text-align:center;
+    color: #fcb315;
+    padding: 9px;
+}
+.namaste.devi {
+    font-size: 19px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, #ff0000 0%, #17d35c 100%);
+    border-radius: 40px;
+    font-weight: 500;
+}
+
+.filter-research {
+    margin-bottom: 15px;
+    margin-top: 15px;
+    display: flex;
+    font-size: 1.1rem;
+    opacity: 0.7;
+}
+
+/* UPI Setup Popup Styles */
+.popup {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background: var(--background-secondary); /* Using a CSS variable */
+    padding: 30px;
+    border-radius: 0px;
+    z-index: 1000;
+    text-align: center;
+    width:100%;
+    height:100%;
+    margin-left:auto;
+    margin-right:auto;
+    overflow:hidden;
+}
+
+@media (max-width: 700px) {
+    /* Adjust the width of your target element */
+    .popup {
+      /* You can also add other responsive properties here */
+      margin: 0 auto; /* Optional: centers the element */
+    }
+    
+  }
+
+  @media (max-width: 420px) {
+    /* Adjust the width of your target element */
+    .popup {
+      /* You can also add other responsive properties here */
+      margin: 0 auto; /* Optional: centers the element */
+    }
+    
+  }
+
+  @media (max-width: 498px) {
+    .filter-controls .filter-group:first-child #startDate {
+        margin-bottom: 14px;
+        font-size: 10px;
+    }
+  }
+
+
+.popup h2 {
+    color: var(--text-primary); /* Using a CSS variable */
+    margin-bottom: 15px;
+}
+
+.popup p {
+    color: var(--text-secondary); /* Using a CSS variable */
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    color: var(--text-primary); /* Using a CSS variable */
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color); /* Using a CSS variable */
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.error-message {
+    color: var(--error-color); /* Using a CSS variable */
+    font-size: 0.8rem;
+    margin-top: 5px;
+}
+
+/* Action Buttons Section */
+.action-buttons {
+    display: flex;
+    margin-bottom: 20px;
+    /* margin-top: 10px; */
+    gap: 20px;
+   /* z-index: 999;
+   
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    /* margin-bottom: 120px; 
+    padding: 15px 10px;
+    background: #FAB972; */
+}
+.wallet {
+    display: flex;
+    width: 100%;
+    gap: 15px;
+    text-align: center;
+    margin-top: 10px;
+    justify-content: space-between;
+}
+
+.adsSpace {
+    background-repeat: no-repeat;
+    position: relative;
+    width: 85%;
+    max-height: 128px;
+    margin-left: auto;
+    margin-right: auto;
+    background-position: center center;
+    background-size: cover;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.wallet .filter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--background-light);
+    background: var(--accent-color);
+    font-weight: bold;
+    font-size: 1.2rem;
+    transition: border-color 0.15s ease-in-out, background 0.15s ease-in-out;
+}
+
+.wallet .filter h3 {
+    color:  var(--background-light);
+    font-size: 1.2rem;
+}
+
+.header-logo-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 300;
+    align-content: center;
+    justify-content: center;
+    flex-direction: row;
+    text-decoration: none;
+}
+
+.header-logo-section:hover {
+    text-decoration: none;
+}
+
+.header-logo-section p {
+    font-size: 0.9rem;
+}
+
+.ux-actions {
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 0;
+}
+
+.walletfilter * {
+    cursor: pointer;
+}
+
+#toggleWalletFilter {
+    margin-top: 20px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
+  
+#toggleWalletFilter.visible {
+    min-height: 200px; /* adjust as needed */
+    opacity: 1;
+    display: contents;
+  }
+
+.action-buttons .button {
+    background: (--background-primary);
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 8px;
+    background: var(--accent-color); /* Using a CSS variable */
+    color: var(--text-on-accent); /* Using a CSS variable */
+    font-weight: bold;
+    font-size:.8rem;
+    text-transform: uppercase;
+    gap: 3px;
+    cursor: pointer;
+    transition: background 0.15s ease-in-out, transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+#receiveMoneyBtn {
+    background: var(--income-color);
+}
+
+#sendMoneyBtn {
+    background: var(--expense-color);
+}
+
+.popup-help {
+    margin-top: 7px;
+    font-size: 0.6rem;
+    display: flex;
+    margin-left: 8px;
+}
+
+.walletfilter {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
+  
+  .walletfilter.visible {
+    max-height: 200px; /* adjust as needed */
+    opacity: 1;
+  }
+  
+
+.action-buttons .button img {
+    width: 24px;
+    height: 24px;
+    /* margin-left: 10px; */
+    color: #fff;
+}
+
+.action-buttons .button:hover {
+    background: var(--accent-hover-color); /* Using a CSS variable */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+@media (max-width: 600px) {
+
+    #transactionsTable tr td:nth-child(6),
+    #transactionsTable tr th:nth-child(6) {
+        display: none;
+    }
+    
+    
+    #transactionsTable tr th:nth-child(5), 
+    #transactionsTable tr td:nth-child(5){
+        /* border: 1px solid red; */
+        /* display: none; */
+    }
+    
+    #transactionsTable tr th:nth-child(2), 
+    #transactionsTable tr td:nth-child(2){
+        /* border: 1px solid red; */
+        display: none;
+    }
+    
+    #transactionsTable tr th:nth-child(7), 
+    #transactionsTable tr td:nth-child(7){
+        /* border: 1px solid red; */
+        display: none;
+    }
+}
+
+#transactionsTable * {
+    text-transform: capitalize;
+}
+/* Summary Section */
+.summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.summary-item {
+    background: var(--background-secondary); /* Using a CSS variable */
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.summary-item:first-child {
+    background: linear-gradient(135deg, #e6f9ed 0%, #d1f2e0 100%);
+}
+
+.summary-item:nth-child(2) {
+    background: linear-gradient(135deg, #e6f9ed 0%, #fceeee 100%);
+}
+
+.summary-item p {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.summary-item img {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 10px;
+    opacity: 0.4;
+}
+
+.summary-item h3 {
+    color: var(--text-primary);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    font-size: 1rem;
+    opacity: 0.6;
+}
+
+.summary-item:first-child h3 {
+    color: #3da76d;
+}
+
+.summary-item:nth-child(2) h3 {
+ color: #d39a96;
+}
+
+
+.summary-item.income p strong {
+    color: var(--income-color); /* Using a CSS variable */
+}
+
+.summary-item.expense p strong {
+    color: var(--expense-color); /* Using a CSS variable */
+}
+
+/* Transactions Section */
+.transactions h2 {
+    color: var(--text-primary); /* Using a CSS variable */
+    margin-bottom: 15px;
+    opacity: 0.6;
+    font-size: 1.2rem;
+    margin: 10px auto 30px auto;
+}
+
+.filter-controls {
+    display: grid;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+
+.filter-group label {
+    color: var(--text-secondary); /* Using a CSS variable */
+    margin-right: 5px;
+}
+
+.filter-group input[type="date"],
+.filter-group select,
+.filter-group input[type="text"] {
+    padding: 8px;
+    border: 1px solid var(--border-color); /* Using a CSS variable */
+    border-radius: 5px;
+    width: 100%;
+}
+
+
+.date-filter {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.table_wrap {
+    overflow: scroll;
+    border-radius: 15px;
+    /* padding-bottom: 50px; */
+    min-height: 100px;
+}
+
+#transactionsTable {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    border-collapse: collapse;
+    /* margin-top: 10px; */
+    background: var(--background-secondary); /* Using a CSS variable */
+    border-radius: 8px;
+    overflow: auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+#transactionsTable th,
+#transactionsTable td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color-light); /* Using a CSS variable */
+    opacity: 0.6;
+    font-size:1rem;
+}
+
+#transactionsTable th {
+    background: var(--background-light); /* Using a CSS variable */
+    font-weight: bold;
+    color: var(--text-primary); /* Using a CSS variable */
+}
+
+#transactionsTable tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+#upiSetupPopup {
+    display: none;
+    overflow: hidden;
+    height: 100vh;
+}
+
+.bodymass {
+    /* margin-top: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 10px; */
+}
+
+.footer_arranged {
+    display: flex;
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+}
+
+body:has(> .popup)
+
+
+
+.filtered-summary {
+    margin-top: 10px;
+    padding: 12px 16px; /* Increased padding */
+    border: 1px solid #e0e0e0; /* Softer border color */
+    border-radius: 8px; /* Slightly more rounded corners */
+    background: #ffffff; /* Lighter background */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+    width: fit-content; /* Adjust width to content */
+    margin-bottom: 20px;
+}
+
+.filtered-summary-text {
+    font-size: 14px; /* Adjust font size */
+    color: #333; /* Darker text color */
+    margin: 8px 0; /* Adjusted margins */
+}
+
+.filtered-summary-text b {
+    font-weight: 600; /* Semi-bold if appropriate */
+    color: #212121;
+}
+
+/* Add responsive behavior if needed */
+@media (max-width: 600px) {
+    .filtered-summary {
+        width: 100%; /* Full width on smaller screens */
+    }
+}
+
+#filteredSummaryContainer p:first-child {
+    color: var(--income-color);
+}
+
+#filteredSummaryContainer p:nth-child(2) {
+    color: var(--expense-color);
+}
+
+.responsive-image {
+    width: 128px;
+    height: auto;
+}
+
+.into.the.logo {
+    justify-content: space-between;
+    align-items: center;
+    color: var(--income-color);
+    font-weight: 600;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.upi-confirmation-notification {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #f8f8f8;
+    color: #333;
+    padding: 15px;
+    border-top: 1px solid #ddd;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    transform: translateY(100%); /* Initially hidden */
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000; /* Ensure it's on top */
+}
+
+.upi-confirmation-notification.show {
+    transform: translateY(0); /* Slide up */
+}
+
+.upi-confirmation-notification h3 {
+    margin-top: 0;
+    margin-bottom: 5px;
+    opacity: 0.7;
+}
+
+.upi-confirmation-notification p {
+    margin-bottom: 8px;
+}
+
+.upi-confirmation-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+#upiConfirmationDescription {
+    text-transform: capitalize;
+}
+
+#subscriptionNotification {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #f0f9ff; /* Light blue background */
+    color: #1e3a8a; /* Dark blue text */
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000; /* Ensure it stays on top */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid #e0e7ff; /* Light blue border */
+    transition: transform 0.3s ease-in-out; /* For potential animations */
+}
+
+#subscriptionNotification.hidden {
+    transform: translateY(-100%);
+}
+
+#subscriptionNotification span {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+#skipNotification,
+#paynowheader {
+    background: #4f46e5; /* Indigo button */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.2s ease-in-out;
+    text-decoration: none; /* Remove underline from the link */
+    display: inline-block; /* To allow padding and margin */
+    margin-left: 10px; /* Space between buttons */
+}
+
+#skipNotification:hover,
+#paynowheader:hover {
+    background: #6366f1; /* Lighter indigo on hover */
+}
+
+/* Optional: Add a close button for more control */
+#closeNotificationButton {
+    background: none;
+    border: none;
+    color: #4b5563; /* Gray close icon */
+    font-size: 20px;
+    cursor: pointer;
+    margin-left: 15px;
+    outline: none;
+}
+
+#closeNotificationButton:hover {
+    color: #6b7280; /* Darker gray on hover */
+}
+
+/* Modern touches */
+#subscriptionNotification {
+    border-radius: 0 0 8px 8px; /* Slightly rounded bottom corners */
+}
+
+#subscriptionNotification span {
+    letter-spacing: 0.5px;
+}
+
+#skipNotification,
+#paynowheader {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+/* Slightly different style for Pay Now to make it stand out */
+#paynowheader {
+    background: #22c55e; /* Green Pay Now button */
+}
+
+#paynowheader:hover {
+    background: #4ade80; /* Lighter green on hover */
+}
+
+.upi-notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* Ensure it's on top of other elements */
+    text-align: center;
+}
+
+.upi-notification-title {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.upi-notification-message {
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.upi-notification-transaction-id {
+    color: #777;
+    font-size: 0.9em;
+    margin-bottom: 10px;
+}
+
+.upi-notification-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.upi-notification-button:hover {
+    background-color: #0056b3;
+}
+-e 
+
+=== FILE: ./css/receive-qr.css ===
+.container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    /* background-color: var(--background-secondary); Using a CSS variable */
+    border-radius: 8px;
+    /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); */
+    text-align: center;
+}
+
+h1 {
+    color: var(--text-primary); /* Using a CSS variable */
+    margin-bottom: 20px;
+}
+
+#qrCodeContainer {
+    margin-bottom: 20px;
+}
+
+.payment-details p {
+    color: var(--text-secondary); /* Using a CSS variable */
+    margin-bottom: 10px;
+}
+
+.payment-details strong {
+    color: var(--text-primary); /* Using a CSS variable */
+}
+
+#doneButton {
+    background-color: var(--income-color); /* Using a CSS variable */
+    color: var(--text-on-accent); /* Using a CSS variable */
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.15s ease-in-out;
+}
+
+#cancelButton {
+    background-color: var(--error-color); /* Using a CSS variable */
+    color: var(--text-on-accent); /* Using a CSS variable */
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.15s ease-in-out;
+}
+
+#cancelButton,#doneButton {
+    font-size: 1.1rem;
+    margin-top: 20px;
+}
+
+#doneButton:hover {
+    background-color: var(--accent-hover-color); /* Using a CSS variable */
+}
+
+.cred-advertisement {
+    margin-top: 20px;
+    border-radius: 4px;
+}
+
+#descriptionDisplay {
+    text-transform: capitalize;
+}-e 
+
+=== FILE: ./css/faq.css ===
+/* css/faq.css */
+body {
+    padding-top: 20px;
+}
+.faq-section {
+    margin-top: 30px;
+}
+
+h2 {
+    opacity: 0.5;
+    text-align: center;
+}
+
+.faq-widget {
+    margin-bottom: 20px;
+    border-radius: 12px; /* More pronounced rounded corners */
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08); /* Softer, more modern shadow */
+    border: 1px solid #e0e0e0; /* Light grey border */
+}
+
+.faq-question {
+    padding: 18px 20px; /* Increased padding */
+    background-color: #f0f0f0; /* Very light grey background */
+    color: #2e2e2e; /* Dark grey text */
+    cursor: pointer;
+    font-weight: 500; /* Slightly less bold */
+    position: relative;
+    padding-right: 40px; /* More space for the icon */
+    transition: background-color 0.15s ease-in-out;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.faq-question:hover {
+    background-color: #e8e8e8;
+}
+
+.faq-question::after {
+    content: ''; /* Using a custom icon */
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    background-image: url('assets/icons/chevron-down.svg'); /* Replace with your down arrow icon */
+    background-size: contain;
+    transition: transform 0.2s ease-in-out;
+    opacity: 0.7; /* Slightly desaturated icon */
+}
+
+.faq-widget[open] .faq-question::after {
+    transform: translateY(-50%) rotate(180deg); /* Rotate to show up arrow */
+}
+
+.faq-answer {
+    padding: 20px; /* Increased padding */
+    background-color: #fff;
+    color: #555;
+    line-height: 1.7; /* Further improved line spacing */
+    font-size: 0.95em; /* Slightly smaller, softer text */
+}
+
+/* If you have a primary button color, you can subtly integrate it */
+/* Example: */
+/* summary::marker { */
+/* color: your-primary-color; */
+/* } */
+-e 
+
+=== FILE: ./css/send.css ===
+body {
+    background-color: var(--background-secondary);
+}
+.container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+h1 {
+    color: var(--text-primary); /* Using a CSS variable */
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    margin-bottom: 40px;
+    opacity: 0.5;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    color: var(--text-secondary); /* Using a CSS variable */
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.form-group input[type="number"],
+.form-group textarea {
+    width: 100%;
+    padding: 20px 20px;
+    border: 1px solid var(--border-color); /* Using a CSS variable */
+    border-radius: 4px;
+    text-align: left;
+    box-sizing: border-box;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.icon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 15px;
+    text-align: center;
+}
+
+.icon-grid input[type="radio"] {
+    display: none; /* Hide the default radio button */
+}
+
+.icon-grid label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border: 1px solid var(--border-color-light); /* Using a CSS variable */
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+}
+
+.icon-grid label:hover,
+.icon-grid input[type="radio"]:checked + label {
+    border-color: var(--accent-color); /* Using a CSS variable */
+    background-color: var(--background-light); /* Using a CSS variable */
+}
+
+.icon-grid label img {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 5px;
+    opacity: 0.3;
+}
+
+.icon-grid label span {
+    color: var(--text-secondary); /* Using a CSS variable */
+    font-size: 0.9rem;
+}
+
+.button.primary {
+    background-color: var(--expense-color);
+    color: var(--text-on-accent); /* Using a CSS variable */
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.button.primary:hover {
+    background-color: var(--accent-hover-color); /* Using a CSS variable */
+}
+
+.back-link {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: var(--text-link); /* Using a CSS variable */
+    text-decoration: none;
+    margin-top: 21px;
+    text-align: right;
+    padding: 13px;
+    display: inline-flex;
+}
+
+.back-link img {
+    border-radius: 100px;
+}
+
+.back-link:hover {
+    text-decoration: none;
+}
+
+.fullscreen-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black; /* Set the background of the popup to black */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#qrScannerView {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#qrScannerView canvas {
+    /* The canvas will be full screen, and we'll draw the video with black bars */
+    display: block; /* Ensure it takes up the space */
+}
+
+
+#closeScanner, #toggleFlash {
+    /* position: absolute; */
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1001; /* Ensure it's above the canvas */
+}
+
+#toggleFlash {
+    background-color: var(--text-on-accent);
+}
+
+.footer-Adv {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.footer-Adv figure {
+    display: flex;
+    gap: 2px;
+    /* width: 220px; */
+    overflow: visible;
+    padding: 20px 10px 20px 20px;
+    align-content: space-around;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.button.secondary {
+    background-color: var(--background-secondary);
+    color: var(--expense-color);
+    box-shadow: inset 0px 0px 0px 4px var(--expense-color);
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    border-radius: 100px;
+    font-weight: bold;
+    transition: background-color 0.15s ease-in-out;
+}
+
+
+.intoaction-buttons {
+    display: flex;
+    justify-content: col;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 15px;
+}
+
+.intoaction-buttons button.primary {
+    font-size: 1.2rem;
+    padding: 20px 40px;
+    border-radius: 14px;
+}
+
+/* css/send.css */
+.scanner-controls {
+    display: flex;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+}
+
+
+/* css/send.css */
+
+/* Existing styles... */
+
+.switch-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(16px);
+    -ms-transform: translateX(16px);
+    transform: translateX(16px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.toggle-label {
+    font-size: 0.9em;
+    color: #555;
+}
+
+#detailsFields.hidden {
+    display: none;
+}
+
+/* QR Scanner Styles */
+.qr-scanner-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* Ensure it's on top */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.qr-scanner-popup.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.qr-scanner-view {
+    position: relative;
+    width: 80%; /* Adjust as needed for responsiveness */
+    max-width: 400px;
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.qr-scanner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid #007bff; /* Example accent color */
+    box-sizing: border-box;
+    pointer-events: none;
+    animation: pulse-border 2s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-border {
+    0% { border-color: #007bff; }
+    100% { border-color: #66aaff; }
+}
+
+.qr-scanner-laser {
+    position: absolute;
+    left: 10%;
+    top: 50%;
+    width: 80%;
+    height: 2px;
+    background-color: #ff4d4d; /* Example laser color */
+    animation: laser-move 1.5s linear infinite;
+}
+
+@keyframes laser-move {
+    0% { top: 15%; }
+    50% { top: 85%; }
+    100% { top: 15%; }
+}
+
+.qr-scan-success {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4em;
+    color: #28a745; /* Success color */
+    opacity: 0;
+    animation: fade-in-out 0.8s ease-in-out forwards;
+}
+
+@keyframes fade-in-out {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.qr-scanner-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-size: 1.2em;
+}
+
+.qr-scanner-close,
+.qr-scanner-flash {
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.qr-scanner-close {
+    background-color: #dc3545; /* Danger color */
+    color: white;
+}
+
+.qr-scanner-flash {
+    background-color: #007bff; /* Primary color */
+    color: white;
+}
+-e 
+
+=== FILE: ./css/splash.css ===
+body {
+    background-color: #007AFF; /* Using a CSS variable */
+}
+
+.splash-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.logo {
+    width: 150px; /* Adjust size as needed */
+    height: auto;
+    margin-bottom: 1px;
+}
+
+h1 {
+    color: var(--text-on-accent); /* Using a CSS variable */
+    font-size: 1.3rem;
+    margin-bottom: 30px;
+    font-weight: 300;
+}
+
+.loading-icon {
+    width: 50px; /* Adjust size as needed */
+    height: 50px;
+    border-radius: 50%;
+    border: 3px solid var(--accent-color); /* Using a CSS variable */
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}-e 
+
+=== FILE: ./css/data.css ===
+/* Styles specific to the data upload page for local testing */
+body {
+    font-family: sans-serif;
+    line-height: 1.6;
+    margin: 20px;
+    /* background-color: #f9f9f9; */
+    color: #333;
+}
+
+header {
+    background-color: #28a745; /* Green */
+    color: white;
+    padding: 1.5rem 0;
+    text-align: center;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    margin: 0;
+    color: white;
+    font-size: 2rem;
+}
+
+main {
+    max-width: 700px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    background-color: #fefefe;
+    transition: all 0.2s ease;
+}
+
+section:hover {
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.05);
+    border-color: #ccc;
+}
+
+h2 {
+    color: #2c3e50; /* Darker heading color */
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 0.75rem;
+    font-size: 1.5rem;
+}
+
+form div {
+    margin-bottom: 1.25rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #555;
+    font-size: 1rem;
+}
+
+input[type="file"] {
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 0.375rem;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+input[type="file"]:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+button {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.15);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+
+button[type="submit"] {
+    background-color: #007bff; /* Blue */
+    color: white;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3; /* Darker blue */
+}
+
+#upload-status {
+    margin-top: 1.5rem;
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+    border: 1px solid transparent;
+    text-align: center;
+}
+
+#upload-status.success {
+    color: #28a745;
+    background-color: #f0fdf4;
+    border-color: #d1e7dd;
+}
+
+#upload-status.error {
+    color: #dc3545;
+    background-color: #fef2f2;
+    border-color: #f8d7da;
+}
+
+.hidden {
+    display: none;
+}
+
+footer {
+    text-align: center;
+    margin-top: 2rem;
+    color: #777;
+    font-size: 0.9rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+#instructions-section code {
+    background-color: #e8f0fa;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    font-family: monospace;
+    font-size: 0.9rem;
+    color: #2c3e50;
+    border: 1px solid #ddd;
+}
+
+#downloadButton {
+    background-color: #6c757d;
+    color: white;
+}
+
+#downloadButton:hover {
+    background-color: #5a6268;
+}
+-e 
+
+=== FILE: ./js/reset.js ===
+document.addEventListener('DOMContentLoaded', () => {
+    const resetButton = document.getElementById('resetButton');
+    const cancelButton = document.getElementById('cancelButton');
+    const resetMessage = document.getElementById('reset-message');
+
+    resetButton.addEventListener('click', () => {
+        // Logic to clear localStorage
+        localStorage.removeItem('earn_transactions');
+        localStorage.removeItem('earn_upiId');
+        localStorage.removeItem('earn_username');
+
+        // Display confirmation message
+        resetMessage.textContent = 'App data has been reset.';
+        resetMessage.classList.remove('hidden');
+
+        // Optionally, redirect to the main page after a short delay
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 2000);
+    });
+
+    cancelButton.addEventListener('click', () => {
+        // Go back to the previous page (or a specific page)
+        window.history.back(); // Attempts to go to the previous page in history
+        // Or: window.location.href = 'index.html'; // To go to the main page
+    });
+});
+-e 
+
+=== FILE: ./js/transactions.js ===
+document.addEventListener('DOMContentLoaded', () => {
+    const allTransactionsTableBody = document.getElementById('allTransactionsTable').querySelector('tbody');
+    const prevPageButton = document.getElementById('prevPage');
+    const nextPageButton = document.getElementById('nextPage');
+    const pageNumbersDiv = document.getElementById('pageNumbers');
+    const editTransactionPopup = document.getElementById('editTransactionPopup');
+    const editTransactionForm = document.getElementById('editTransactionForm');
+    const cancelEditButton = document.getElementById('cancelEdit');
+    const editTransactionIdInput = document.getElementById('editTransactionId');
+    const editTypeInput = document.getElementById('editType');
+    const editCategoryInput = document.getElementById('editCategory');
+    const editDescriptionInput = document.getElementById('editDescription');
+    const editAmountInput = document.getElementById('editAmount');
+    const editDateInput = document.getElementById('editDate');
+    const editTimeInput = document.getElementById('editTime');
+    const filterTypeSelect = document.getElementById('filterType');
+    const filterCategorySelect = document.getElementById('filterCategory');
+    const filterStartDateInput = document.getElementById('filterStartDate');
+    const filterEndDateInput = document.getElementById('filterEndDate');
+    const clearFiltersButton = document.getElementById('clearFilters');
+    const generateReportButton = document.getElementById('generateReport');
+
+    const transactionsPerPage = 50;
+    let allTransactions = [];
+    let filteredTransactions = [];
+    let currentPage = 1;
+    let editingTransactionId = null;
+    let currentFilters = { type: '', category: '', startDate: '', endDate: '' };
+
+    const getLocalStorageItem = (key) => localStorage.getItem(key);
+    const setLocalStorageItem = (key, value) => localStorage.setItem(key, value);
+
+    const getCategoryIcon = (category) => ({
+        'cash': 'assets/icons/cash.svg',
+        'rent': 'assets/icons/rent.svg',
+        'salary': 'assets/icons/salary.svg',
+        'gift': 'assets/icons/gift.svg',
+        'investment': 'assets/icons/investment.svg',
+        'other': 'assets/icons/other.svg',
+        'food': 'assets/icons/food.svg',
+        'shopping': 'assets/icons/shopping-bag.svg',
+        'entertainment': 'assets/icons/entertainment.svg',
+        'travel': 'assets/icons/travel.svg',
+        'others': 'assets/icons/others.svg',
+    })[category] || '';
+
+    const loadAllTransactions = () => {
+        console.log('loadAllTransactions() called');
+        const storedTransactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
+        console.log('Stored Transactions:', storedTransactions);
+        allTransactions = storedTransactions.sort((a, b) => new Date(b.date + ' ' + b.time) - new Date(a.date + ' ' + a.time));
+        applyFilters();
+    };
+
+    const applyFilters = () => {
+        console.log('applyFilters() called');
+        filteredTransactions = allTransactions.filter(transaction => {
+            const typeMatch = !currentFilters.type || transaction.type === currentFilters.type;
+            const categoryMatch = !currentFilters.category || transaction.category === currentFilters.category;
+
+            const transactionDate = new Date(transaction.date);
+            const startDate = currentFilters.startDate ? new Date(currentFilters.startDate) : null;
+            const endDate = currentFilters.endDate ? new Date(currentFilters.endDate) : null;
+
+            const startDateMatch = !startDate || transactionDate >= startDate;
+            const endDateMatch = !endDate || transactionDate <= endDate;
+
+            return typeMatch && categoryMatch && startDateMatch && endDateMatch;
+        });
+        console.log('Filtered Transactions:', filteredTransactions);
+        currentPage = 1;
+        localStorage.setItem('filtered_transactions', JSON.stringify(filteredTransactions));
+
+        if (generateReportButton) {
+            generateReportButton.style.display = filteredTransactions.length > 0 ? 'block' : 'none';
+        }
+
+        renderTransactions();
+        renderPagination();
+        console.log('applyFilters() finished');
+    };
+
+    const renderTransactions = () => {
+        console.log('renderTransactions() called');
+        const startIndex = (currentPage - 1) * transactionsPerPage;
+        const endIndex = startIndex + transactionsPerPage;
+        const currentTransactions = filteredTransactions.slice(startIndex, endIndex);
+
+        console.log('Current Page:', currentPage);
+        console.log('Transactions to Render (slice):', currentTransactions);
+        console.log('Table Body Element:', allTransactionsTableBody);
+
+        if (!allTransactionsTableBody) {
+            console.error('Error: allTransactionsTableBody is null. Check your HTML.');
+            return;
+        }
+
+        allTransactionsTableBody.innerHTML = '';
+        currentTransactions.forEach(transaction => {
+            console.log('Rendering Transaction:', transaction);
+            const row = allTransactionsTableBody.insertRow();
+            row.insertCell().innerHTML = transaction.type === 'expense' ? '<img src="assets/icons/arrow-up.svg" alt="Expense" class="transaction-icon">' : '<img src="assets/icons/arrow-down.svg" alt="Income" class="transaction-icon">';
+            const categoryCell = row.insertCell();
+            const icon = getCategoryIcon(transaction.category) || 'assets/icons/default.svg';
+            categoryCell.innerHTML = `<img src="${icon}" alt="${transaction.category}">`;
+            row.insertCell().textContent = transaction.description || '-';
+            const amountCell = row.insertCell();
+            const formattedAmount = `₹${parseFloat(transaction.amount).toFixed(2)}`;
+            amountCell.textContent = transaction.type === 'expense' ? `- ${formattedAmount}` : `+ ${formattedAmount}`;
+            amountCell.classList.add(transaction.type === 'expense' ? 'expense' : 'income');
+            row.insertCell().textContent = transaction.date;
+            row.insertCell().textContent = transaction.time;
+            row.insertCell().textContent = transaction.status || '';
+            const actionsCell = row.insertCell();
+
+            const editWrapper = document.createElement('div');
+            editWrapper.classList.add('action-icon-wrapper');
+            const editIcon = document.createElement('img');
+            editIcon.src = 'assets/icons/edit.svg';
+            editIcon.alt = 'Edit';
+            editIcon.classList.add('edit-icon');
+            editIcon.addEventListener('click', () => openEditPopup(transaction.id));
+            editWrapper.appendChild(editIcon);
+            actionsCell.appendChild(editWrapper);
+
+            const deleteWrapper = document.createElement('div');
+            deleteWrapper.classList.add('action-icon-wrapper');
+            const deleteIcon = document.createElement('img');
+            deleteIcon.src = 'assets/icons/delete.svg';
+            deleteIcon.alt = 'Delete';
+            deleteIcon.classList.add('delete-icon');
+            deleteIcon.addEventListener('click', () => deleteTransaction(transaction.id));
+            deleteWrapper.appendChild(deleteIcon);
+            actionsCell.appendChild(deleteWrapper);
+        });
+        console.log('renderTransactions() finished');
+    };
+
+    const renderPagination = () => {
+        const totalPages = Math.ceil(filteredTransactions.length / transactionsPerPage);
+        pageNumbersDiv.innerHTML = '';
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageNumber = document.createElement('button');
+            pageNumber.textContent = i;
+            if (i === currentPage) {
+                pageNumber.classList.add('active');
+            }
+            pageNumber.addEventListener('click', () => {
+                currentPage = i;
+                renderTransactions();
+                updatePaginationButtons();
+                updateActivePageNumber();
+            });
+            pageNumbersDiv.appendChild(pageNumber);
+        }
+
+        updatePaginationButtons();
+    };
+
+    const updatePaginationButtons = () => {
+        const totalPages = Math.ceil(filteredTransactions.length / transactionsPerPage);
+        prevPageButton.disabled = currentPage === 1;
+        nextPageButton.disabled = currentPage === totalPages || totalPages === 0;
+    };
+
+    const updateActivePageNumber = () => {
+        const pageNumberButtons = pageNumbersDiv.querySelectorAll('button');
+        pageNumberButtons.forEach(button => button.classList.remove('active'));
+        const activePageButton = pageNumbersDiv.querySelector(`button:nth-child(${currentPage})`);
+        if (activePageButton) {
+            activePageButton.classList.add('active');
+        }
+    };
+
+    const openEditPopup = (transactionId) => {
+        editingTransactionId = transactionId;
+        const transactionToEdit = allTransactions.find(t => t.id === transactionId);
+        if (transactionToEdit) {
+            editTransactionIdInput.value = transactionToEdit.id;
+            editTypeInput.value = transactionToEdit.type;
+            editCategoryInput.value = transactionToEdit.category;
+            editDescriptionInput.value = transactionToEdit.description || '';
+            editAmountInput.value = transactionToEdit.amount;
+            editDateInput.value = transactionToEdit.date;
+            editTimeInput.value = transactionToEdit.time;
+            editTransactionPopup.style.display = 'block';
+        }
+    };
+
+    const closeEditPopup = () => {
+        editTransactionPopup.style.display = 'none';
+        editingTransactionId = null;
+    };
+
+    const saveEditedTransaction = () => {
+        if (editingTransactionId) {
+            const updatedTransactions = allTransactions.map(transaction => {
+                if (transaction.id === editingTransactionId) {
+                    return {
+                        ...transaction,
+                        type: editTypeInput.value,
+                        category: editCategoryInput.value,
+                        description: editDescriptionInput.value,
+                        amount: parseFloat(editAmountInput.value),
+                        date: editDateInput.value,
+                        time: editTimeInput.value,
+                    };
+                }
+                return transaction;
+            });
+            setLocalStorageItem('earn_transactions', JSON.stringify(updatedTransactions));
+            loadAllTransactions();
+            closeEditPopup();
+        }
+    };
+
+    editTransactionForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        saveEditedTransaction();
+    });
+
+    cancelEditButton.addEventListener('click', closeEditPopup);
+
+    const deleteTransaction = (transactionIdToDelete) => {
+        if (confirm('Are you sure you want to delete this transaction?')) {
+            const updatedTransactions = allTransactions.filter(transaction => transaction.id !== transactionIdToDelete);
+            setLocalStorageItem('earn_transactions', JSON.stringify(updatedTransactions));
+            loadAllTransactions();
+        }
+    };
+
+    prevPageButton.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderTransactions();
+            updatePaginationButtons();
+            updateActivePageNumber();
+        }
+    });
+
+    nextPageButton.addEventListener('click', () => {
+        const totalPages = Math.ceil(filteredTransactions.length / transactionsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderTransactions();
+            updatePaginationButtons();
+            updateActivePageNumber();
+        }
+    });
+
+    filterTypeSelect.addEventListener('change', () => {
+        currentFilters.type = filterTypeSelect.value;
+        applyFilters();
+    });
+
+    filterCategorySelect.addEventListener('change', () => {
+        currentFilters.category = filterCategorySelect.value;
+        applyFilters();
+    });
+
+    filterStartDateInput.addEventListener('change', () => {
+        currentFilters.startDate = filterStartDateInput.value;
+        applyFilters();
+    });
+
+    filterEndDateInput.addEventListener('change', () => {
+        currentFilters.endDate = filterEndDateInput.value;
+        applyFilters();
+    });
+
+    clearFiltersButton.addEventListener('click', () => {
+        currentFilters = { type: '', category: '', startDate: '', endDate: '' };
+        applyFilters();
+    });
+
+    loadAllTransactions();
+});-e 
+
+=== FILE: ./js/send.js ===
+document.addEventListener('DOMContentLoaded', () => {
+    // Set initial focus and selection on the amount input field
+    setTimeout(() => {
+        const input = document.getElementById("amount");
+        if (input) { // Check if input exists before focusing
+            input.focus();
+            input.select(); // optional: selects the input text
+        }
+    }, 300); // Small delay to ensure mobile keyboard shows
+
+    // --- DOM Elements ---
+    const sendForm = document.getElementById('sendForm');
+    const amountInput = document.getElementById('amount');
+    const descriptionInput = document.getElementById('description'); // CORRECTED: Was document('description')
+    const categoryFood = document.getElementById('categoryFood');
+    const categoryShopping = document.getElementById('categoryShopping');
+    const categoryEntertainment = document.getElementById('categoryEntertainment');
+    const categoryTravel = document.getElementById('categoryTravel');
+    const categoryOthers = document.getElementById('categoryOthers');
+    const qrScannerPopup = document.getElementById('qrScannerPopup');
+    const qrScannerView = document.getElementById('qrScannerView');
+    const closeScannerButton = document.getElementById('closeScanner');
+    const addExpenseBtn = document.getElementById('addExpenseBtn');
+    const toggleFlashButton = document.getElementById('toggleFlash');
+    const toggleDetailsSwitch = document.getElementById('toggleDetails');
+    const detailsFields = document.getElementById('detailsFields');
+
+    // New DOM elements for YOUR confirmation modal (based on your provided HTML)
+    // >>> IMPORTANT: These IDs MUST match EXACTLY in your HTML <<<
+    const upiConfirmationNotification = document.getElementById('upiConfirmationNotification');
+    const upiConfirmationTitle = document.getElementById('upiConfirmationTitle');
+    const upiConfirmationMerchant = document.getElementById('upiConfirmationMerchant'); // New element
+    const upiConfirmationUpiId = document.getElementById('upiConfirmationUpiId');     // New element
+    const upiConfirmationAmount = document.getElementById('upiConfirmationAmount');
+    const upiConfirmationDescription = document.getElementById('upiConfirmationDescription');
+    const upiConfirmationCategory = document.getElementById('upiConfirmationCategory'); // New element
+    const upiConfirmButton = document.getElementById('upiConfirmButton');
+    const upiConfirmCancelButton = document.getElementById('upiConfirmCancelButton');
+
+
+    // --- State Variables ---
+    let flashEnabled = false;
+    let html5QrCode = null; // Holds the Html5Qrcode instance
+    let qrCodeDetected = false; // Flag to ensure QR code is processed only once
+    let currentCameraCapabilities = null; // Stores camera capabilities (zoom, torch, etc.)
+    let amount = 0; // Declare amount here to make it accessible to initiateUpiPayment
+
+    // Variables to hold data extracted from QR code for confirmation
+    let currentExtractedUPIID = null;
+    let currentExtractedMerchantName = null;
+    let currentAmount = 0; // Use a dedicated variable for amount to confirm
+    let currentDescription = '';
+    let currentCategory = '';
+
+
+    // Define Html5QrcodeScannerState (assuming it's not globally available, common for Html5Qrcode)
+    const Html5QrcodeScannerState = {
+        NOT_STARTED: 0,
+        SCANNING: 1,
+        PAUSED: 2,
+        STOPPED: 3
+    };
+
+
+    // --- Helper Functions (Defined once in global scope) ---
+
+    function getSelectedCategory() {
+        if (categoryFood.checked) return 'food';
+        if (categoryShopping.checked) return 'shopping';
+        if (categoryEntertainment.checked) return 'entertainment';
+        if (categoryTravel.checked) return 'travel';
+        if (categoryOthers.checked) return 'others';
+        return '';
+    }
+
+    function generateUniqueId() {
+        return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    }
+
+    function saveTransaction(transaction) {
+        let transactions = JSON.parse(localStorage.getItem('earn_transactions') || '[]');
+        transactions.unshift(transaction); // Add to the beginning of the array
+        localStorage.setItem('earn_transactions', JSON.stringify(transactions));
+    }
+
+    function extractDataFromQRCode(qrCodeText) {
+        let upiId = null;
+        let merchantName = null;
+
+        // Extract VPA (Virtual Payment Address) from UPI QR code text
+        if (qrCodeText && qrCodeText.includes("pa=")) {
+            const vpaStart = qrCodeText.indexOf("pa=") + 3;
+            let vpaEnd = qrCodeText.indexOf("&", vpaStart);
+            if (vpaEnd === -1) { // If '&' not found, take till end of string
+                vpaEnd = qrCodeText.length;
+            }
+            upiId = qrCodeText.substring(vpaStart, vpaEnd);
+        }
+
+        // Extract Payee Name from UPI QR code text
+        if (qrCodeText && qrCodeText.includes("pn=")) {
+            const nameStart = qrCodeText.indexOf("pn=") + 3;
+            let nameEnd = qrCodeText.indexOf("&", nameStart);
+            if (nameEnd === -1) { // If '&' not found, take till end of string
+                nameEnd = qrCodeText.length;
+            }
+            merchantName = decodeURIComponent(qrCodeText.substring(nameStart, nameEnd).replace(/\+/g, ' ')); // Decode and replace + with space
+        }
+
+        return { upiId, merchantName };
+    }
+
+    function initiateUpiPayment(recipientVPA, paymentAmount, description, category, merchantNameFromQR) {
+        const transactionId = generateUniqueId();
+        // Use merchantName from QR if available, otherwise default or use stored username
+        const payeeName = merchantNameFromQR || localStorage.getItem('earn_username') || 'Recipient Name';
+        const merchantCategoryCode = '0000'; // Generic MCC for now
+        // Construct success URL for callback (ensure this URL is correct for your hosted app)
+        const successUrl = encodeURIComponent(`https://missionode.github.io/earn-app/index.html?status=success&transactionId=${transactionId}`);
+
+        let encodedDescription = encodeURIComponent(description);
+        // Replace spaces with '+' for proper URL encoding in UPI intent (some apps prefer +)
+        encodedDescription = encodedDescription.replace(/%20/g, '+');
+
+        // Construct the UPI Intent URL
+        const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(recipientVPA)}&pn=${encodeURIComponent(payeeName)}&am=${parseFloat(paymentAmount).toFixed(2)}&cu=INR&tr=${encodeURIComponent(transactionId)}&tn=${encodedDescription}&mc=${merchantCategoryCode}&url=${successUrl}`;
+
+        console.log("Generated UPI Intent URL:", upiIntentUrl);
+
+        // Save a pending transaction to local storage
+        const pendingTransaction = {
+            id: transactionId,
+            type: 'expense',
+            amount: parseFloat(paymentAmount),
+            category: category,
+            description: description,
+            date: new Date().toISOString().split('T')[0],
+            time: new Date().toTimeString().split(' ')[0],
+            status: 'pending' // Mark as pending until confirmed by UPI app callback
+        };
+
+        saveTransaction(pendingTransaction);
+        // Store this specific pending transaction for potential confirmation on index.html
+        localStorage.setItem('pending_upi_confirmation', JSON.stringify(pendingTransaction));
+        
+        // Redirect to the UPI application
+        window.location.href = upiIntentUrl;
+    }
+
+    // --- QR Scanner Control Functions ---
+
+    function startQrScanner() {
+        qrScannerView.innerHTML = ''; // Clear previous content in scanner view
+        qrCodeDetected = false;
+
+        // Clear any previous Html5Qrcode instance to prevent conflicts
+        if (html5QrCode) {
+            html5QrCode.clear().catch(err => console.error("Error clearing old Html5Qrcode instance:", err));
+        }
+        html5QrCode = new Html5Qrcode("qrScannerView"); // Initialize a new Html5Qrcode instance
+
+        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+            if (!qrCodeDetected) { // Ensure QR code is processed only once
+                qrCodeDetected = true;
+                // Stop the camera immediately after a successful scan
+                html5QrCode.stop().then(() => {
+                    qrScannerPopup.style.display = 'none'; // Hide the scanner popup
+
+                    const qrData = extractDataFromQRCode(decodedText);
+                    currentExtractedUPIID = qrData.upiId; // Store extracted data
+                    currentExtractedMerchantName = qrData.merchantName;
+                    currentAmount = amount; // Use the 'amount' entered before scanning
+                    currentDescription = toggleDetailsSwitch.checked ? descriptionInput.value : '';
+                    currentCategory = toggleDetailsSwitch.checked ? getSelectedCategory() : '';
+
+                    if (currentExtractedUPIID) {
+                        // Populate confirmation modal fields using your specific IDs
+                        upiConfirmationTitle.textContent = `Confirm Payment`; // Set generic title
+                        upiConfirmationMerchant.textContent = `To: ${currentExtractedMerchantName || 'Unknown Merchant'}`;
+                        upiConfirmationUpiId.textContent = `UPI ID: ${currentExtractedUPIID}`;
+                        upiConfirmationAmount.textContent = `Amount: ₹${parseFloat(currentAmount).toFixed(2)}`;
+                        upiConfirmationDescription.textContent = `Description: ${currentDescription || 'N/A'}`;
+                        upiConfirmationCategory.textContent = `Category: ${currentCategory || 'N/A'}`;
+                        
+                        upiConfirmationNotification.style.display = 'flex'; // Show the confirmation popup
+                    } else {
+                        alert('Invalid UPI QR code. No UPI ID found.');
+                        // Optionally, restart scanner here if it was an invalid QR and user wants to try again
+                        // qrScannerPopup.style.display = 'block';
+                        // startQrScanner();
+                    }
+                }).catch(err => {
+                    console.error("Error stopping QR scanner after success:", err);
+                    // Provide more specific error message to the user
+                    alert(`Error processing QR code after scan: ${err.message || 'An unexpected error occurred while stopping the camera.'}`);
+                });
+            }
+        };
+
+        // Get available camera devices
+        Html5Qrcode.getCameras().then(devices => {
+            if (devices && devices.length > 0) {
+                // Prioritize the back/rear camera for better scanning
+                const rearCamera = devices.find(device => device.label.toLowerCase().includes('back') || device.label.toLowerCase().includes('rear'));
+                const cameraId = rearCamera ? rearCamera.id : devices[0].id; // Fallback to first camera if no rear found
+
+                const config = {
+                    fps: 20, // Frames per second for scanning (good balance of performance and accuracy)
+                    qrbox: { width: 250, height: 250 }, // Define the scanning area
+                    videoConstraints: {
+                        facingMode: "environment", // Request the environment (back) camera
+                    }
+                };
+
+                // Start the QR scanner
+                html5QrCode.start(cameraId, config, qrCodeSuccessCallback)
+                    .then(() => {
+                        console.log('QR scanner started successfully.');
+                        // --- IMPORTANT: Get capabilities and apply zoom/torch synchronously ---
+                        const capabilities = html5QrCode.getRunningTrackCapabilities();
+                        currentCameraCapabilities = capabilities; // Store capabilities for flash button
+
+                        // Apply zoom if supported by the camera
+                        if (capabilities.zoom) {
+                            // Calculate a reasonable desired zoom level (e.g., min + 2.0 or capped at max)
+                            // Adjust '2.0' based on testing for optimal distance scanning
+                            const desiredZoom = Math.min(capabilities.zoom.max || 1.0, capabilities.zoom.min + 2.0);
+                            html5QrCode.applyVideoConstraints({ advanced: [{ zoom: desiredZoom }] })
+                                .then(() => console.log(`Applied zoom: ${desiredZoom}`))
+                                .catch(err => console.warn('Could not apply zoom:', err.message));
+                        } else {
+                            console.warn('Zoom not supported by this camera or browser.');
+                        }
+
+                        // Show/hide flash button based on torch support
+                        if (capabilities.torch) {
+                            toggleFlashButton.style.display = 'block';
+                        } else {
+                            toggleFlashButton.style.display = 'none';
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error starting QR scanner:', err);
+                        alert('Error starting QR scanner. Please ensure camera permissions are granted and try again.');
+                    });
+            } else {
+                alert("No cameras found on this device.");
+            }
+        }).catch(err => {
+            console.error("Error getting camera devices:", err);
+            alert("Error getting camera devices. Please ensure camera permissions are granted.");
+        });
+    }
+
+    // --- Event Listeners ---
+
+    // Load and apply the saved details switch state from local storage
+    const savedDetailsState = localStorage.getItem('showDetails');
+    if (savedDetailsState === 'false') {
+        toggleDetailsSwitch.checked = false;
+        detailsFields.classList.add('hidden');
+    } else {
+        toggleDetailsSwitch.checked = true;
+        detailsFields.classList.remove('hidden');
+    }
+
+    // Event listener for the toggle switch to show/hide details fields
+    toggleDetailsSwitch.addEventListener('change', () => {
+        detailsFields.classList.toggle('hidden');
+        localStorage.setItem('showDetails', toggleDetailsSwitch.checked);
+    });
+
+    // Event listener for the form submission (initiates QR scan)
+    sendForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        amount = parseFloat(amountInput.value); // Assign to the outer 'amount' variable
+        
+        if (isNaN(amount) || amount <= 0) {
+            alert('Please enter a valid amount.');
+            return;
+        }
+
+        qrScannerPopup.style.display = 'block'; // Show QR scanner popup
+        startQrScanner(); // Start the QR scanner
+    });
+
+    // Event listener to close the QR scanner popup
+    closeScannerButton.addEventListener('click', () => {
+        qrScannerPopup.style.display = 'none'; // Hide the popup
+        if (html5QrCode) {
+            html5QrCode.stop().then(() => { // Stop the camera stream
+                html5QrCode.clear(); // Clear the Html5Qrcode instance
+                html5QrCode = null; // Reset the instance
+                flashEnabled = false; // Reset flash state
+                toggleFlashButton.textContent = 'Enable Flash'; // Reset button text
+                toggleFlashButton.style.display = 'none'; // Hide flash button
+            }).catch(err => console.error("Error stopping or clearing Html5Qrcode on close:", err));
+        }
+        qrCodeDetected = false; // Reset QR detection flag
+    });
+
+    // Event listener for adding a manual expense
+    addExpenseBtn.addEventListener('click', () => {
+        const manualExpenseAmount = parseFloat(amountInput.value);
+        const manualExpenseDescription = toggleDetailsSwitch.checked ? descriptionInput.value : '';
+        const manualExpenseCategory = toggleDetailsSwitch.checked ? getSelectedCategory() : '';
+
+        if (isNaN(manualExpenseAmount) || manualExpenseAmount <= 0) {
+            alert('Please enter a valid expense amount.');
+            return;
+        }
+
+        const newExpenseTransaction = {
+            id: generateUniqueId(),
+            type: 'expense',
+            amount: manualExpenseAmount,
+            category: manualExpenseCategory,
+            description: manualExpenseDescription,
+            date: new Date().toISOString().split('T')[0],
+            time: new Date().toTimeString().split(' ')[0],
+            status: 'success' // Manual entry is directly added as success
+        };
+
+        saveTransaction(newExpenseTransaction);
+        window.location.href = 'index.html'; // Redirect to index page after saving
+    });
+
+    // Event listener for the flashlight toggle button
+    toggleFlashButton.addEventListener('click', () => {
+        // Check if html5QrCode instance exists and is currently scanning
+        if (html5QrCode && html5QrCode.getState() === Html5QrcodeScannerState.SCANNING) {
+            // Get current camera capabilities (synchronous)
+            const capabilities = html5QrCode.getRunningTrackCapabilities();
+            currentCameraCapabilities = capabilities; // Update capabilities (though likely already current)
+
+            if (capabilities.torch) { // Check if torch (flashlight) is supported
+                flashEnabled = !flashEnabled; // Toggle flash state
+                html5QrCode.applyVideoConstraints({ advanced: [{ torch: flashEnabled }] })
+                    .then(() => {
+                        toggleFlashButton.textContent = flashEnabled ? 'Disable Flash' : 'Enable Flash';
+                        console.log(`Flash ${flashEnabled ? 'enabled' : 'disabled'}`);
+                    })
+                    .catch(err => {
+                        console.error('Error toggling flash:', err);
+                        alert('Error toggling flash. Ensure camera permissions are granted and device supports it.');
+                    });
+            } else {
+                alert('Flash control is not supported on this device or current camera.');
+            }
+        } else {
+            alert('QR scanner is not active to toggle flash.');
+        }
+    });
+
+    // --- Event Listeners for YOUR Confirmation Modal ---
+    upiConfirmButton.addEventListener('click', () => {
+        upiConfirmationNotification.style.display = 'none'; // Hide confirmation popup
+        // Proceed with payment initiation using the stored data
+        initiateUpiPayment(
+            currentExtractedUPIID,
+            currentAmount,
+            currentDescription,
+            currentCategory, // Pass category
+            currentExtractedMerchantName
+        );
+    });
+
+    upiConfirmCancelButton.addEventListener('click', () => {
+        upiConfirmationNotification.style.display = 'none'; // Hide confirmation popup
+        // Optionally, you can reset input fields or offer to re-scan
+        // For now, it just closes the confirmation.
+    });
+
+});-e 
+
+=== FILE: ./js/prosperity.js ===
+document.addEventListener('DOMContentLoaded', () => {
+    const dailyCounterElement = document.getElementById('dailyCounter');
+    const coinRainTrigger = document.getElementById('coinRainTrigger');
+    const coinRainContainer = document.getElementById('coinRainContainer');
+    const coinsFolder = 'assets/coins/';
+    const audioFolder = 'assets/sounds/'; // Assuming you put the sound in an 'assets/sounds' folder
+    const coinDropSound = new Audio(`${audioFolder}coin_drop.mp3`); // Create an Audio object
+    const initialDate = new Date('2025-05-11'); // Hardcoded start date
+    const coinImages = [
+        'gold_coin_1.png',
+        'gold_coin_2.png',
+        'gold_coin_3.png',
+        'gold_coin_4.png',
+        'gold_coin_5.png',
+        'gold_coin_6.png',
+        'gold_coin_7.png',
+        'copper_coin_.png',
+        'platinum_coin_.png',
+        'gold_coin_.png',
+        'jewel_1_.png',
+        'jewel_2_.png',
+        'jewel_3_.png',
+        'jewel_4_.png',
+        'jewel_5_.png',
+        'jewel_6_.png',
+        'jewel_7_.png',
+        'jewel_8_.png',
+        'jewel_9_.png',
+        'jewel_10_.png',
+        'jewel_11_.png',
+        'jewel_12_.png',
+        'jewel_13_.png',
+        'jewel_14_.png',
+        'jewel_15_.png',
+        'jewel_nav_1_.png',
+        'jewel_nav_2_.png',
+        'jewel_nav_3_.png',
+        'jewel_nav_4_.png',
+        'jewel_nav_5_.png',
+        'jewel_nav_6_.png',
+        'jewel_nav_7_.png',
+        'jewel_nav_8_.png',
+        'jewel_nav_9_.png',
+        'jewel_16_.png',
+        'silver_coin_.png'
+        // Add ALL your coin image filenames here
+    ];
+    const animationSpeed = 5; // Adjust for faster/slower speed (higher is faster)
+
+    function updateDailyCounter() {
+        const now = new Date();
+        const diffInDays = Math.floor((now - initialDate) / (1000 * 60 * 60 * 24));
+        const count = diffInDays >= 0 ? diffInDays : 0;
+        dailyCounterElement.textContent = count;
+        return count;
+    }
+
+    function getRandomCoinImage() {
+        if (!coinImages || coinImages.length === 0) {
+            console.error('Error: No coin images defined in coinImages array.');
+            return '';
+        }
+        const randomIndex = Math.floor(Math.random() * coinImages.length);
+        const imageUrl = coinsFolder + coinImages[randomIndex];
+        console.log('Getting random coin image:', imageUrl);
+        return imageUrl;
+    }
+
+    function createCoin() {
+        const imageUrl = getRandomCoinImage();
+        if (!imageUrl) {
+            return null;
+        }
+
+        const coin = document.createElement('img');
+        coin.src = imageUrl;
+        coin.classList.add('coin');
+        coin.style.width = '25px';
+        coin.style.height = '25px';
+        coin.style.position = 'absolute';
+        coin.style.top = `-${Math.random() * 50 + 30}px`; // Start coins above the viewport
+        coin.style.left = `${Math.random() * window.innerWidth}px`;
+        coin.style.opacity = 1;
+        coin.style.transform = `rotate(${Math.random() * 360}deg)`;
+
+        const rotationSpeed = (Math.random() * 60 - 30);
+
+        let animationFrameId;
+        const animateCoin = () => {
+            coin.style.transform = `rotate(${parseFloat(coin.style.transform.replace('rotate(', '').replace('deg)', '')) + rotationSpeed}deg)`;
+            coin.style.top = `${parseFloat(coin.style.top) + animationSpeed}px`;
+
+            if (parseFloat(coin.style.top) < window.innerHeight + 50) { // Extend slightly below viewport
+                animationFrameId = requestAnimationFrame(animateCoin);
+            } else {
+                coin.remove();
+            }
+        };
+
+        setTimeout(() => {
+            animationFrameId = requestAnimationFrame(animateCoin);
+        }, Math.random() * 100);
+
+        return coin;
+    }
+
+
+    coinRainTrigger.addEventListener('click', () => {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+        
+        const numberOfCoins = updateDailyCounter();
+        console.log('Coin trigger clicked, creating', numberOfCoins, 'coins.');
+
+        // Play the coin drop sound
+        coinDropSound.currentTime = 0; // Reset the sound to the beginning if it's still playing
+        coinDropSound.play();
+
+        for (let i = 0; i < numberOfCoins; i++) {
+            setTimeout(() => {
+                const coin = createCoin();
+                if (coin) {
+                    coinRainContainer.appendChild(coin);
+                }
+            }, i * 50); // Faster stagger
+        }
+    });
+
+    // Initialize the counter on page load
+    updateDailyCounter();
+    console.log('Daily counter initialized.');
+});
+-e 
+
+=== FILE: ./js/receive-qr.js ===
+document.addEventListener('DOMContentLoaded', () => {
+    const qrCodeContainer = document.getElementById('qrCodeContainer');
+    const amountDisplay = document.getElementById('amountDisplay');
+    const descriptionDisplay = document.getElementById('descriptionDisplay');
+    const payeeNameDisplay = document.getElementById('payeeNameDisplay');
+    const doneButton = document.getElementById('doneButton');
+
+    const payeeVPA = localStorage.getItem('earn_upiId');
+    const payeeName = localStorage.getItem('earn_username');
+    const pendingTransactionString = localStorage.getItem('pending_receive_transaction');
+    const pendingTransaction = pendingTransactionString ? JSON.parse(pendingTransactionString) : null;
+
+    if (!payeeVPA || !payeeName || !pendingTransaction) {
+        alert('Error: Payment details not found.');
+        window.location.href = 'index.html'; // Redirect to home if data is missing
+        return;
+    }
+
+    const { amount, description } = pendingTransaction;
+
+    amountDisplay.textContent = `₹${amount.toFixed(2)}`;
+    descriptionDisplay.textContent = description || 'No description provided';
+    payeeNameDisplay.textContent = payeeName;
+
+    // Construct the UPI link (more robust format)
+    let upiLink = `upi://pay?pa=${encodeURIComponent(payeeVPA)}&pn=${encodeURIComponent(payeeName)}&am=${amount.toFixed(2)}`;
+    if (description) {
+        upiLink += `&tn=${encodeURIComponent(description)}`; // 'tn' for transaction note/remarks
+    }
+
+    // Generate the QR code using EasyQRCodeJS with logo options
+    new QRCode(qrCodeContainer, {
+        text: upiLink,
+        width: 256,
+        height: 256,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H,
+        logo: 'assets/icons/icon-40x40.svg', // Path to your logo image
+        logoWidth: 64, // Adjust logo width (optional)
+        logoHeight: 64, // Adjust logo height (optional)
+        logoBackgroundColor: '#ffffff', // Background color behind the logo (optional)
+        logoBackgroundTransparent: false // Make the logo background transparent (optional)
+    });
+
+    doneButton.addEventListener('click', () => {
+        saveTransaction(pendingTransaction); // Save the pending transaction
+        localStorage.removeItem('pending_receive_transaction'); // Clear the pending transaction
+        window.location.href = 'index.html';
+    });
+
+    function saveTransaction(transaction) {
+        let transactions = JSON.parse(localStorage.getItem('earn_transactions') || '[]');
+        transactions.unshift(transaction); // Add to the beginning for recent first
+        localStorage.setItem('earn_transactions', JSON.stringify(transactions));
+    }
+});-e 
+
+=== FILE: ./js/index.js ===
+document.addEventListener('DOMContentLoaded', () => {
+    // --- DOM Elements for the new confirmation modal ---
+    const paymentConfirmationModal = document.getElementById('paymentConfirmationModal');
+    const confirmAmountSpan = document.getElementById('confirmAmount');
+    const confirmDescriptionSpan = document.getElementById('confirmDescription');
+    const confirmCategorySpan = document.getElementById('confirmCategory');
+    const confirmMerchantSpan = document.getElementById('confirmMerchant'); // Added for clarity
+    const paymentStatusMessage = document.getElementById('paymentStatusMessage');
+    const confirmPaymentSuccessBtn = document.getElementById('confirmPaymentSuccessBtn');
+    const confirmPaymentCancelBtn = document.getElementById('confirmPaymentCancelBtn');
+
+    // --- Helper function to get URL parameters ---
+    function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        const results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
+    // --- Function to update the main transactions list ---
+    function saveTransaction(transaction) {
+        let transactions = JSON.parse(localStorage.getItem('earn_transactions') || '[]');
+        transactions.unshift(transaction); // Add to the beginning of the array
+        localStorage.setItem('earn_transactions', JSON.stringify(transactions));
+    }
+
+    // --- Main logic for handling UPI redirect confirmation ---
+    function handleUpiRedirect() {
+        const transactionId = getUrlParameter('transactionId');
+        const status = getUrlParameter('status'); // Expected 'success' from UPI app
+
+        // Retrieve the pending transaction from localStorage
+        const pendingTransactionJson = localStorage.getItem('pending_upi_confirmation');
+
+        if (transactionId && pendingTransactionJson) {
+            let pendingTransaction;
+            try {
+                pendingTransaction = JSON.parse(pendingTransactionJson);
+            } catch (e) {
+                console.error("Error parsing pending transaction from localStorage:", e);
+                localStorage.removeItem('pending_upi_confirmation'); // Clear corrupted data
+                return;
+            }
+
+            // Check if the transaction ID matches (important for security/integrity)
+            if (pendingTransaction.id === transactionId) {
+                // Show the confirmation modal
+                confirmAmountSpan.textContent = `₹${parseFloat(pendingTransaction.amount).toFixed(2)}`;
+                confirmDescriptionSpan.textContent = pendingTransaction.description || 'N/A';
+                confirmCategorySpan.textContent = pendingTransaction.category || 'N/A';
+                confirmMerchantSpan.textContent = pendingTransaction.merchantName || 'Unknown'; // Assuming you added merchantName to pendingTransaction
+                
+                // Display a status message based on the URL parameter (optional)
+                if (status === 'success') {
+                    paymentStatusMessage.textContent = "The payment app reported success. Please confirm.";
+                    paymentStatusMessage.style.color = 'green';
+                } else {
+                    paymentStatusMessage.textContent = "The payment app redirection occurred. Please confirm status.";
+                    paymentStatusMessage.style.color = 'orange';
+                }
+                
+                paymentConfirmationModal.style.display = 'flex'; // Show the modal
+
+                // Event listener for "Yes, it was successful"
+                confirmPaymentSuccessBtn.onclick = () => {
+                    pendingTransaction.status = 'success';
+                    // Re-record date/time to be current at confirmation, or keep original from initiation
+                    pendingTransaction.date = new Date().toISOString().split('T')[0];
+                    pendingTransaction.time = new Date().toTimeString().split(' ')[0];
+                    saveTransaction(pendingTransaction); // Add to main transaction list
+                    localStorage.removeItem('pending_upi_confirmation'); // Clear pending state
+                    paymentConfirmationModal.style.display = 'none'; // Hide modal
+                    // Optionally, update the UI on index.html to reflect new transaction
+                    alert('Payment confirmed and added to your transactions!');
+                    // Clean the URL parameters after processing
+                    window.history.replaceState({}, document.title, location.pathname); 
+                };
+
+                // Event listener for "No, cancel it"
+                confirmPaymentCancelBtn.onclick = () => {
+                    localStorage.removeItem('pending_upi_confirmation'); // Discard pending transaction
+                    paymentConfirmationModal.style.display = 'none'; // Hide modal
+                    alert('Payment cancelled. Transaction not added.');
+                    // Clean the URL parameters after processing
+                    window.history.replaceState({}, document.title, location.pathname);
+                };
+            } else {
+                console.warn("Mismatched transaction ID or corrupted pending state.");
+                localStorage.removeItem('pending_upi_confirmation'); // Clear potentially stale data
+            }
+        } else if (pendingTransactionJson) {
+            // A pending transaction exists but no transactionId in URL
+            // This might happen if user navigated away or reloaded without UPI callback
+            // You might want to ask the user what to do with the pending transaction here
+            // For now, we'll just log it. You could add a "Resume Pending" feature if desired.
+            console.warn("A pending transaction exists but no matching URL parameters. Discarding.");
+            localStorage.removeItem('pending_upi_confirmation');
+        }
+        // Clean URL parameters immediately if they exist to prevent re-prompting on refresh
+        // This is important even if no pending transaction was found but parameters were present
+        if (location.search.includes('transactionId') || location.search.includes('status')) {
+             window.history.replaceState({}, document.title, location.pathname);
+        }
+    }
+
+    // Call the handler when the page loads
+    handleUpiRedirect();
+
+    // --- (Your existing index.js code for displaying transactions etc. goes here if any) ---
+    // Example: If you have a function to load and display transactions, call it here.
+    // displayTransactions(); 
+});-e 
+
+=== FILE: ./js/receive.js ===
+document.addEventListener('DOMContentLoaded', () => {
+
+    setTimeout(() => {
+        const input = document.getElementById("amount");
+        input.focus();
+        input.select(); // optional
+    }, 300); // delay ensures mobile keyboard show
+
+    const receiveForm = document.getElementById('receiveForm');
+    const amountInput = document.getElementById('amount');
+    const descriptionInput = document.getElementById('description');
+    const categoryCash = document.getElementById('categoryCash');
+    const categoryRent = document.getElementById('categoryRent');
+    const categorySalary = document.getElementById('categorySalary');
+    const categoryOther = document.getElementById('categoryOther');
+    const customReceiptButton = document.getElementById('customReceiptButton'); // Get the custom receipt button
+    // Get the switch and the details container for Receive page
+    const toggleDetailsSwitchReceive = document.getElementById('toggleDetailsReceive');
+    const detailsFieldsReceive = document.getElementById('detailsFieldsReceive');
+
+    // --- Unified Switch Logic ---
+    // Load the saved switch state from local storage (using a single key)
+    const hideDetailsState = localStorage.getItem('hideDetails');
+    // Default to showing details if state is not set
+    const showDetails = hideDetailsState === null ? true : hideDetailsState === 'true';
+
+    toggleDetailsSwitchReceive.checked = showDetails;
+    if (!showDetails) {
+        detailsFieldsReceive.classList.add('hidden');
+    } else {
+        detailsFieldsReceive.classList.remove('hidden');
+    }
+
+    // Event listener for the toggle switch
+    toggleDetailsSwitchReceive.addEventListener('change', () => {
+        const currentState = toggleDetailsSwitchReceive.checked;
+        detailsFieldsReceive.classList.toggle('hidden', !currentState);
+        // Save the state using the unified key
+        localStorage.setItem('hideDetails', currentState);
+    });
+    // --- End Unified Switch Logic ---
+
+
+    receiveForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const amount = parseFloat(amountInput.value);
+        // Only get category and description if details are shown
+        const description = toggleDetailsSwitchReceive.checked ? descriptionInput.value : '';
+        let category = '';
+        if (toggleDetailsSwitchReceive.checked) {
+            if (categoryCash.checked) category = 'cash';
+            if (categoryRent.checked) category = 'rent';
+            if (categorySalary.checked) category = 'salary';
+            if (categoryOther.checked) category = 'other';
+        }
+
+        if (isNaN(amount) || amount <= 0) {
+            alert('Please enter a valid amount.');
+            return;
+        }
+
+        const transactionData = {
+            id: generateUniqueId(),
+            type: 'income',
+            amount: amount,
+            category: category,
+            description: description,
+            date: new Date().toISOString().split('T')[0],
+            time: new Date().toTimeString().split(' ')[0]
+        };
+
+        // Store the transaction data temporarily in localStorage for QR code
+        localStorage.setItem('pending_receive_transaction', JSON.stringify(transactionData));
+        window.location.href = 'receive-qr.html';
+    });
+
+    // Event listener for the "Add Custom Receipt" button
+    customReceiptButton.addEventListener('click', () => {
+        const amount = parseFloat(amountInput.value);
+         // Only get category and description if details are shown
+        const description = toggleDetailsSwitchReceive.checked ? descriptionInput.value : '';
+        let category = '';
+        if (toggleDetailsSwitchReceive.checked) {
+            if (categoryCash.checked) category = 'cash';
+            if (categoryRent.checked) category = 'rent';
+            if (categorySalary.checked) category = 'salary';
+            if (categoryOther.checked) category = 'other';
+        }
+
+        if (isNaN(amount) || amount <= 0) {
+            alert('Please enter a valid amount.');
+            return;
+        }
+
+        const transactionData = {
+            id: generateUniqueId(),
+            type: 'income',
+            amount: amount,
+            category: category,
+            description: description,
+            date: new Date().toISOString().split('T')[0],
+            time: new Date().toTimeString().split(' ')[0]
+        };
+
+        // Save the transaction directly to earn_transactions
+        saveTransaction(transactionData);
+        window.location.href = 'index.html'; // Redirect to index.html
+    });
+
+    function saveTransaction(transaction) {
+        let transactions = JSON.parse(localStorage.getItem('earn_transactions') || '[]');
+        transactions.unshift(transaction); // Add to the beginning for recent first
+        localStorage.setItem('earn_transactions', JSON.stringify(transactions));
+    }
+
+    const iconGrid = document.querySelector('.icon-grid');
+
+    if (iconGrid) {
+        iconGrid.addEventListener('click', (event) => {
+            const label = event.target.closest('label');
+            if (label) {
+                const radioId = label.getAttribute('for');
+                if (radioId) {
+                    const radioButton = document.getElementById(radioId);
+                    if (radioButton) {
+                        radioButton.checked = true;
+                    }
+                }
+            }
+        });
+    }
+});
+
+function generateUniqueId() {
+    return Date.now().toString(36) + Math.random().toString(36).substring(2, 15);
+}
+-e 
+
+=== FILE: ./js/script.js ===
+// Global JavaScript File
+
+function getLocalStorageItem(key) {
+    return localStorage.getItem(key);
+}
+
+function setLocalStorageItem(key, value) {
+    localStorage.setItem(key, value);
+}
+
+function generateUniqueId() {
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
+
+// You can add more global functions here as needed
+
+-e 
+
+=== FILE: ./js/splash.js ===
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        window.location.href = 'index.html'; // Redirect to the landing page after 3 seconds
+    }, 3500);
+});-e 
+
+=== FILE: ./js/data.js ===
+document.addEventListener('DOMContentLoaded', () => {
+    const uploadForm = document.getElementById('uploadForm');
+    const uploadStatus = document.getElementById('upload-status');
+    const downloadButton = document.getElementById('downloadButton');
+    const downloadStatus = document.getElementById('download-status');
+
+    uploadForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const fileInput = document.getElementById('csvFile');
+        const file = fileInput.files[0];
+
+        if (file) {
+            uploadStatus.textContent = 'Reading file...';
+            uploadStatus.classList.remove('hidden');
+
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const contents = e.target.result;
+                try {
+                    const transactions = parseCSV(contents);
+
+                    if (transactions && transactions.length > 0) {
+                        localStorage.setItem('earn_transactions', JSON.stringify(transactions));
+                        uploadStatus.textContent = `Successfully loaded ${transactions.length} entries to local storage.`;
+                        uploadStatus.classList.add('success');
+                    } else {
+                        uploadStatus.textContent = 'Error parsing CSV or empty data.';
+                        uploadStatus.classList.add('error');
+                    }
+                } catch (error) {
+                    console.error("Error parsing CSV:", error);
+                    uploadStatus.textContent = 'Error parsing CSV.';
+                    uploadStatus.classList.add('error');
+                }
+            };
+
+            reader.onerror = function() {
+                uploadStatus.textContent = 'Error reading the CSV file.';
+                uploadStatus.classList.add('error');
+            };
+
+            reader.readAsText(file);
+        } else {
+            uploadStatus.textContent = 'Please select a CSV file.';
+            uploadStatus.classList.remove('hidden');
+            uploadStatus.classList.add('error');
+        }
+    });
+
+    downloadButton.addEventListener('click', () => {
+        const data = localStorage.getItem('earn_transactions');
+        if (!data) {
+            downloadStatus.textContent = 'No data found in local storage.';
+            downloadStatus.classList.remove('hidden');
+            downloadStatus.classList.add('error');
+            return;
+        }
+
+        try {
+            const transactions = JSON.parse(data);
+            if (!Array.isArray(transactions) || transactions.length === 0) {
+                downloadStatus.textContent = 'No transaction data to download.';
+                downloadStatus.classList.remove('hidden');
+                downloadStatus.classList.add('error');
+                return;
+            }
+            const csvContent = convertToCSV(transactions);
+            downloadCSV(csvContent, 'transactions.csv');
+            downloadStatus.textContent = 'CSV file downloaded.';
+            downloadStatus.classList.remove('hidden');
+            downloadStatus.classList.remove('error');
+
+        } catch (error) {
+            console.error("Error converting to CSV:", error);
+            downloadStatus.textContent = 'Error generating CSV file.';
+            downloadStatus.classList.remove('hidden');
+            downloadStatus.classList.add('error');
+        }
+    });
+
+    function parseCSV(csvText) {
+        const lines = csvText.trim().split('\n');
+        if (lines.length <= 1) { // No data rows or just headers
+            return [];
+        }
+        const headers = lines[0].split(',');
+        const transactions = [];
+
+        for (let i = 1; i < lines.length; i++) {
+            const values = lines[i].split(',');
+            if (values.length === headers.length) {
+                const transaction = {};
+                for (let j = 0; j < headers.length; j++) {
+                    let value = values[j].trim();
+                    if (headers[j] === 'amount') {
+                        const parsedAmount = parseFloat(value);
+                        transaction[headers[j]] = isNaN(parsedAmount) ? 0 : parsedAmount; // Default to 0 if not a number
+                    } else {
+                        transaction[headers[j]] = value;
+                    }
+                }
+                transactions.push(transaction);
+            }
+        }
+        return transactions;
+    }
+
+    function convertToCSV(transactions) {
+        if (!Array.isArray(transactions) || transactions.length === 0) {
+            return '';
+        }
+        const headers = Object.keys(transactions[0]);
+        const headerRow = headers.join(',');
+        const rows = transactions.map(transaction => {
+            return headers.map(header => {
+                let value = transaction[header];
+                if (typeof value === 'string') {
+                    value = value.replace(/"/g, '""'); // Escape double quotes
+                    if (value.includes(',') || value.includes('\n') || value.includes('"')) {
+                        value = `"${value}"`; // Quote the value if it contains commas, newlines, or quotes
+                    }
+                }
+                return value;
+            }).join(',');
+        });
+        return `${headerRow}\n${rows.join('\n')}`;
+    }
+
+    function downloadCSV(csvContent, fileName) {
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", fileName);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+});
+-e 
+
+=== FILE: ./js/report.js ===
+document.addEventListener('DOMContentLoaded', () => {
+    const generateReportButton = document.getElementById('generateReport');
+
+    if (generateReportButton) {
+        generateReportButton.addEventListener('click', generateTransactionReport);
+    } else {
+        console.error('Generate Report button not found.');
+    }
+
+    function generateTransactionReport() {
+        const reportTitle = 'Transaction Report';
+        const userName = localStorage.getItem('earn_username') || 'User Name Not Available';
+        const userUPI = localStorage.getItem('earn_upiId') || 'UPI ID Not Available';
+        const a4Width = 210; // mm
+        const a4Height = 297; // mm
+        const margin = 15; // mm
+        let yPosition = margin;
+        const rowHeight = 7; // mm
+        const fontSize = 10;
+        const headerFontSize = 12;
+        const descriptionColumnWidth = 40; // Width allocated for description
+
+        const filteredTransactionsJSON = localStorage.getItem('filtered_transactions');
+        const transactions = filteredTransactionsJSON ? JSON.parse(filteredTransactionsJSON) : [];
+
+        if (transactions.length === 0) {
+            alert('No transactions to report based on the current filters.');
+            return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+
+        pdf.setFontSize(headerFontSize);
+        pdf.text(reportTitle, margin, yPosition);
+        yPosition += headerFontSize + 5;
+
+        pdf.setFontSize(fontSize);
+        pdf.text(`Name: ${userName}`, margin, yPosition);
+        yPosition += fontSize + 2;
+        pdf.text(`UPI ID: ${userUPI}`, margin, yPosition);
+        yPosition += fontSize + 5;
+
+        // Calculate totals
+        let totalIncome = 0;
+        let totalExpense = 0;
+        transactions.forEach(t => {
+            if (t.type === 'income') {
+                totalIncome += parseFloat(t.amount);
+            } else if (t.type === 'expense') {
+                totalExpense += parseFloat(t.amount);
+            }
+        });
+
+        const currentFilterType = localStorage.getItem('current_filter_type') || '';
+        pdf.setFont('helvetica', 'bold');
+        if (currentFilterType === 'income') {
+            pdf.text(`Total Income: ₹${totalIncome.toFixed(2)}`, margin, yPosition);
+            yPosition += fontSize + 3;
+        } else if (currentFilterType === 'expense') {
+            pdf.text(`Total Expense: ₹${totalExpense.toFixed(2)}`, margin, yPosition);
+            yPosition += fontSize + 3;
+        } else {
+            pdf.text(`Total Income: ₹${totalIncome.toFixed(2)}`, margin, yPosition);
+            yPosition += fontSize + 3;
+            pdf.text(`Total Expense: ₹${totalExpense.toFixed(2)}`, margin, yPosition);
+            yPosition += fontSize + 3;
+            pdf.text(`Net Balance: ₹${(totalIncome - totalExpense).toFixed(2)}`, margin, yPosition);
+            yPosition += fontSize + 3;
+        }
+        pdf.setFont('helvetica', 'normal');
+        yPosition += 5;
+
+        // Define table headers
+        const headers = ['Type', 'Category', 'Description', 'Amount', 'Date', 'Time'];
+        const columnWidths = [15, 35, descriptionColumnWidth, 35, 25, 15];
+        let xPosition = margin;
+
+        pdf.setFont('helvetica', 'bold');
+        headers.forEach((header, index) => {
+            pdf.text(header, xPosition, yPosition);
+            xPosition += columnWidths[index];
+        });
+        yPosition += rowHeight + 2;
+        pdf.setFont('helvetica', 'normal');
+
+        // Add transaction data
+        transactions.forEach(transaction => {
+            xPosition = margin;
+            const rowData = [
+                transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1),
+                transaction.category.charAt(0).toUpperCase() + transaction.category.slice(1),
+                transaction.description || '-',
+                `${transaction.type === 'expense' ? '-' : '+' }₹${parseFloat(transaction.amount).toFixed(2)}`,
+                transaction.date,
+                transaction.time
+            ];
+
+            let currentY = yPosition;
+            const descriptionLines = pdf.splitTextToSize(rowData[2], columnWidths[2] - 5); // -5 for a little padding
+            const descriptionLineHeight = pdf.getTextDimensions('M', { fontSize: fontSize }).h; // Approximate line height
+
+            rowData[2] = descriptionLines; // Replace the single description with the array of lines
+
+            rowData.forEach((data, index) => {
+                let textToPrint = data;
+                if (index === 2 && Array.isArray(data)) {
+                    data.forEach((line, lineIndex) => {
+                        pdf.text(line, xPosition, currentY + lineIndex * descriptionLineHeight);
+                    });
+                    const linesCount = data.length;
+                    currentY += linesCount * descriptionLineHeight;
+                } else {
+                    if (index === 3) {
+                        console.log('Amount being printed:', textToPrint); // ADD THIS LINE IN report.js
+                    }
+                    pdf.text(textToPrint, xPosition, currentY);
+                }
+                xPosition += columnWidths[index];
+            });
+            yPosition = Math.max(yPosition + rowHeight, currentY + (Array.isArray(rowData[2]) ? (rowData[2].length -1) * descriptionLineHeight : 0));
+
+            if (yPosition > a4Height - margin - rowHeight) {
+                pdf.addPage();
+                yPosition = margin;
+                pdf.setFontSize(fontSize);
+            }
+        });
+
+        // Save or open the PDF
+        pdf.save('transaction_report.pdf');
+        // pdf.output('dataurlnewwindow'); // To open in a new window
+    }
+});-e 
+
+=== FILE: ./js/app.js ===
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('js/sw.js')
+            .then((registration) => {
+                console.log('Service Worker registered with scope:', registration.scope);
+            })
+            .catch((error) => {
+                console.error('Service Worker registration failed:', error);
+            });
+    });
+}
+
+let deferredPrompt;
+const installPrompt = document.createElement('div');
+installPrompt.id = 'installPrompt';
+installPrompt.style.display = 'none'; // Initially hidden
+installPrompt.classList.add('install-prompt-container'); // Add a class for easier styling
+
+const appLogo = document.createElement('img');
+appLogo.src = './assets/icons/icon-96x96.png'; // Adjust path if needed
+appLogo.alt = 'Earn App Logo';
+appLogo.classList.add('install-logo');
+
+const appInfo = document.createElement('div');
+appInfo.classList.add('install-info');
+
+const appName = document.createElement('h3');
+appName.textContent = 'Install Earn App';
+
+const appDescription = document.createElement('p');
+appDescription.textContent = 'Add Earn to your home screen for quick access.';
+
+appInfo.appendChild(appName);
+appInfo.appendChild(appDescription);
+
+const installButton = document.createElement('button');
+installButton.textContent = 'Install';
+installButton.classList.add('button', 'primary', 'install-button');
+installButton.addEventListener('click', async () => {
+    console.log('Install button clicked');
+    if (deferredPrompt) {
+        console.log('deferredPrompt is available');
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`User response to the install prompt: ${outcome}`);
+        deferredPrompt = null;
+        installPrompt.style.display = 'none'; // Hide the prompt after interaction
+    } else {
+        console.log('deferredPrompt is null or undefined when install button clicked');
+    }
+});
+
+const closeButton = document.createElement('button');
+closeButton.textContent = 'Skip for Now';
+closeButton.classList.add('button', 'secondary', 'install-close-button');
+closeButton.addEventListener('click', () => {
+    console.log('Close button clicked');
+    installPrompt.style.display = 'none'; // Hide the prompt if closed
+});
+
+installPrompt.appendChild(appLogo);
+installPrompt.appendChild(appInfo);
+installPrompt.appendChild(installButton);
+installPrompt.appendChild(closeButton);
+document.body.appendChild(installPrompt);
+console.log('installPrompt appended to body');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    console.log('beforeinstallprompt fired');
+    e.preventDefault();
+    deferredPrompt = e;
+    // Show your custom install prompt after a delay or based on user interaction
+    setTimeout(() => {
+        isAppInstalled().then(isInstalled => {
+            console.log('isAppInstalled() resolved:', isInstalled);
+            if (!isInstalled) {
+                console.log('App is not installed, showing prompt');
+                installPrompt.style.display = 'block';
+                installPrompt.classList.add('show-install-prompt');
+                console.log('installPrompt display set to block and show class added');
+            } else {
+                console.log('App is likely installed, not showing prompt');
+            }
+        });
+    }, 2000); // Show after 2 seconds (slightly reduced delay)
+});
+
+window.addEventListener('appinstalled', () => {
+    console.log('PWA was installed');
+    deferredPrompt = null;
+    installPrompt.style.display = 'none'; // Ensure prompt is hidden after install
+});
+
+// Optional: Function to check if the app is already installed
+function isAppInstalled() {
+    const standalone = window.matchMedia('(display-mode: standalone)').matches;
+    console.log('Standalone check:', standalone);
+    return navigator.getInstalledRelatedApps().then((relatedApps) => {
+        const installed = relatedApps.length > 0;
+        console.log('getInstalledRelatedApps check:', installed, relatedApps);
+        return installed || standalone; // Include standalone check in the resolved value
+    }).catch(error => {
+        console.error('Error checking installed related apps:', error);
+        return standalone; // Return standalone status on error
+    });
+}
+-e 
+
+=== FILE: ./js/sw.js ===
+const CACHE_NAME = 'earn-app-v10';
+const urlsToCache = [
+    '../',
+    '../index.html',
+    '../splash.html',
+    '../receive.html',
+    '../receive-qr.html',
+    '../send.html',
+    '../transactions.html',
+    '../data.html',
+    '../faq.html',
+    '../reset.html',
+    '../subscription.html',
+    '../favicon.ico',
+    '../manifest.json',
+    '../test-data.csv',
+
+    // CSS
+    '../css/styles.css',
+    '../css/index.css',
+    '../css/splash.css',
+    '../css/receive.css',
+    '../css/receive-qr.css',
+    '../css/send.css',
+    '../css/transactions.css',
+    '../css/data.css',
+    '../css/reset.css',
+    '../css/subscription.css',
+    '../css/faq.css',
+
+    // JS
+    '../js/app.js',
+    '../js/data.js',
+    '../js/index.js',
+    '../js/splash.js',
+    '../js/receive.js',
+    '../js/receive-qr.js',
+    '../js/send.js',
+    '../js/transactions.js',
+    '../js/script.js',
+    '../js/reset.js',
+    '../js/report.js',
+    '../js/prosperity.js',
+    '../js/sw.js',
+
+    // Images
+    '../assets/images/logo.png',
+    '../assets/images/logofull.svg',
+    '../assets/images/twct.png',
+    '../assets/images/wwwc.png',
+    '../assets/images/Banner.jpg',
+    '../assets/images/Banner.png',
+    '../assets/images/auralogo.png',
+    '../assets/images/young-girl-red-shirt-feels-positive.jpg',
+
+    // Sounds
+    '../assets/sounds/coin_drop.mp3',
+
+    // Coins
+    '../assets/coins/copper_coin_.png',
+    '../assets/coins/gold_coin_1.png',
+    '../assets/coins/gold_coin_2.png',
+    '../assets/coins/gold_coin_3.png',
+    '../assets/coins/gold_coin_4.png',
+    '../assets/coins/gold_coin_5.png',
+    '../assets/coins/gold_coin_6.png',
+    '../assets/coins/gold_coin_7.png',
+    '../assets/coins/gold_coin_8.png',
+    '../assets/coins/gold_coin_.png',
+    '../assets/coins/platinum_coin_.png',
+    '../assets/coins/silver_coin_.png',
+    '../assets/coins/jewel_1_.png',
+    '../assets/coins/jewel_2_.png',
+    '../assets/coins/jewel_3_.png',
+    '../assets/coins/jewel_4_.png',
+    '../assets/coins/jewel_5_.png',
+    '../assets/coins/jewel_6_.png',
+    '../assets/coins/jewel_7_.png',
+    '../assets/coins/jewel_8_.png',
+    '../assets/coins/jewel_9_.png',
+    '../assets/coins/jewel_10_.png',
+    '../assets/coins/jewel_11_.png',
+    '../assets/coins/jewel_12_.png',
+    '../assets/coins/jewel_13_.png',
+    '../assets/coins/jewel_14_.png',
+    '../assets/coins/jewel_15_.png',
+    '../assets/coins/jewel_16_.png',
+    '../assets/coins/jewel_nav_1_.png',
+    '../assets/coins/jewel_nav_2_.png',
+    '../assets/coins/jewel_nav_3_.png',
+    '../assets/coins/jewel_nav_4_.png',
+    '../assets/coins/jewel_nav_5_.png',
+    '../assets/coins/jewel_nav_6_.png',
+    '../assets/coins/jewel_nav_7_.png',
+    '../assets/coins/jewel_nav_8_.png',
+    '../assets/coins/jewel_nav_9_.png',
+
+    // Icons
+    '../assets/icons/Audit.svg',
+    '../assets/icons/arrow-down-income.svg',
+    '../assets/icons/arrow-down.svg',
+    '../assets/icons/arrow-up-expense.svg',
+    '../assets/icons/arrow-up.svg',
+    '../assets/icons/cash.svg',
+    '../assets/icons/coin.svg',
+    '../assets/icons/default.svg',
+    '../assets/icons/delete.svg',
+    '../assets/icons/edit.svg',
+    '../assets/icons/entertainment.svg',
+    '../assets/icons/food.svg',
+    '../assets/icons/help.svg',
+    '../assets/icons/home-back-arrow.gif',
+    '../assets/icons/icon-40x40.png',
+    '../assets/icons/icon-40x40.svg',
+    '../assets/icons/icon-48x48.png',
+    '../assets/icons/icon-96x96.png',
+    '../assets/icons/icon-144x144.png',
+    '../assets/icons/icon-192x192.png',
+    '../assets/icons/icon-512x512.png',
+    '../assets/icons/investment.svg',
+    '../assets/icons/money-bill-stack.svg',
+    '../assets/icons/other.svg',
+    '../assets/icons/others.svg',
+    '../assets/icons/rent.svg',
+    '../assets/icons/salary.svg',
+    '../assets/icons/shopping-bag.svg',
+    '../assets/icons/travel.svg',
+    '../assets/icons/upi.svg',
+    '../assets/icons/wallet.svg',
+];
+
+
+self.addEventListener('install', (event) => {
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+            .then((cache) => {
+                console.log('Opened cache');
+                return cache.addAll(urlsToCache);
+            })
+    );
+});
+
+self.addEventListener('fetch', (event) => {
+    event.respondWith(
+        caches.match(event.request)
+            .then((response) => {
+                // Cache hit - return response
+                if (response) {
+                    return response;
+                }
+                return fetch(event.request).then(
+                    (response) => {
+                        // Check if we received a valid response
+                        if (!response || response.status !== 200 || response.type !== 'basic') {
+                            return response;
+                        }
+
+                        // IMPORTANT: Clone the response. A response is a stream
+                        // and because we want the browser to consume the response
+                        // as well as the cache consuming the response, we need
+                        // to clone it so both streams can be read.
+                        const responseToCache = response.clone();
+
+                        caches.open(CACHE_NAME)
+                            .then((cache) => {
+                                cache.put(event.request, responseToCache);
+                            });
+
+                        return response;
+                    }
+                );
+            })
+    );
+});
+
+self.addEventListener('activate', (event) => {
+    const cacheWhitelist = [CACHE_NAME];
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cacheName) => {
+                    if (cacheWhitelist.indexOf(cacheName) === -1) {
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        })
+    );
+});
+-e 
+
+=== FILE: ./transactions.html ===
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Transactions - Earn</title>
+    <meta name="theme-color" content="#f0f4f8">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/transactions.css">
+</head>
+<body>
+    <div class="container">
+        <h1>All Transactions</h1>
+        <div class="filter-controls">
+            <div class="filter-group">
+                <label for="filterType">Type:</label>
+                <select id="filterType">
+                    <option value="">All Types</option>
+                    <option value="income">Income</option>
+                    <option value="expense">Expense</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filterCategory">Category:</label>
+                <select id="filterCategory">
+                    <option value="">All Categories</option>
+                    <option value="cash">Cash</option>
+                    <option value="rent">Rent</option>
+                    <option value="salary">Salary</option>
+                    <option value="gift">Gift</option>
+                    <option value="investment">Investment</option>
+                    <option value="other">Other</option>
+                    <option value="food">Food</option>
+                    <option value="shopping">Shopping</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="travel">Travel</option>
+                    <option value="others">Others</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filterStartDate">From Date:</label>
+                <input type="date" id="filterStartDate">
+            </div>
+            <div class="filter-group">
+                <label for="filterEndDate">To Date:</label>
+                <input type="date" id="filterEndDate">
+            </div>
+            <button id="clearFilters" class="button secondary small">Clear Filters</button>
+            <button id="generateReport" class="button primary" style="display: none;">Generate Report</button>
+        </div>
+        <div class="table_wrap">
+            <table id="allTransactionsTable">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </div>
+        <div class="pagination">
+            <button id="prevPage" disabled>Previous</button>
+            <div id="pageNumbers"></div>
+            <button id="nextPage">Next</button>
+        </div>
+        <div id="editTransactionPopup" class="popup" style="display: none;">
+            <h3>Edit Transaction</h3>
+            <form id="editTransactionForm">
+                <input type="hidden" id="editTransactionId">
+                <div class="form-group">
+                    <label for="editType">Type:</label>
+                    <select id="editType">
+                        <option value="income">Income</option>
+                        <option value="expense">Expense</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editCategory">Category:</label>
+                    <select id="editCategory">
+                        <option value="cash">Cash</option>
+                        <option value="rent">Rent</option>
+                        <option value="salary">Salary</option>
+                        <option value="gift">Gift</option>
+                        <option value="investment">Investment</option>
+                        <option value="other">Other</option>
+                        <option value="food">Food</option>
+                        <option value="shopping">Shopping</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="travel">Travel</option>
+                        <option value="others">Others</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editDescription">Description:</label>
+                    <textarea id="editDescription"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editAmount">Amount:</label>
+                    <input type="number" id="editAmount" required>
+                </div>
+                <div class="form-group">
+                    <label for="editDate">Date:</label>
+                    <input type="date" id="editDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="editTime">Time:</label>
+                    <input type="time" id="editTime" step="1" required>
+                </div>
+                <button type="submit" class="button primary">Save</button>
+                <button type="button" id="cancelEdit" class="button secondary">Cancel</button>
+            </form>
+        </div>
+        <div class="footer-Adv">
+            <a href="index.html" class="back-link">Back to Home</a>
+        </div>
+    </div>
+    <script src="js/transactions.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="js/report.js"></script>
+</body>
+</html>-e 
+
+=== FILE: ./splash.html ===
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta name="google" content="notranslate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earn - Just keep earning</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/splash.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#f0f4f8">
+</head>
+<body>
+    <div class="splash-container">
+        <img src="assets/images/logo.png" alt="Earn Logo" class="logo">
+        <h1>Just keep Earning</h1>
+        <div class="loading-icon">
+            <div class="spinner"></div>
+        </div>
+    </div>
+    <script src="js/splash.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
+-e 
+
+=== FILE: ./data.html ===
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload/Download Test Data</title>
+    <meta name="theme-color" content="#f0f4f8">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/data.css">
+</head>
+<body>
+    <header>
+        <h1>Upload/Download Test Data</h1>
+    </header>
+    <main>
+        <section id="upload-section">
+            <h2>Upload CSV File</h2>
+            <form id="uploadForm">
+                <div>
+                    <label for="csvFile">Select CSV file:</label>
+                    <input type="file" id="csvFile" name="csvFile" accept=".csv" required>
+                </div>
+                <button type="submit">Load Data to Local Storage</button>
+                <p id="upload-status" class="hidden"></p>
+            </form>
+        </section>
+
+        <section id="download-section">
+            <h2>Download Data from Local Storage</h2>
+            <button id="downloadButton" class="secondary">Download CSV from Local Storage</button>
+            <p id="download-status" class="hidden"></p>
+        </section>
+
+        <section id="instructions-section">
+            <h2>Instructions</h2>
+            <p><strong>Upload:</strong> Select a CSV file containing your test financial data and click "Load Data to Local Storage".</p>
+            <p>The data from the CSV will be stored in your browser's local storage under the key 'earn_transactions'.</p>
+            <p>Ensure your CSV file has the following headers: <code>type,category,description,amount,date,time</code></p>
+            <p>After successful upload, navigate back to the main application page to see the data.</p>
+            <p><strong>Download:</strong> Click the "Download CSV from Local Storage" button to download the current data in local storage as a CSV file.</p>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Earn App</p>
+    </footer>
+    <script src="js/data.js"></script>
+</body>
+</html>
+-e 
+
+=== FILE: ./send.html ===
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="google" content="notranslate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Money - Earn</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/send.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Add Expense</h1>
+        <form id="sendForm">
+
+            <div class="form-group">
+                <label for="amount">Amount:</label>
+                <input placeholder="Enter Amount" type="number" id="amount" name="amount" required>
+            </div>
+
+            <div class="form-group switch-container">
+                <label class="switch">
+                    <input type="checkbox" id="toggleDetails">
+                    <span class="slider round"></span>
+                </label>
+                <label for="toggleDetails" class="toggle-label">Show Category & Description</label>
+            </div>
+
+            <div id="detailsFields">
+                <div class="form-group">
+                    <label>Category:</label>
+                    <div class="icon-grid">
+                        <input type="radio" id="categoryFood" name="category" value="food">
+                        <label for="categoryFood"><img src="assets/icons/food.svg" alt="Food"><span>Food</span></label>
+
+                        <input type="radio" id="categoryShopping" name="category" value="shopping">
+                        <label for="categoryShopping"><img src="assets/icons/shopping-bag.svg" alt="Shopping"><span>Shopping</span></label>
+
+                        <input type="radio" id="categoryEntertainment" name="category" value="entertainment">
+                        <label for="categoryEntertainment"><img src="assets/icons/entertainment.svg" alt="Entertainment"><span>Entertainment</span></label>
+
+                        <input type="radio" id="categoryTravel" name="category" value="travel">
+                        <label for="categoryTravel"><img src="assets/icons/travel.svg" alt="Travel"><span>Travel</span></label>
+
+                        <input type="radio" id="categoryOthers" name="category" value="others">
+                        <label for="categoryOthers"><img src="assets/icons/others.svg" alt="Others"><span>Others</span></label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description (Optional):</label>
+                    <textarea placeholder="Enter Description" id="description" name="description"></textarea>
+                </div>
+            </div>
+
+            <div class="intoaction-buttons">
+                <button type="button" id="addExpenseBtn" class="button secondary">Add Expense</button>
+                <button type="submit" class="button primary">Pay with UPI</button>
+            </div>
+        </form>
+        <div class="footer-Adv">
+            <a href="index.html" style="position: relative; left: -10px; top:-10px;" class="back-link"><img src="./assets/icons/home-back-arrow.gif"></a>
+            <figure>
+                <figcaption><p>USE</p></figcaption>
+                <img width="100" src="assets/images/wwwc.png" class="responsive-image" alt="works well with cred">
+            </figure>
+        </div>
+    </div>
+
+    <div id="qrScannerPopup" class="fullscreen-popup" style="display: none;">
+        <div id="qrScannerView">
+            </div>
+            <div class="scanner-controls">
+                <button id="closeScanner">Close Scanner</button>
+                <button id="toggleFlash">Toggle Flash</button>
+            </div>
+    </div>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <script src="js/send.js"></script>
+</body>
+</html>-e 
+
+=== FILE: ./receive.html ===
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta name="google" content="notranslate">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receive Money - Earn</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/receive.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Add Income</h1>
+        <form id="receiveForm">
+
+            <div class="form-group">
+                <label for="amount">Amount:</label>
+                <input type="number" id="amount" name="amount" placeholder="Enter Amount" required>
+            </div>
+
+            <div class="form-group switch-container">
+                <label class="switch">
+                    <input type="checkbox" id="toggleDetailsReceive">
+                    <span class="slider round"></span>
+                </label>
+                <label for="toggleDetailsReceive" class="toggle-label">Show Category & Description</label>
+            </div>
+
+            <div id="detailsFieldsReceive">
+                <div class="form-group">
+                    <label>Category (Optional):</label>
+                    <div class="icon-grid">
+                        <input type="radio" id="categoryCash" name="category" value="cash">
+                        <label for="categoryCash"><img src="assets/icons/cash.svg" alt="Cash"><span>Cash</span></label>
+
+                        <input type="radio" id="categoryRent" name="category" value="rent">
+                        <label for="categoryRent"><img src="assets/icons/rent.svg" alt="Rent"><span>Rent</span></label>
+
+                        <input type="radio" id="categorySalary" name="category" value="salary">
+                        <label for="categorySalary"><img src="assets/icons/salary.svg" alt="Salary"><span>Salary</span></label>
+
+                        <input type="radio" id="categoryOther" name="category" value="other">
+                        <label for="categoryOther"><img src="assets/icons/other.svg" alt="Other"><span>Other</span></label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description (Optional):</label>
+                    <textarea id="description" placeholder="Enter Description" name="description"></textarea>
+                </div>
+            </div>
+
+            <div class="intoaction-buttons">
+                <button type="button" id="customReceiptButton" class="button secondary">Add Income</button>
+                <button type="submit" class="button primary">Receive with UPI QR</button>
+            </div>
+        </form>
+        <div class="footer-Adv">
+            <a href="index.html" style="position: relative; left: -10px; top:-10px;" class="back-link"><img src="./assets/icons/home-back-arrow.gif"></a>
+            <figure>
+                <!-- <figcaption><p>USE</p></figcaption>
+                <img width="100" src="assets/images/wwwc.png" class="responsive-image" alt="works well with cred"> -->
+            </figure>
+        </div>
+    </div>
+    <script src="js/script.js"></script>
+    <script src="js/receive.js"></script>
+</body>
+</html>-e 
+
+=== FILE: ./receive-qr.html ===
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <meta name="google" content="notranslate">
+    <meta name="theme-color" content="#f0f4f8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receive QR Code - Earn</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/receive-qr.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Scan to Pay</h1>
+        <div id="qrCodeContainer">
+            </div>
+        <div class="payment-details">
+            <p>Amount: <strong><span id="amountDisplay"></span></strong></p>
+            <p>Description: <span id="descriptionDisplay"></span></p>
+            <p>Payee: <strong id="payeeNameDisplay"></strong></p>
+        </div>
+        <div class="status-update">
+            <button id="doneButton" class="button primary">Recieved Payment</button>
+            <button id="cancelButton" onclick="window.location.href = 'index.html'" class="button primary">Cancelled Transaction</button>
+        </div>
+
+        <div hidden class="adrev">
+            <figure>
+                <img src="assets/images/twct.png" class="cred-advertisement" alt="">
+                <figcaption>Earn & Working well with CRED</figcaption>
+            </figure>
+        </div>
+        
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/easyqrcodejs@4.6.2/dist/easy.qrcode.min.js"></script> <script src="js/receive-qr.js"></script>
+</body>
+</html>
+-e 
+
+=== FILE: ./subscription.html ===
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription - Earn</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/subscription.css">
+</head>
+<body>
+    <div class="subscription-container">
+        <h1>Continue Usage</h1>
+        <p>Support us.</p>
+
+        <div class="plan-options">
+           
+
+            <div class="plan-card">
+                <h2 class="plan-title">Premium</h2>
+                <div class="plan-price">₹1/month</div>
+                <ul class="plan-features">
+                    <li>Unlimited Transactions</li>
+                </ul>
+                <button class="subscribe-button" onclick="subscribe(1, 'Monthly Premium Subscription')">Subscribe Now</button>
+            </div>
+        </div>
+
+        <div class="payment-methods">
+            Secure payments via UPI:
+            <div class="payment-icons">
+                <img src="assets/icons/upi.svg" alt="UPI">
+                </div>
+        </div>
+
+        <p><a href="index.html" class="back-link">Back to Home</a></p>
+    </div>
+
+    <script>
+        // Function to generate a unique transaction ID
+        function generateUniqueId() {
+             return Date.now().toString(36) + Math.random().toString(36).substring(2, 15);
+        }
+
+        // Function to initiate UPI payment
+        function subscribe(amount, description) {
+            const recipientVPA = 'bodhiintellect1@fbl'; // Your UPI ID
+            const payeeName = 'Bodhi Intellect Pvt Ltd'; // Your Name
+            const transactionId = generateUniqueId();
+            const currency = 'INR';
+            const merchantCategoryCode = '0000'; // Or a relevant MCC
+
+            // Construct the callback URL to index.html
+            // We'll pass transaction ID and status
+            const callbackUrl = encodeURIComponent(`https://missionode.github.io/earn-app/index.html?paymentStatus=success&transactionId=${transactionId}`);
+            // Note: The actual payment status is determined by the UPI app/gateway,
+            // but we pass 'success' as the expected outcome in the URL for our check.
+            // A real integration would need server-side validation.
+
+            const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(recipientVPA)}&pn=${encodeURIComponent(payeeName)}&am=${parseFloat(amount).toFixed(2)}&cu=${currency}&tr=${encodeURIComponent(transactionId)}&tn=${encodeURIComponent(description)}&mc=${merchantCategoryCode}&url=${callbackUrl}`;
+
+            console.log("Generated UPI Intent URL:", upiIntentUrl);
+
+            // Redirect to the UPI app
+            window.location.href = upiIntentUrl;
+
+            // Store the transaction details temporarily for potential manual confirmation
+            // This is a fallback if the callback doesn't work reliably.
+            const pendingSubscriptionPayment = {
+                id: transactionId,
+                amount: amount,
+                description: description,
+                timestamp: new Date().toISOString()
+            };
+            localStorage.setItem('pending_subscription_payment', JSON.stringify(pendingSubscriptionPayment));
+        }
+    </script>
+</body>
+</html>
+-e 
+
+=== FILE: ./faq.html ===
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="theme-color" content="#f0f4f8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Earn</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/faq.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Frequently Asked Questions</h2>
+
+        <section class="faq-section">
+            <details class="faq-widget">
+                <summary class="faq-question">What makes Earn different?</summary>
+                <p class="faq-answer">We don’t collect or store any of your personal data. Everything stays on your device.</p>
+            </details>
+
+            <details class="faq-widget">
+                <summary class="faq-question">Where is my data saved?</summary>
+                <p class="faq-answer">All your data is saved locally in your browser using PWA technology. It never leaves your device.</p>
+            </details>
+
+            <details class="faq-widget">
+                <summary class="faq-question">What if I want to change my device?</summary>
+                <p class="faq-answer">You can easily back up your data from the current device and import it on the new one using our <a href="data.html">export/import</a> option.</p>
+            </details>
+
+            <details class="faq-widget">
+                <summary class="faq-question">What if I make a mistake in manual entries?</summary>
+                <p class="faq-answer">You can view, edit, any of your <a href="transactions.html">past transactions</a> anytime.</p>
+            </details>
+
+            <details class="faq-widget">
+                <summary class="faq-question">Is there any chance of data loss from the device?</summary>
+                <p class="faq-answer">It’s rare, but if it happens due to browser issues or resets, you can avoid loss by taking <a href="data.html">regular backups</a>.</p>
+            </details>
+
+            <details class="faq-widget">
+                <summary class="faq-question">Why is Earn limited to CRED?</summary>
+                <p class="faq-answer">Earn isn’t built as a full payment gateway. It’s focused on helping you manage, plan, and improve your budget. We’ve added a payment feature just to support that goal.</p>
+            </details>
+
+            <details class="faq-widget">
+                <summary class="faq-question">Can I take printable reports using Earn ?</summary>
+                <p class="faq-answer">Yes You can generate and print reports using  <a href="transactions.html" class="setupAndGoHomeButton">Transactions</a>.</p>
+            </details>
+        </section>
+
+        <div class="footer-Adv">
+            <a style="padding: 20px 10px;" href="index.html" class="back-link">Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+       function redirectToIndexAndTriggerUPI() {
+        window.location.href = 'index.html?triggerUPIPopUp=true';
+        }
+
+        // Example of how you might call this function when a button is clicked:
+        // Assuming you have a button with an ID 'setupAndGoHomeButton'
+        document.addEventListener('DOMContentLoaded', () => {
+        const setupAndGoHomeButton = document.getElementById('setupAndGoHomeButton');
+        if (setupAndGoHomeButton) {
+            setupAndGoHomeButton.addEventListener('click', redirectToIndexAndTriggerUPI);
+        }
+        });
+    </script>
+</body>
+</html>

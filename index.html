@@ -12,14 +12,14 @@
     <link rel="manifest" href="manifest.json">
     </head>
 <body id="homepage">
+    <!-- <p style="padding-top:10px; text-align:center;" align="center;">ॐ ♰ ☪</p> -->
 
     <div class="container">
 
         <section class="action-buttons into the logo">
-            <p class="namaste" align="center;">☪ ♰ ॐ <span>🪬</span></p>
             <img src="./assets/images/logofull.svg" class="responsive-image" alt="Earn logo">
-            <section>
-                <a class="header-logo-section" class="" href="faq.html"><p>HELP</p><img src="assets/icons/help.svg" alt="Help icon"></a>
+            <section class="header-logo-section">
+                <p><a href="faq.html" class="footer-faq-link"><img src="assets/icons/help.svg" alt="Help icon"></a></p>
             </section>
         </section>
         <img class="earn-logo" src="assets/icons/icon-96x96.png" alt="earn logo">
@@ -103,7 +103,7 @@
                             <option value="travel">Travel</option>
                         </select>
                     </div>
-                    <div class="filter-group date-filter">
+                    <div class="filter-group">
                         <input type="date" placeholder="From date" id="startDate">
                         <span>to</span>
                         <input type="date" placeholder="To date" id="endDate">
@@ -114,7 +114,7 @@
                 </div>
 
                 <div id="filteredSummaryContainer" class="filtered-summary"></div>
-                <button style="margin-bottom: 5px;" id="clearFilter" class="button">Clear Filters</button>
+                <button style="margin-bottom: 15px;" id="clearFilter" class="button">Clear Filters</button>
             </section>
 
 
@@ -138,17 +138,6 @@
             </div>
 
         </section>
-        <p class="namaste devi" align="center;">
-            ॐ श्रीं महालक्ष्म्यै नमः
-        </p>
-        <div class="footer_arranged">
-            <div class="prosperity-container">
-                <div id="dailyCounter">0</div>
-                <img id="coinRainTrigger" src="assets/icons/coin.svg" alt="Click for Coin Rain" style="cursor: pointer; width: 30px; height: 30px;">
-            </div>
-            <p class="bodymass" display: flex;"><img src="assets/images/auralogo.png" alt=""></p>
-        </div>
-        
     </div>
 
     <div id="upiConfirmationNotification" class="upi-confirmation-notification">
@@ -160,14 +149,6 @@
             <button id="upiConfirmButton" class="button primary">Confirm</button>
         </div>
     </div>
-
-
-    <div id="coinRainContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: -webkit-fill-available; pointer-events: none;">
-    </div>
-
-   
-    
-    <script src="js/prosperity.js"></script>
     <script src="js/script.js"></script>
     <script src="js/index.js"></script>
     <script src="js/app.js"></script>
@@ -181,5 +162,6 @@
         });
 
     </script>
+
 </body>
 </html>

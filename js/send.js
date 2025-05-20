@@ -22,8 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeScannerButton = document.getElementById('closeScanner');
     const addExpenseBtn = document.getElementById('addExpenseBtn');
     const toggleFlashButton = document.getElementById('toggleFlash');
-    const toggleDetailsSwitch = document.getElementById('toggleDetails');
-    const detailsFields = document.getElementById('detailsFields');
+    // Get the switch and the details container for Send page
+    const toggleDetailsSwitch = document.getElementById('toggleDetails'); // Correct variable name
+    const detailsFields = document.getElementById('detailsFields'); // Correct variable name
 
     // --- State Variables ---
     let flashEnabled = false;
@@ -32,8 +33,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentCameraCapabilities = null; // Stores camera capabilities (zoom, torch, etc.)
     let amount = 0; // Declare amount here to make it accessible to initiateUpiPayment
 
-    // Define Html5QrcodeScannerState (assuming it's not globally available)
-    // If you're importing Html5Qrcode as a module, it might be Html5Qrcode.Html5QrcodeScannerState
+    // Variables to hold data extracted from QR code for confirmation
+    let currentExtractedUPIID = null;
+    let currentExtractedMerchantName = null;
+
+
+    // Define Html5QrcodeScannerState (assuming it's not globally available, common for Html5Qrcode)
     const Html5QrcodeScannerState = {
         NOT_STARTED: 0,
         SCANNING: 1,
@@ -44,12 +49,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Helper Functions (Defined once in global scope) ---
 
+    // Ensure these category elements actually exist in your full send.html if you want them
     function getSelectedCategory() {
-        if (categoryFood.checked) return 'food';
-        if (categoryShopping.checked) return 'shopping';
-        if (categoryEntertainment.checked) return 'entertainment';
-        if (categoryTravel.checked) return 'travel';
-        if (categoryOthers.checked) return 'others';
+        if (categoryFood && categoryFood.checked) return 'food';
+        if (categoryShopping && categoryShopping.checked) return 'shopping';
+        if (categoryEntertainment && categoryEntertainment.checked) return 'entertainment';
+        if (categoryTravel && categoryTravel.checked) return 'travel';
+        if (categoryOthers && categoryOthers.checked) return 'others';
         return '';
     }
 
@@ -84,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (nameEnd === -1) { // If '&' not found, take till end of string
                 nameEnd = qrCodeText.length;
             }
-            merchantName = qrCodeText.substring(nameStart, nameEnd);
+            merchantName = decodeURIComponent(qrCodeText.substring(nameStart, nameEnd).replace(/\+/g, ' ')); // Decode and replace + with space
         }
 
         return { upiId, merchantName };
@@ -95,8 +101,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Use merchantName from QR if available, otherwise default or use stored username
         const payeeName = merchantNameFromQR || localStorage.getItem('earn_username') || 'Recipient Name';
         const merchantCategoryCode = '0000'; // Generic MCC for now
-        // Construct success URL for callback (ensure this URL is correct for your hosted app)
-        const successUrl = encodeURIComponent(`https://missionode.github.io/earn-app/index.html?status=success&transactionId=${transactionId}`);
+
+        // Dynamically construct the success URL using window.location.origin
+        const successUrl = encodeURIComponent(`${window.location.origin}/index.html?status=success&transactionId=${transactionId}`);
 
         let encodedDescription = encodeURIComponent(description);
         // Replace spaces with '+' for proper URL encoding in UPI intent (some apps prefer +)
@@ -105,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Construct the UPI Intent URL
         const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(recipientVPA)}&pn=${encodeURIComponent(payeeName)}&am=${parseFloat(paymentAmount).toFixed(2)}&cu=INR&tr=${encodeURIComponent(transactionId)}&tn=${encodedDescription}&mc=${merchantCategoryCode}&url=${successUrl}`;
 
-        console.log("Generated UPI Intent URL:", upiIntentUrl);
+        console.log("DEBUG (send.js): Generated UPI Intent URL:", upiIntentUrl);
 
         // Save a pending transaction to local storage
         const pendingTransaction = {
@@ -116,13 +123,17 @@ document.addEventListener('DOMContentLoaded', () => {
             description: description,
             date: new Date().toISOString().split('T')[0],
             time: new Date().toTimeString().split(' ')[0],
-            status: 'pending' // Mark as pending until confirmed by UPI app callback
+            status: 'pending', // Mark as pending until confirmed by UPI app callback
+            merchantName: merchantNameFromQR // ADD THIS LINE to save merchant name
         };
 
         saveTransaction(pendingTransaction);
+        console.log("DEBUG (send.js): Saved pending transaction to earn_transactions:", pendingTransaction);
+
         // Store this specific pending transaction for potential confirmation on index.html
         localStorage.setItem('pending_upi_confirmation', JSON.stringify(pendingTransaction));
-        
+        console.log("DEBUG (send.js): Set pending_upi_confirmation in localStorage:", localStorage.getItem('pending_upi_confirmation'));
+
         // Redirect to the UPI application
         window.location.href = upiIntentUrl;
     }
@@ -142,24 +153,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const qrCodeSuccessCallback = (decodedText, decodedResult) => {
             if (!qrCodeDetected) { // Ensure QR code is processed only once
                 qrCodeDetected = true;
-                // Stop the camera after a successful scan
+                // Stop the camera immediately after a successful scan
                 html5QrCode.stop().then(() => {
                     qrScannerPopup.style.display = 'none'; // Hide the scanner popup
-                    const qrData = extractDataFromQRCode(decodedText);
-                    const extractedUPIID = qrData.upiId;
-                    const extractedMerchantName = qrData.merchantName;
 
-                    if (extractedUPIID) {
-                        const category = toggleDetailsSwitch.checked ? getSelectedCategory() : '';
-                        const description = toggleDetailsSwitch.checked ? descriptionInput.value : '';
-                        // 'amount' variable is now accessible from the outer scope
-                        initiateUpiPayment(extractedUPIID, amount, description, category, extractedMerchantName);
+                    const qrData = extractDataFromQRCode(decodedText);
+                    currentExtractedUPIID = qrData.upiId; // Store extracted data
+                    currentExtractedMerchantName = qrData.merchantName;
+                    
+                    // Get current category and description from the form
+                    const currentDescription = toggleDetailsSwitch && toggleDetailsSwitch.checked ? descriptionInput.value : '';
+                    const currentCategory = toggleDetailsSwitch && toggleDetailsSwitch.checked ? getSelectedCategory() : '';
+
+                    if (currentExtractedUPIID) {
+                        // Directly initiate UPI payment, the confirmation logic is on index.html
+                        initiateUpiPayment(currentExtractedUPIID, amount, currentDescription, currentCategory, currentExtractedMerchantName);
                     } else {
                         alert('Invalid UPI QR code. No UPI ID found.');
+                        // Optionally, restart scanner here if it was an invalid QR and user wants to try again
+                        // qrScannerPopup.style.display = 'block';
+                        // startQrScanner();
                     }
                 }).catch(err => {
                     console.error("Error stopping QR scanner after success:", err);
-                    alert("Error processing QR code after scan.");
+                    // Provide more specific error message to the user
+                    alert(`Error processing QR code after scan: ${err.message || 'An unexpected error occurred while stopping the camera.'}`);
                 });
             }
         };
@@ -173,10 +191,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const config = {
                     fps: 20, // Frames per second for scanning (good balance of performance and accuracy)
-                    qrbox: { width: 250, height: 250 }, // Define the scanning area
+                    // Make qrbox responsive to the viewfinder dimensions
+                    qrbox: (viewfinderWidth, viewfinderHeight) => {
+                        let minEdgePercentage = 0.7; // 70% of the smaller edge
+                        let minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight) * minEdgePercentage;
+                        return { width: minEdgeSize, height: minEdgeSize };
+                    },
                     videoConstraints: {
                         facingMode: "environment", // Request the environment (back) camera
-                        // Initial zoom is not applied here; it will be applied dynamically
                     }
                 };
 
@@ -223,104 +245,136 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Event Listeners ---
 
     // Load and apply the saved details switch state from local storage
-    const savedDetailsState = localStorage.getItem('showDetails');
-    if (savedDetailsState === 'false') {
-        toggleDetailsSwitch.checked = false;
-        detailsFields.classList.add('hidden');
-    } else {
-        toggleDetailsSwitch.checked = true;
-        detailsFields.classList.remove('hidden');
+    const savedDetailsState = localStorage.getItem('hideDetails'); // Use 'hideDetails' for unified switch
+    // Corrected logic for showDetails: if 'hideDetails' is 'false', then showDetails should be true.
+    // If 'hideDetails' is 'true' or null/undefined, then showDetails should be false (hidden).
+    const showDetails = savedDetailsState === 'false';
+
+    if (toggleDetailsSwitch) {
+        toggleDetailsSwitch.checked = showDetails;
+    }
+    if (detailsFields) {
+        if (!showDetails) {
+            detailsFields.classList.add('hidden');
+        } else {
+            detailsFields.classList.remove('hidden');
+        }
     }
 
+
     // Event listener for the toggle switch to show/hide details fields
-    toggleDetailsSwitch.addEventListener('change', () => {
-        detailsFields.classList.toggle('hidden');
-        localStorage.setItem('showDetails', toggleDetailsSwitch.checked);
-    });
+    if (toggleDetailsSwitch && detailsFields) {
+        toggleDetailsSwitch.addEventListener('change', () => {
+            const currentState = toggleDetailsSwitch.checked;
+            detailsFields.classList.toggle('hidden', !currentState);
+            // Save the state as 'true' if checked (show details), 'false' if unchecked (hide details)
+            localStorage.setItem('hideDetails', !currentState); // Invert logic to match 'hideDetails' key
+        });
+    }
+
 
     // Event listener for the form submission (initiates QR scan)
-    sendForm.addEventListener('submit', (event) => {
-        event.preventDefault();
+    if (sendForm) {
+        sendForm.addEventListener('submit', (event) => {
+            event.preventDefault();
 
-        amount = parseFloat(amountInput.value); // Assign to the outer 'amount' variable
-        // const category = toggleDetailsSwitch.checked ? getSelectedCategory() : ''; // Not used here, passed to payment
-        // const description = toggleDetailsSwitch.checked ? descriptionInput.value : ''; // Not used here, passed to payment
+            amount = parseFloat(amountInput.value); // Assign to the outer 'amount' variable
+            
+            if (isNaN(amount) || amount <= 0) {
+                alert('Please enter a valid amount.');
+                return;
+            }
 
-        if (isNaN(amount) || amount <= 0) {
-            alert('Please enter a valid amount.');
-            return;
-        }
+            qrScannerPopup.style.display = 'block'; // Show QR scanner popup
+            startQrScanner(); // Start the QR scanner
+        });
+    } else {
+        console.warn("Send form not found in send.html.");
+    }
 
-        qrScannerPopup.style.display = 'block'; // Show QR scanner popup
-        startQrScanner(); // Start the QR scanner
-    });
 
     // Event listener to close the QR scanner popup
-    closeScannerButton.addEventListener('click', () => {
-        qrScannerPopup.style.display = 'none'; // Hide the popup
-        if (html5QrCode) {
-            html5QrCode.stop().then(() => { // Stop the camera stream
-                html5QrCode.clear(); // Clear the Html5Qrcode instance
-                html5QrCode = null; // Reset the instance
-                flashEnabled = false; // Reset flash state
-                toggleFlashButton.textContent = 'Enable Flash'; // Reset button text
-                toggleFlashButton.style.display = 'none'; // Hide flash button
-            }).catch(err => console.error("Error stopping or clearing Html5Qrcode on close:", err));
-        }
-        qrCodeDetected = false; // Reset QR detection flag
-    });
+    if (closeScannerButton) {
+        closeScannerButton.addEventListener('click', () => {
+            qrScannerPopup.style.display = 'none'; // Hide the popup
+            if (html5QrCode && html5QrCode.getState() === Html5QrcodeScannerState.SCANNING) { // Only stop if scanning
+                html5QrCode.stop().then(() => { // Stop the camera stream
+                    html5QrCode.clear(); // Clear the Html5Qrcode instance
+                    html5QrCode = null; // Reset the instance
+                    flashEnabled = false; // Reset flash state
+                    if(toggleFlashButton) toggleFlashButton.textContent = 'Enable Flash'; // Reset button text
+                    if(toggleFlashButton) toggleFlashButton.style.display = 'none'; // Hide flash button
+                }).catch(err => console.error("Error stopping or clearing Html5Qrcode on close:", err));
+            }
+            qrCodeDetected = false; // Reset QR detection flag
+        });
+    } else {
+        console.warn("Close scanner button not found in send.html.");
+    }
+
 
     // Event listener for adding a manual expense
-    addExpenseBtn.addEventListener('click', () => {
-        const manualExpenseAmount = parseFloat(amountInput.value);
-        const manualExpenseDescription = toggleDetailsSwitch.checked ? descriptionInput.value : '';
-        const manualExpenseCategory = toggleDetailsSwitch.checked ? getSelectedCategory() : '';
+    if (addExpenseBtn) {
+        addExpenseBtn.addEventListener('click', () => {
+            const manualExpenseAmount = parseFloat(amountInput.value);
+            // Use toggleDetailsSwitch directly here
+            const manualExpenseDescription = toggleDetailsSwitch && toggleDetailsSwitch.checked ? descriptionInput.value : '';
+            const manualExpenseCategory = toggleDetailsSwitch && toggleDetailsSwitch.checked ? getSelectedCategory() : '';
 
-        if (isNaN(manualExpenseAmount) || manualExpenseAmount <= 0) {
-            alert('Please enter a valid expense amount.');
-            return;
-        }
+            if (isNaN(manualExpenseAmount) || manualExpenseAmount <= 0) {
+                alert('Please enter a valid expense amount.');
+                return;
+            }
 
-        const newExpenseTransaction = {
-            id: generateUniqueId(),
-            type: 'expense',
-            amount: manualExpenseAmount,
-            category: manualExpenseCategory,
-            description: manualExpenseDescription,
-            date: new Date().toISOString().split('T')[0],
-            time: new Date().toTimeString().split(' ')[0],
-            status: 'success' // Manual entry is directly added as success
-        };
+            const newExpenseTransaction = {
+                id: generateUniqueId(),
+                type: 'expense',
+                amount: manualExpenseAmount,
+                category: manualExpenseCategory,
+                description: manualExpenseDescription,
+                date: new Date().toISOString().split('T')[0],
+                time: new Date().toTimeString().split(' ')[0],
+                status: 'success' // Manual entry is directly added as success
+            };
 
-        saveTransaction(newExpenseTransaction);
-        window.location.href = 'index.html'; // Redirect to index page after saving
-    });
+            saveTransaction(newExpenseTransaction);
+            console.log("DEBUG (send.js): Saved manual expense to earn_transactions:", newExpenseTransaction);
+            window.location.href = 'index.html'; // Redirect to index page after saving
+        });
+    } else {
+        console.warn("Add expense button not found in send.html.");
+    }
+
 
     // Event listener for the flashlight toggle button
-    toggleFlashButton.addEventListener('click', () => {
-        // Check if html5QrCode instance exists and is currently scanning
-        if (html5QrCode && html5QrCode.getState() === Html5QrcodeScannerState.SCANNING) {
-            // Get current camera capabilities (synchronous)
-            const capabilities = html5QrCode.getRunningTrackCapabilities();
-            currentCameraCapabilities = capabilities; // Update capabilities (though likely already current)
+    if (toggleFlashButton) {
+        toggleFlashButton.addEventListener('click', () => {
+            // Check if html5QrCode instance exists and is currently scanning
+            if (html5QrCode && html5QrCode.getState() === Html5QrcodeScannerState.SCANNING) {
+                // Get current camera capabilities (synchronous)
+                const capabilities = html5QrCode.getRunningTrackCapabilities();
+                currentCameraCapabilities = capabilities; // Update capabilities (though likely already current)
 
-            if (capabilities.torch) { // Check if torch (flashlight) is supported
-                flashEnabled = !flashEnabled; // Toggle flash state
-                html5QrCode.applyVideoConstraints({ advanced: [{ torch: flashEnabled }] })
-                    .then(() => {
-                        toggleFlashButton.textContent = flashEnabled ? 'Disable Flash' : 'Enable Flash';
-                        console.log(`Flash ${flashEnabled ? 'enabled' : 'disabled'}`);
-                    })
-                    .catch(err => {
-                        console.error('Error toggling flash:', err);
-                        alert('Error toggling flash. Ensure camera permissions are granted and device supports it.');
-                    });
+                if (capabilities.torch) { // Check if torch (flashlight) is supported
+                    flashEnabled = !flashEnabled; // Toggle flash state
+                    html5QrCode.applyVideoConstraints({ advanced: [{ torch: flashEnabled }] })
+                        .then(() => {
+                            toggleFlashButton.textContent = flashEnabled ? 'Disable Flash' : 'Enable Flash';
+                            console.log(`Flash ${flashEnabled ? 'enabled' : 'disabled'}`);
+                        })
+                        .catch(err => {
+                            console.error('Error toggling flash:', err);
+                            alert('Error toggling flash. Ensure camera permissions are granted and device supports it.');
+                        });
+                } else {
+                    alert('Flash control is not supported on this device or current camera.');
+                }
             } else {
-                alert('Flash control is not supported on this device or current camera.');
+                alert('QR scanner is not active to toggle flash.');
             }
-        } else {
-            alert('QR scanner is not active to toggle flash.');
-        }
-    });
+        });
+    } else {
+        console.warn("Toggle flash button not found in send.html.");
+    }
 
 });
