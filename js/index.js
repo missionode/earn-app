@@ -1,17 +1,35 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Variables ---
-    const homePage = document.getElementById('homepage'); // Keep this as it's used for other logic
+    // --- Version Log ---
+    console.log("DEBUG: index.js version: Truly Unified DOMContentLoaded (2025-05-21) - Enhanced Debugging");
+
+    // --- Variables (Declared only once at the top of the single DOMContentLoaded block) ---
+    const homePage = document.getElementById('homepage');
+    // Subscription related elements (now removed from HTML, but keeping variables for safety if HTML is older)
+    const subscriptionNotification = document.getElementById('subscriptionNotification');
+    const skipNotificationButton = document.getElementById('skipNotification');
+    const manualConfirmationPopup = document.getElementById('manualConfirmationPopup');
+    const confirmPaidButton = document.getElementById('confirmPaidButton');
+    const confirmNotPaidButton = document.getElementById('confirmNotPaidButton');
+
+    // UPI Setup Popup elements
     const upiSetupPopup = document.getElementById('upiSetupPopup');
     const upiSetupForm = document.getElementById('upiSetupForm');
     const upiIdInput = document.getElementById('upiId');
     const usernameInput = document.getElementById('username');
     const upiIdError = document.getElementById('upiIdError');
     const usernameError = document.getElementById('usernameError');
+    const closeUpiSetupButton = document.getElementById('closeUpiSetup'); // Declared once here!
+
+    // Main action buttons
     const receiveMoneyBtn = document.getElementById('receiveMoneyBtn');
     const sendMoneyBtn = document.getElementById('sendMoneyBtn');
+
+    // Summary displays
     const totalIncomeDisplay = document.getElementById('totalIncome');
     const totalExpensesDisplay = document.getElementById('totalExpenses');
-    const transactionsTableBody = document.getElementById('transactionsTable').querySelector('tbody');
+
+    // Transactions table and filters
+    const transactionsTableBody = document.getElementById('transactionsTable') ? document.getElementById('transactionsTable').querySelector('tbody') : null;
     const categoryFilter = document.getElementById('categoryFilter');
     const searchBox = document.getElementById('searchBox');
     const startDateInput = document.getElementById('startDate');
@@ -19,6 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterType = document.getElementById('filterType');
     const clearFilterButton = document.getElementById('clearFilter');
     const filteredSummaryContainer = document.getElementById('filteredSummaryContainer');
+
+    // Elements for the UPI payment confirmation modal (from send.html redirect)
     const upiConfirmationNotification = document.getElementById('upiConfirmationNotification');
     const upiConfirmationTitle = document.getElementById('upiConfirmationTitle');
     const upiConfirmationAmount = document.getElementById('upiConfirmationAmount');
@@ -32,71 +52,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const getLocalStorageItem = (key) => localStorage.getItem(key);
     const setLocalStorageItem = (key, value) => localStorage.setItem(key, value);
     const isFirstTimeUser = () => !getLocalStorageItem('earn_upiId') || !getLocalStorageItem('earn_username');
-    const displayUPISetupPopup = () => upiSetupPopup.style.display = 'block';
-    const hideUPISetupPopup = () => upiSetupPopup.style.display = 'none';
+    const displayUPISetupPopup = () => {
+        if (upiSetupPopup) upiSetupPopup.style.display = 'block';
+        else console.error("ERROR: upiSetupPopup element not found for displayUPISetupPopup.");
+    };
+    const hideUPISetupPopup = () => {
+        if (upiSetupPopup) upiSetupPopup.style.display = 'none';
+        else console.error("ERROR: upiSetupPopup element not found for hideUPISetupPopup.");
+    };
 
     const validateUPIId = (upiId) => {
         if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,}@[a-zA-Z]{2,}$/.test(upiId)) return 'Invalid UPI ID format.';
         const domain = upiId.split('@')[1];
         const validDomains = [
-            'ybl',          // Paytm
-            'upi',          // General UPI
-            'okhdfcbank',   // HDFC Bank
-            'hdfcbank',     // HDFC Bank New
-            'icici',        // ICICI Bank (direct)
-            'axisbank',     // Axis Bank
-            'oksbi',        // SBI
-            'paytm',        // Paytm
-            'fbl',          // Federal Bank
-            'okicici',      // ICICI Bank (via Google Pay)
-            'kotak',        // Kotak Mahindra Bank
-            'yesbank',      // YES Bank
-            'idbi',         // IDBI Bank
-            'canarabank',   // Canara Bank
-            'pnb',          // Punjab National Bank
-            'airtel',       // Airtel Payments Bank
-            'barodapay',    // Bank of Baroda
-            'hsbc',         // HSBC Bank
-            'rbl',          // RBL Bank
-            'indus',        // IndusInd Bank
-            'ubi',          // Union Bank of India
-            'standardchartered', // Standard Chartered Bank
-            'cbin',         // Central Bank of India
-            'iob',          // Indian Overseas Bank
-            'sib',          // South Indian Bank
-            'tjsb',         // TJSB (Co-operative Bank)
-            'kbl',          // Karnataka Bank
-            'dbs',          // DBS Bank India
-            'bandhan',      // Bandhan Bank
-            'nsdl',         // NSDL Payments Bank
-            'jio',          // Jio Payments Bank
-            'lvbank',       // Laxmi Vilas Bank
-            'punjabandsindh', // Punjab & Sind Bank
-            'idfcfirst',    // IDFC First Bank
-            'csb',          // Catholic Syrian Bank
-            'citi',         // Citibank India
-            'dlb',          // Dhanlaxmi Bank
-            'kvbank',       // Karur Vysya Bank
-            'jandkbank',    // Jammu and Kashmir Bank
-            'equitas',      // Equitas Small Finance Bank
-            'dcb',          // DCB Bank
-            'aubank'        // AU Small Finance Bank
+            'ybl', 'upi', 'okhdfcbank', 'hdfcbank', 'icici', 'axisbank', 'oksbi', 'paytm', 'fbl', 'okicici', 'kotak', 'yesbank', 'idbi', 'canarabank', 'pnb', 'airtel', 'barodapay', 'hsbc', 'rbl', 'indus', 'ubi', 'standardchartered', 'cbin', 'iob', 'sib', 'tjsb', 'kbl', 'dbs', 'bandhan', 'nsdl', 'jio', 'lvbank', 'punjabandsindh', 'idfcfirst', 'csb', 'citi', 'dlb', 'kvbank', 'jandkbank', 'equitas', 'dcb', 'aubank'
         ];
         return validDomains.includes(domain) ? '' : 'Invalid UPI ID domain.';
     };
 
     const getCategoryIcon = (category) => ({
-        'cash': 'assets/icons/cash.svg',
-        'rent': 'assets/icons/rent.svg',
-        'salary': 'assets/icons/salary.svg',
-        'gift': 'assets/icons/gift.svg',
-        'investment': 'assets/icons/investment.svg',
-        'other': 'assets/icons/other.svg',
-        'food': 'assets/icons/food.svg',
-        'shopping': 'assets/icons/shopping-bag.svg',
-        'entertainment': 'assets/icons/entertainment.svg',
-        'travel': 'assets/icons/travel.svg',
-        'others': 'assets/icons/others.svg',
+        'cash': 'assets/icons/cash.svg', 'rent': 'assets/icons/rent.svg', 'salary': 'assets/icons/salary.svg', 'gift': 'assets/icons/gift.svg', 'investment': 'assets/icons/investment.svg', 'other': 'assets/icons/other.svg', 'food': 'assets/icons/food.svg', 'shopping': 'assets/icons/shopping-bag.svg', 'entertainment': 'assets/icons/entertainment.svg', 'travel': 'assets/icons/travel.svg', 'others': 'assets/icons/others.svg',
     })[category] || '';
 
     const filterTransactions = (transactions, filters) => {
@@ -128,47 +103,52 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadTransactions = () => {
         console.log("loadTransactions called");
         const storedTransactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
+        // Only display confirmed transactions in the table
         allTransactions = storedTransactions.filter(t => t.status !== 'pending');
         console.log("Transactions loaded (excluding pending):", allTransactions);
         const filters = {
-            type: filterType.value,
-            category: categoryFilter.value,
-            startDate: startDateInput.value,
-            endDate: endDateInput.value,
-            search: searchBox.value ? searchBox.value.toLowerCase() : ''
+            type: filterType ? filterType.value : '',
+            category: categoryFilter ? categoryFilter.value : '',
+            startDate: startDateInput ? startDateInput.value : '',
+            endDate: endDateInput ? endDateInput.value : '',
+            search: searchBox && searchBox.value ? searchBox.value.toLowerCase() : ''
         };
         const displayedTransactions = filterTransactions(allTransactions, filters).slice(0, 50);
-        transactionsTableBody.innerHTML = '';
-        displayedTransactions.forEach(transaction => {
-            const row = transactionsTableBody.insertRow();
-            const typeCell = row.insertCell();
-            const categoryCell = row.insertCell();
-            const descriptionCell = row.insertCell();
-            const amountCell = row.insertCell();
-            const dateCell = row.insertCell();
-            const timeCell = row.insertCell();
-            const statusCell = row.insertCell();
+        if (transactionsTableBody) {
+            transactionsTableBody.innerHTML = '';
+            displayedTransactions.forEach(transaction => {
+                const row = transactionsTableBody.insertRow();
+                const typeCell = row.insertCell();
+                const categoryCell = row.insertCell();
+                const descriptionCell = row.insertCell();
+                const amountCell = row.insertCell();
+                const dateCell = row.insertCell();
+                const timeCell = row.insertCell();
+                const statusCell = row.insertCell();
 
-            if (transaction.type === 'expense') {
-                typeCell.innerHTML = '<img src="assets/icons/arrow-up-expense.svg" alt="Expense" class="transaction-icon">';
-            } else if (transaction.type === 'income') {
-                typeCell.innerHTML = '<img src="assets/icons/arrow-down-income.svg" alt="Income" class="transaction-icon">';
-            } else {
-                typeCell.textContent = transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1); // Fallback
-            }
+                if (transaction.type === 'expense') {
+                    typeCell.innerHTML = '<img src="assets/icons/arrow-up-expense.svg" alt="Expense" class="transaction-icon">';
+                } else if (transaction.type === 'income') {
+                    typeCell.innerHTML = '<img src="assets/icons/arrow-down-income.svg" alt="Income" class="transaction-icon">';
+                } else {
+                    typeCell.textContent = transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1); // Fallback
+                }
 
-            const icon = getCategoryIcon(transaction.category) || 'assets/icons/default.svg';
-            categoryCell.innerHTML = `<img src="${icon}" alt="${transaction.category}">`;
-            descriptionCell.textContent = transaction.description || '-';
-            const formattedAmount = `₹${parseFloat(transaction.amount).toFixed(2)}`;
-            amountCell.textContent = transaction.type === 'expense' ? `- ${formattedAmount}` : `+ ${formattedAmount}`;
-            amountCell.classList.add(transaction.type === 'expense' ? 'expense' : 'income');
-            dateCell.textContent = transaction.date;
-            timeCell.textContent = transaction.time;
-            statusCell.textContent = transaction.status || '';
-        });
+                const icon = getCategoryIcon(transaction.category) || 'assets/icons/default.svg';
+                categoryCell.innerHTML = `<img src="${icon}" alt="${transaction.category}">`;
+                descriptionCell.textContent = transaction.description || '-';
+                const formattedAmount = `₹${parseFloat(transaction.amount).toFixed(2)}`;
+                amountCell.textContent = transaction.type === 'expense' ? `- ${formattedAmount}` : `+ ${formattedAmount}`;
+                amountCell.classList.add(transaction.type === 'expense' ? 'expense' : 'income');
+                dateCell.textContent = transaction.date;
+                timeCell.textContent = transaction.time;
+                statusCell.textContent = transaction.status || '';
+            });
+        } else {
+            console.error("ERROR: loadTransactions: transactionsTableBody is null! Cannot render transactions.");
+        }
         updateFilteredSummary(displayedTransactions, filters);
-        updateCategoryFilterByType(filterType.value);
+        if (filterType) updateCategoryFilterByType(filterType.value);
     };
 
     const updateFilteredSummary = (transactions, filters) => {
@@ -196,7 +176,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const updateOverallSummary = () => {
-        const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
+        // Only sum transactions with status 'success' for overall summary
+        const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]').filter(t => t.status === 'success');
+        console.log("DEBUG (updateOverallSummary): Transactions used for overall summary (status 'success' only):", transactions);
         let totalIncome = 0;
         let totalExpenses = 0;
 
@@ -208,18 +190,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        totalIncomeDisplay.textContent = `₹${totalIncome.toFixed(2)}`;
-        totalExpensesDisplay.textContent = `₹${totalExpenses.toFixed(2)}`;
+        console.log("DEBUG (updateOverallSummary): Calculated Total Income:", totalIncome.toFixed(2));
+        console.log("DEBUG (updateOverallSummary): Calculated Total Expenses:", totalExpenses.toFixed(2));
+
+        if (totalIncomeDisplay) totalIncomeDisplay.textContent = `₹${totalIncome.toFixed(2)}`;
+        if (totalExpensesDisplay) totalExpensesDisplay.textContent = `₹${totalExpenses.toFixed(2)}`;
     };
 
     const handleUPISetupSubmit = (event) => {
         event.preventDefault();
-        const upiId = upiIdInput.value.trim();
-        const username = usernameInput.value.trim();
+        const upiId = upiIdInput ? upiIdInput.value.trim() : '';
+        const username = usernameInput ? usernameInput.value.trim() : '';
 
         const upiIdErrorMessage = validateUPIId(upiId);
-        upiIdError.textContent = upiIdErrorMessage;
-        usernameError.textContent = username ? '' : 'Please enter your name.';
+        if (upiIdError) upiIdError.textContent = upiIdErrorMessage;
+        if (usernameError) usernameError.textContent = username ? '' : 'Please enter your name.';
 
         if (!upiIdErrorMessage && username) {
             setLocalStorageItem('earn_upiId', upiId);
@@ -231,32 +216,40 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const updateCategoryFilterByType = (selectedType) => {
-        const categoryOptions = categoryFilter.options;
-        for (let i = 1; i < categoryOptions.length; i++) {
-            const option = categoryOptions[i];
-            const expenseCategories = ['food', 'shopping', 'entertainment', 'travel', 'others'];
-            const incomeCategories = ['salary', 'gift', 'investment', 'cash', 'other'];
+        if (categoryFilter) {
+            const categoryOptions = categoryFilter.options;
+            for (let i = 1; i < categoryOptions.length; i++) {
+                const option = categoryOptions[i];
+                const expenseCategories = ['food', 'shopping', 'entertainment', 'travel', 'others'];
+                const incomeCategories = ['salary', 'gift', 'investment', 'cash', 'other'];
 
-            if (selectedType === 'income') {
-                option.style.display = incomeCategories.includes(option.value) ? 'block' : 'none';
-            } else if (selectedType === 'expense') {
-                option.style.display = expenseCategories.includes(option.value) ? 'block' : 'none';
-            } else {
-                option.style.display = 'block';
+                if (selectedType === 'income') {
+                    option.style.display = incomeCategories.includes(option.value) ? 'block' : 'none';
+                } else if (selectedType === 'expense') {
+                    option.style.display = expenseCategories.includes(option.value) ? 'block' : 'none';
+                } else {
+                    option.style.display = 'block';
+                }
             }
+            categoryFilter.value = '';
         }
-        categoryFilter.value = '';
     };
 
     const populateCategoryFilter = () => {
         const categories = ['food', 'shopping', 'entertainment', 'travel', 'others', 'salary', 'gift', 'investment', 'cash', 'other'];
         const categorySelect = document.getElementById('categoryFilter');
-        categories.forEach(category => {
-            const option = document.createElement('option');
-            option.value = category;
-            option.textContent = category.charAt(0).toUpperCase() + category.slice(1);
-            categorySelect.appendChild(option);
-        });
+        if (categorySelect) {
+            // Clear existing options except the first "All Categories"
+            while (categorySelect.options.length > 1) {
+                categorySelect.remove(1);
+            }
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+                categorySelect.appendChild(option);
+            });
+        }
     };
 
     const triggerConfirmationPopup = () => {
@@ -271,29 +264,33 @@ document.addEventListener('DOMContentLoaded', () => {
             upiConfirmationDescription.textContent = latestPendingTransaction.description || 'No description provided.';
             upiConfirmationNotification.classList.add('show'); // Add 'show' class for animation
 
-            upiConfirmButton.onclick = () => {
-                console.log("Confirm button clicked for transaction ID:", latestPendingTransaction.id);
-                updateTransactionStatus(latestPendingTransaction.id, 'success');
-                upiConfirmationNotification.classList.remove('show'); // Hide popup
-                alert('Payment confirmed and added to your transactions!');
-                // Clear pending_upi_confirmation from localStorage after user confirms
-                localStorage.removeItem('pending_upi_confirmation');
-            };
+            if (upiConfirmButton) {
+                upiConfirmButton.onclick = () => {
+                    console.log("Confirm button clicked for transaction ID:", latestPendingTransaction.id);
+                    updateTransactionStatus(latestPendingTransaction.id, 'success');
+                    upiConfirmationNotification.classList.remove('show'); // Hide popup
+                    alert('Payment confirmed and added to your transactions!');
+                    // Clear pending_upi_confirmation from localStorage after user confirms
+                    localStorage.removeItem('pending_upi_confirmation');
+                };
+            }
 
-            upiConfirmCancelButton.onclick = () => {
-                console.log("Cancel button clicked for transaction ID:", latestPendingTransaction.id);
-                // Remove the pending transaction from the main list if cancelled
-                let currentTransactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-                const filtered = currentTransactions.filter(t => t.id !== latestPendingTransaction.id);
-                setLocalStorageItem('earn_transactions', JSON.stringify(filtered));
+            if (upiConfirmCancelButton) {
+                upiConfirmCancelButton.onclick = () => {
+                    console.log("Cancel button clicked for transaction ID:", latestPendingTransaction.id);
+                    // Remove the pending transaction from the main list if cancelled
+                    let currentTransactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
+                    const filtered = currentTransactions.filter(t => t.id !== latestPendingTransaction.id);
+                    setLocalStorageItem('earn_transactions', JSON.stringify(filtered));
 
-                upiConfirmationNotification.classList.remove('show'); // Hide popup
-                alert('Payment confirmation cancelled. Transaction removed.');
-                // Clear pending_upi_confirmation from localStorage after user cancels
-                localStorage.removeItem('pending_upi_confirmation');
-                loadTransactions(); // Reload to reflect removal
-                updateOverallSummary();
-            };
+                    upiConfirmationNotification.classList.remove('show'); // Hide popup
+                    alert('Payment confirmation cancelled. Transaction removed.');
+                    // Clear pending_upi_confirmation from localStorage after user cancels
+                    localStorage.removeItem('pending_upi_confirmation');
+                    loadTransactions(); // Reload to reflect removal
+                    updateOverallSummary();
+                };
+            }
         } else if (upiConfirmationNotification) {
             console.log("DEBUG (index.js): No pending transaction found or upiConfirmationNotification is null. Ensuring popup is hidden.");
             upiConfirmationNotification.classList.remove('show'); // Ensure it's hidden if no pending transaction
@@ -305,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const updateTransactionStatus = (transactionId, newStatus) => {
-        console.log("updateTransactionStatus called with ID:", transactionId, "and status:", newStatus);
+        console.log("DEBUG (index.js): updateTransactionStatus called with ID:", transactionId, "and status:", newStatus);
         const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
         const updatedTransactions = transactions.map(t =>
             t.id === transactionId ? { ...t, status: newStatus } : t
@@ -381,7 +378,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check if the 'triggerUPIPopUp' parameter is present and true
     const triggerPopup = getQueryParam('triggerUPIPopUp');
     if (triggerPopup === 'true') {
-      const upiSetupPopup = document.getElementById('upiSetupPopup');
       if (upiSetupPopup) {
         upiSetupPopup.style.display = 'block';
         // Optionally, you might want to remove the parameter from the URL
@@ -395,8 +391,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // You'll also likely need a way to close the popup on index.html
-    function closeUpiSetupPopup() {
-        const upiSetupPopup = document.getElementById('upiSetupPopup');
+    // This function is now defined within the single DOMContentLoaded
+    function closeUpiSetupPopupHandler() { // Renamed to avoid conflict if function was outside
         if (upiSetupPopup) {
             upiSetupPopup.style.display = 'none';
         }
@@ -404,7 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Attach the close function to a button within the popup (example):
     if (closeUpiSetupButton) {
-      closeUpiSetupButton.addEventListener('click', closeUpiSetupPopup);
+      closeUpiSetupButton.addEventListener('click', closeUpiSetupPopupHandler);
     }
 
     // Keep populateCategoryFilter call here as it depends on DOM being loaded

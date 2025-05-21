@@ -67,7 +67,8 @@ document.addEventListener('DOMContentLoaded', () => {
             category: category,
             description: description,
             date: new Date().toISOString().split('T')[0],
-            time: new Date().toTimeString().split(' ')[0]
+            time: new Date().toTimeString().split(' ')[0],
+            status: 'success' // Added status: 'success' for income transactions
         };
 
         // Store the transaction data temporarily in localStorage for QR code
@@ -100,7 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
             category: category,
             description: description,
             date: new Date().toISOString().split('T')[0],
-            time: new Date().toTimeString().split(' ')[0]
+            time: new Date().toTimeString().split(' ')[0],
+            status: 'success' // Added status: 'success' for income transactions
         };
 
         // Save the transaction directly to earn_transactions

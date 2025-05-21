@@ -773,12 +773,12 @@ body:has(> .popup)
 }
 
 .upi-confirmation-buttons .secondary {
-    background-color: #dc3545; /* Red for cancel */
+    background: #dc3545; /* Red for cancel */
     color: white;
 }
 
 .upi-confirmation-buttons .secondary:hover {
-    background-color: #c82333;
+    background: #c82333;
 }
 
 /* New Styles for QR Shaded Region */
