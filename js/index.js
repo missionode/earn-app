@@ -100,6 +100,23 @@ document.addEventListener('DOMContentLoaded', () => {
         return filteredTransactions;
     };
 
+    // Convert and format numbers 
+    function formatMoney(value) {
+        // Convert the number to a string
+        let numStr = value.toString();
+        
+        // Split into whole and decimal parts
+        const parts = numStr.split('.');
+        let wholePart = parts[0];
+        const decimalPart = parts.length > 1 ? '.' + parts[1] : '';
+        
+        // Add commas every 3 digits from the right
+        wholePart = wholePart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        
+        // Combine and return
+        return wholePart + decimalPart;
+    }
+
     const loadTransactions = () => {
         console.log("loadTransactions called");
         const storedTransactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
@@ -137,7 +154,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const icon = getCategoryIcon(transaction.category) || 'assets/icons/default.svg';
                 categoryCell.innerHTML = `<img src="${icon}" alt="${transaction.category}">`;
                 descriptionCell.textContent = transaction.description || '-';
-                const formattedAmount = `₹${parseFloat(transaction.amount).toFixed(2)}`;
+                var maskedAmount = formatMoney(transaction.amount);
+                const formattedAmount = `₹${maskedAmount}`;
                 amountCell.textContent = transaction.type === 'expense' ? `- ${formattedAmount}` : `+ ${formattedAmount}`;
                 amountCell.classList.add(transaction.type === 'expense' ? 'expense' : 'income');
                 dateCell.textContent = transaction.date;
@@ -190,22 +208,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-
-        function formatMoney(value) {
-            // Convert the number to a string
-            let numStr = value.toString();
-            
-            // Split into whole and decimal parts
-            const parts = numStr.split('.');
-            let wholePart = parts[0];
-            const decimalPart = parts.length > 1 ? '.' + parts[1] : '';
-            
-            // Add commas every 3 digits from the right
-            wholePart = wholePart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-            
-            // Combine and return
-            return wholePart + decimalPart;
-        }
         
         totalIncome = formatMoney(totalIncome)
         totalExpenses = formatMoney(totalExpenses)
