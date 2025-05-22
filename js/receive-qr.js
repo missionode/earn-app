@@ -5,14 +5,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const payeeNameDisplay = document.getElementById('payeeNameDisplay');
     const doneButton = document.getElementById('doneButton');
 
-    const payeeVPA = localStorage.getItem('earn_upiId');
-    const payeeName = localStorage.getItem('earn_username');
-    const pendingTransactionString = localStorage.getItem('pending_receive_transaction');
-    const pendingTransaction = pendingTransactionString ? JSON.parse(pendingTransactionString) : null;
+    const payeeVPA = getLocalStorageItem('earn_upiId');
+    const payeeName = getLocalStorageItem('earn_username');
+    const pendingTransaction = getParsedLocalStorageItem('pending_receive_transaction', null);
 
-    if (!payeeVPA || !payeeName || !pendingTransaction) {
-        alert('Error: Payment details not found.');
-        window.location.href = 'index.html'; // Redirect to home if data is missing
+    // Validate User Details (UPI ID and Name)
+    if (!payeeVPA || payeeVPA.trim() === '' || !payeeName || payeeName.trim() === '') {
+        alert("Your UPI ID or Name is not set up correctly. Please return to the main page to set them up.");
+        window.location.href = 'index.html';
+        return; // Stop execution
+    }
+
+    // Validate Pending Transaction
+    if (!pendingTransaction) {
+        alert('Error: Payment details not found for QR generation.');
+        window.location.href = 'index.html'; // Redirect to home if transaction data is missing
         return;
     }
 
@@ -44,14 +51,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     doneButton.addEventListener('click', () => {
-        saveTransaction(pendingTransaction); // Save the pending transaction
-        localStorage.removeItem('pending_receive_transaction'); // Clear the pending transaction
-        window.location.href = 'index.html';
+        if (saveTransaction(pendingTransaction)) {
+            localStorage.removeItem('pending_receive_transaction'); // Clear the pending transaction
+            window.location.href = 'index.html';
+        } else {
+            // Alert is handled by saveTransaction, so just prevent further actions.
+        }
     });
 
     function saveTransaction(transaction) {
-        let transactions = JSON.parse(localStorage.getItem('earn_transactions') || '[]');
+        let transactions = getParsedLocalStorageItem('earn_transactions', []);
         transactions.unshift(transaction); // Add to the beginning for recent first
-        localStorage.setItem('earn_transactions', JSON.stringify(transactions));
+        if (!setLocalStorageItem('earn_transactions', JSON.stringify(transactions))) {
+            alert("Failed to save confirmed transaction. Please try again or note down the details.");
+            return false;
+        }
+        return true;
     }
 });

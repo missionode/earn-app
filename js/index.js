@@ -46,11 +46,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const upiConfirmCancelButton = document.getElementById('upiConfirmCancelButton');
     const upiConfirmButton = document.getElementById('upiConfirmButton');
 
-    let allTransactions = [];
+    let allTransactionsInMemory = []; // Renamed for clarity and to serve as the primary in-memory cache
 
-    // --- Helper Functions ---
-    const getLocalStorageItem = (key) => localStorage.getItem(key);
-    const setLocalStorageItem = (key, value) => localStorage.setItem(key, value);
+    // --- Helper Functions (Global functions from script.js will be used) ---
+    // const getLocalStorageItem = (key) => localStorage.getItem(key); // Will use global
+    // const setLocalStorageItem = (key, value) => localStorage.setItem(key, value); // Will use global
     const isFirstTimeUser = () => !getLocalStorageItem('earn_upiId') || !getLocalStorageItem('earn_username');
     const displayUPISetupPopup = () => {
         if (upiSetupPopup) upiSetupPopup.style.display = 'block';
@@ -102,10 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const loadTransactions = () => {
         console.log("loadTransactions called");
-        const storedTransactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-        // Only display confirmed transactions in the table
-        allTransactions = storedTransactions.filter(t => t.status !== 'pending');
-        console.log("Transactions loaded (excluding pending):", allTransactions);
+        // Use the in-memory cache, filtering out pending for display
+        const allTransactions = allTransactionsInMemory.filter(t => t.status !== 'pending');
+        console.log("Transactions for display (excluding pending from in-memory):", allTransactions);
         const filters = {
             type: filterType ? filterType.value : '',
             category: categoryFilter ? categoryFilter.value : '',
@@ -176,13 +175,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const updateOverallSummary = () => {
-        // Only sum transactions with status 'success' for overall summary
-        const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]').filter(t => t.status === 'success');
-        console.log("DEBUG (updateOverallSummary): Transactions used for overall summary (status 'success' only):", transactions);
+        // Only sum transactions with status 'success' for overall summary from in-memory cache
+        const successfulTransactions = allTransactionsInMemory.filter(t => t.status === 'success');
+        console.log("DEBUG (updateOverallSummary): Transactions used for overall summary (status 'success' only from in-memory):", successfulTransactions);
         let totalIncome = 0;
         let totalExpenses = 0;
 
-        transactions.forEach(t => {
+        successfulTransactions.forEach(t => {
             if (t.type === 'income') {
                 totalIncome += parseFloat(t.amount);
             } else if (t.type === 'expense') {
@@ -207,11 +206,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (usernameError) usernameError.textContent = username ? '' : 'Please enter your name.';
 
         if (!upiIdErrorMessage && username) {
-            setLocalStorageItem('earn_upiId', upiId);
-            setLocalStorageItem('earn_username', username);
-            hideUPISetupPopup();
-            loadTransactions();
-            updateOverallSummary();
+            const upiIdSaved = setLocalStorageItem('earn_upiId', upiId);
+            const usernameSaved = setLocalStorageItem('earn_username', username);
+
+            if (upiIdSaved && usernameSaved) {
+                allTransactionsInMemory = []; // Reset in-memory as it's a new setup or update
+                hideUPISetupPopup();
+                loadTransactions(); // Will use the (now empty) allTransactionsInMemory
+                updateOverallSummary(); // Will use the (now empty) allTransactionsInMemory
+            } else {
+                alert("Failed to save settings. Please try again.");
+            }
         }
     };
 
@@ -253,9 +258,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const triggerConfirmationPopup = () => {
-        const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-        // Find the most recent pending transaction
-        const latestPendingTransaction = transactions.find(t => t.status === 'pending');
+        // Use in-memory cache to find pending transactions
+        const latestPendingTransaction = allTransactionsInMemory.find(t => t.status === 'pending');
 
         if (latestPendingTransaction && upiConfirmationNotification) {
             console.log("DEBUG (index.js): Found pending transaction. Displaying confirmation popup.");
@@ -270,8 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateTransactionStatus(latestPendingTransaction.id, 'success');
                     upiConfirmationNotification.classList.remove('show'); // Hide popup
                     alert('Payment confirmed and added to your transactions!');
-                    // Clear pending_upi_confirmation from localStorage after user confirms
-                    localStorage.removeItem('pending_upi_confirmation');
+                    // Removed: localStorage.removeItem('pending_upi_confirmation');
                 };
             }
 
@@ -279,14 +282,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 upiConfirmCancelButton.onclick = () => {
                     console.log("Cancel button clicked for transaction ID:", latestPendingTransaction.id);
                     // Remove the pending transaction from the main list if cancelled
-                    let currentTransactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-                    const filtered = currentTransactions.filter(t => t.id !== latestPendingTransaction.id);
-                    setLocalStorageItem('earn_transactions', JSON.stringify(filtered));
+                    const filtered = allTransactionsInMemory.filter(t => t.id !== latestPendingTransaction.id);
+                    if (setLocalStorageItem('earn_transactions', JSON.stringify(filtered))) {
+                        allTransactionsInMemory = [...filtered]; // Update in-memory cache
+                    } else {
+                        alert("Failed to update transactions. Your recent change might not be saved.");
+                    }
 
                     upiConfirmationNotification.classList.remove('show'); // Hide popup
                     alert('Payment confirmation cancelled. Transaction removed.');
-                    // Clear pending_upi_confirmation from localStorage after user cancels
-                    localStorage.removeItem('pending_upi_confirmation');
+                    // Removed: localStorage.removeItem('pending_upi_confirmation');
                     loadTransactions(); // Reload to reflect removal
                     updateOverallSummary();
                 };
@@ -294,8 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (upiConfirmationNotification) {
             console.log("DEBUG (index.js): No pending transaction found or upiConfirmationNotification is null. Ensuring popup is hidden.");
             upiConfirmationNotification.classList.remove('show'); // Ensure it's hidden if no pending transaction
-            // Also clear any stale pending_upi_confirmation if no actual pending transaction exists in earn_transactions
-            localStorage.removeItem('pending_upi_confirmation');
+            // Removed: localStorage.removeItem('pending_upi_confirmation');
         } else {
             console.error("ERROR (index.js): upiConfirmationNotification element not found! Cannot display/hide popup.");
         }
@@ -303,13 +307,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const updateTransactionStatus = (transactionId, newStatus) => {
         console.log("DEBUG (index.js): updateTransactionStatus called with ID:", transactionId, "and status:", newStatus);
-        const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-        const updatedTransactions = transactions.map(t =>
+        // Create a new array with the updated transaction for localStorage
+        const updatedTransactionsForStorage = allTransactionsInMemory.map(t =>
             t.id === transactionId ? { ...t, status: newStatus } : t
         );
-        setLocalStorageItem('earn_transactions', JSON.stringify(updatedTransactions));
-        loadTransactions(); // Reload to show updated status
-        updateOverallSummary();
+
+        if (setLocalStorageItem('earn_transactions', JSON.stringify(updatedTransactionsForStorage))) {
+            // Update in-memory cache
+            const transactionIndex = allTransactionsInMemory.findIndex(t => t.id === transactionId);
+            if (transactionIndex !== -1) {
+                allTransactionsInMemory[transactionIndex] = { ...allTransactionsInMemory[transactionIndex], status: newStatus };
+            }
+        } else {
+            alert("Failed to update transactions. Your recent change might not be saved.");
+            // Optionally, revert in-memory change or skip reload if localStorage failed
+            return; 
+        }
+        loadTransactions(); // Reload to show updated status (will use in-memory)
+        updateOverallSummary(); // Will use in-memory
         console.log("DEBUG (index.js): Transactions reloaded and summary updated after status change.");
     };
 
@@ -318,7 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Log current URL and localStorage state immediately on DOMContentLoaded
     console.log("DEBUG (index.js): Page loaded. Current URL:", window.location.href);
     console.log("DEBUG (index.js): localStorage 'earn_transactions' on load:", localStorage.getItem('earn_transactions'));
-    console.log("DEBUG (index.js): localStorage 'pending_upi_confirmation' on load:", localStorage.getItem('pending_upi_confirmation'));
+    // Removed console log for 'pending_upi_confirmation'
 
     // Check if upiConfirmationNotification element is found right at the start
     const debugUpiConfNotification = document.getElementById('upiConfirmationNotification');
@@ -331,9 +346,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Main application initialization based on user status
     if (isFirstTimeUser()) {
         console.log("DEBUG (index.js): User is first time user. Displaying UPI setup popup.");
+        allTransactionsInMemory = []; // Ensure cache is empty for first time user
         displayUPISetupPopup();
     } else {
         console.log("DEBUG (index.js): User is not first time user. Loading content normally.");
+        allTransactionsInMemory = getParsedLocalStorageItem('earn_transactions', []);
         loadTransactions();
         updateOverallSummary();
         setTimeout(triggerConfirmationPopup, 500); // Check for pending UPI transaction
@@ -361,12 +378,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Logic for hiding transaction details using nth-child (from previous request)
-    const hideDetailsState = localStorage.getItem('hideDetails');
-    if (hideDetailsState === 'false') { // Check for 'false' string
-        document.body.classList.add('hide-transaction-details');
-    } else {
-         document.body.classList.remove('hide-transaction-details'); // Ensure class is removed if state is true or not set
-    }
+    // Standard: 'hideDetails' === 'true' means hide details in forms AND table.
+    // 'hideDetails' === 'false' means show details in forms AND table.
+    // Default (null): Show details in forms (as per send/receive.js logic), show details in table.
+    document.body.classList.toggle('hide-transaction-details', getLocalStorageItem('hideDetails') === 'true');
 
 
     // Function to get the value of a specific query parameter from the URL
@@ -406,4 +421,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Keep populateCategoryFilter call here as it depends on DOM being loaded
     populateCategoryFilter();
 
+    // --- Storage Event Listener for Multi-Tab Sync Warning ---
+    window.addEventListener('storage', (event) => {
+        if (event.key === 'earn_transactions') {
+            // Optional checks to be more specific, though the core requirement is to alert on 'earn_transactions' change.
+            // if (event.url !== window.location.href) { // Ensure it's from a different document
+            // }
+            if (event.newValue !== null && event.newValue !== event.oldValue) {
+                alert("Attention: Your transaction data has been updated in another browser tab or window. To ensure you're seeing the latest information, please reload this page. (This will also refresh the in-memory cache)");
+                // Future enhancement: Could offer to merge or selectively update allTransactionsInMemory here.
+                // For now, the alert guides the user to reload, which naturally refreshes the cache.
+            }
+        }
+    });
 });

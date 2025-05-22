@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('earn_transactions');
         localStorage.removeItem('earn_upiId');
         localStorage.removeItem('earn_username');
+        localStorage.removeItem('pending_receive_transaction');
+        localStorage.removeItem('pending_upi_confirmation');
+        localStorage.removeItem('hideDetails');
 
         // Display confirmation message
         resetMessage.textContent = 'App data has been reset.';

@@ -18,6 +18,7 @@
             <div class="form-group">
                 <label for="amount">Amount:</label>
                 <input placeholder="Enter Amount" type="number" id="amount" name="amount" required>
+                <span class="error-message" id="sendAmountError" style="display: none;"></span>
             </div>
 
             <div class="form-group switch-container">
@@ -77,8 +78,8 @@
                 <button id="toggleFlash">Toggle Flash</button>
             </div>
     </div>
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <script src="js/libs/html5-qrcode.min.js"></script>
+    <script src="js/libs/jsQR.min.js"></script>
     <script src="js/send.js"></script>
 </body>
 </html>

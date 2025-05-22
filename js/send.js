@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Get the switch and the details container for Send page
     const toggleDetailsSwitch = document.getElementById('toggleDetails'); // Correct variable name
     const detailsFields = document.getElementById('detailsFields'); // Correct variable name
+    const amountErrorDisplay = document.getElementById('sendAmountError'); // Get the error span for send page
 
     // --- State Variables ---
     let flashEnabled = false;
@@ -59,47 +60,86 @@ document.addEventListener('DOMContentLoaded', () => {
         return '';
     }
 
-    function generateUniqueId() {
-        return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-    }
+    // function generateUniqueId() { // Will use global version from script.js
+    //     return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    // }
 
     function saveTransaction(transaction) {
-        let transactions = JSON.parse(localStorage.getItem('earn_transactions') || '[]');
+        let transactions = getParsedLocalStorageItem('earn_transactions', []);
         transactions.unshift(transaction); // Add to the beginning of the array
-        localStorage.setItem('earn_transactions', JSON.stringify(transactions));
+        if (!setLocalStorageItem('earn_transactions', JSON.stringify(transactions))) {
+            alert("Failed to save transaction. Please try again.");
+            return false;
+        }
+        return true;
     }
 
     function extractDataFromQRCode(qrCodeText) {
         let upiId = null;
         let merchantName = null;
 
-        // Extract VPA (Virtual Payment Address) from UPI QR code text
-        if (qrCodeText && qrCodeText.includes("pa=")) {
-            const vpaStart = qrCodeText.indexOf("pa=") + 3;
-            let vpaEnd = qrCodeText.indexOf("&", vpaStart);
-            if (vpaEnd === -1) { // If '&' not found, take till end of string
-                vpaEnd = qrCodeText.length;
-            }
-            upiId = qrCodeText.substring(vpaStart, vpaEnd);
+        if (!qrCodeText || !qrCodeText.startsWith("upi://pay?")) {
+            return { upiId: null, merchantName: null };
         }
 
-        // Extract Payee Name from UPI QR code text
-        if (qrCodeText && qrCodeText.includes("pn=")) {
-            const nameStart = qrCodeText.indexOf("pn=") + 3;
-            let nameEnd = qrCodeText.indexOf("&", nameStart);
-            if (nameEnd === -1) { // If '&' not found, take till end of string
-                nameEnd = qrCodeText.length;
+        const queryString = qrCodeText.substring(qrCodeText.indexOf("?") + 1);
+        const params = {};
+        
+        queryString.split('&').forEach(paramPair => {
+            const parts = paramPair.split('=');
+            if (parts.length === 2) {
+                params[parts[0].toLowerCase()] = parts[1]; // Use toLowerCase for keys for case-insensitivity
+            } else if (parts.length === 1 && parts[0].length > 0) {
+                // Handle case where a parameter might not have a value, though less common in UPI
+                params[parts[0].toLowerCase()] = ""; 
             }
-            merchantName = decodeURIComponent(qrCodeText.substring(nameStart, nameEnd).replace(/\+/g, ' ')); // Decode and replace + with space
+        });
+
+        if (params['pa']) {
+            try {
+                upiId = decodeURIComponent(params['pa']);
+            } catch (e) {
+                console.error("Error decoding UPI ID (pa):", e);
+                upiId = null; // Or handle as invalid
+            }
         }
 
-        return { upiId, merchantName };
+        if (params['pn']) {
+            try {
+                merchantName = decodeURIComponent(params['pn'].replace(/\+/g, ' '));
+            } catch (e) {
+                console.error("Error decoding Payee Name (pn):", e);
+                merchantName = null; // Or handle as invalid
+            }
+        }
+
+        let amountVal = null;
+        if (params['am']) {
+            const parsedAmount = parseFloat(params['am']);
+            if (!isNaN(parsedAmount) && parsedAmount > 0) {
+                amountVal = parsedAmount.toFixed(2);
+            } else {
+                console.warn("Invalid or zero amount found in QR (am):", params['am']);
+            }
+        }
+
+        let transactionNote = null;
+        if (params['tn']) {
+            try {
+                transactionNote = decodeURIComponent(params['tn'].replace(/\+/g, ' '));
+            } catch (e) {
+                console.error("Error decoding Transaction Note (tn):", e);
+                transactionNote = null; // Or handle as invalid
+            }
+        }
+        
+        return { upiId, merchantName, amount: amountVal, transactionNote };
     }
 
     function initiateUpiPayment(recipientVPA, paymentAmount, description, category, merchantNameFromQR) {
         const transactionId = generateUniqueId();
         // Use merchantName from QR if available, otherwise default or use stored username
-        const payeeName = merchantNameFromQR || localStorage.getItem('earn_username') || 'Recipient Name';
+        const payeeName = merchantNameFromQR || getLocalStorageItem('earn_username') || 'Recipient Name';
         const merchantCategoryCode = '0000'; // Generic MCC for now
 
         // Dynamically construct the success URL using window.location.origin
@@ -127,12 +167,11 @@ document.addEventListener('DOMContentLoaded', () => {
             merchantName: merchantNameFromQR // ADD THIS LINE to save merchant name
         };
 
-        saveTransaction(pendingTransaction);
+        if (!saveTransaction(pendingTransaction)) {
+            alert("Failed to save pending transaction locally. Aborting UPI payment.");
+            return; // Do not proceed
+        }
         console.log("DEBUG (send.js): Saved pending transaction to earn_transactions:", pendingTransaction);
-
-        // Store this specific pending transaction for potential confirmation on index.html
-        localStorage.setItem('pending_upi_confirmation', JSON.stringify(pendingTransaction));
-        console.log("DEBUG (send.js): Set pending_upi_confirmation in localStorage:", localStorage.getItem('pending_upi_confirmation'));
 
         // Redirect to the UPI application
         window.location.href = upiIntentUrl;
@@ -158,18 +197,50 @@ document.addEventListener('DOMContentLoaded', () => {
                     qrScannerPopup.style.display = 'none'; // Hide the scanner popup
 
                     const qrData = extractDataFromQRCode(decodedText);
-                    currentExtractedUPIID = qrData.upiId; // Store extracted data
+                    currentExtractedUPIID = qrData.upiId;
                     currentExtractedMerchantName = qrData.merchantName;
+
+                    // Handle amount from QR
+                    if (qrData.amount && amountInput) {
+                        const parsedAmount = parseFloat(qrData.amount);
+                        if (!isNaN(parsedAmount) && parsedAmount > 0) {
+                            amountInput.value = parsedAmount.toFixed(2);
+                            amount = parsedAmount; // Update global amount
+                            amountInput.readOnly = true;
+                        } else {
+                            amountInput.readOnly = false; // Ensure editable if QR amount is invalid
+                        }
+                    } else if (amountInput) {
+                        amountInput.readOnly = false; // Ensure editable if no amount in QR
+                    }
                     
-                    // Get current category and description from the form
-                    const currentDescription = toggleDetailsSwitch && toggleDetailsSwitch.checked ? descriptionInput.value : '';
+                    // Handle transaction note (description) from QR
+                    if (qrData.transactionNote && descriptionInput) {
+                        descriptionInput.value = qrData.transactionNote;
+                        // If description is pre-filled, ensure details section is visible
+                        if (toggleDetailsSwitch && detailsFields) {
+                            toggleDetailsSwitch.checked = true;
+                            detailsFields.classList.remove('hidden');
+                        }
+                    }
+
+                    // Get current category and description from the form (description might have been updated)
+                    const currentDescription = descriptionInput ? descriptionInput.value : '';
                     const currentCategory = toggleDetailsSwitch && toggleDetailsSwitch.checked ? getSelectedCategory() : '';
+                    
+                    // The global 'amount' is either from QR or will be taken from amountInput in sendForm submit if not set by QR.
+                    // For direct initiation, ensure 'amount' variable is correctly set if QR had it.
+                    // If not set by QR, it should be the value from the form (which is handled by sendForm submit listener).
+                    // Here, we prioritize QR amount if present.
+                    const paymentAmount = qrData.amount ? parseFloat(qrData.amount) : parseFloat(amountInput.value);
+
 
                     if (currentExtractedUPIID) {
-                        // Directly initiate UPI payment, the confirmation logic is on index.html
-                        initiateUpiPayment(currentExtractedUPIID, amount, currentDescription, currentCategory, currentExtractedMerchantName);
+                        // Directly initiate UPI payment
+                        initiateUpiPayment(currentExtractedUPIID, paymentAmount, currentDescription, currentCategory, currentExtractedMerchantName);
                     } else {
                         alert('Invalid UPI QR code. No UPI ID found.');
+                        if (amountInput) amountInput.readOnly = false; // Reset readOnly status
                         // Optionally, restart scanner here if it was an invalid QR and user wants to try again
                         // qrScannerPopup.style.display = 'block';
                         // startQrScanner();
@@ -245,20 +316,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Event Listeners ---
 
     // Load and apply the saved details switch state from local storage
-    const savedDetailsState = localStorage.getItem('hideDetails'); // Use 'hideDetails' for unified switch
-    // Corrected logic for showDetails: if 'hideDetails' is 'false', then showDetails should be true.
-    // If 'hideDetails' is 'true' or null/undefined, then showDetails should be false (hidden).
-    const showDetails = savedDetailsState === 'false';
+    const savedDetailsState = getLocalStorageItem('hideDetails'); // Use 'hideDetails' for unified switch
+    // Standard: 'true' means hide, 'false' means show. Default to HIDE if not set.
+    // So, showDetails is true ONLY if savedDetailsState is explicitly 'false'.
+    const showDetails = savedDetailsState === 'false'; 
 
     if (toggleDetailsSwitch) {
         toggleDetailsSwitch.checked = showDetails;
     }
     if (detailsFields) {
-        if (!showDetails) {
-            detailsFields.classList.add('hidden');
-        } else {
-            detailsFields.classList.remove('hidden');
-        }
+        // If showDetails is true, 'hidden' class should NOT be there (so, !showDetails is false).
+        // If showDetails is false, 'hidden' class SHOULD be there (so, !showDetails is true).
+        detailsFields.classList.toggle('hidden', !showDetails);
     }
 
 
@@ -268,7 +337,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const currentState = toggleDetailsSwitch.checked;
             detailsFields.classList.toggle('hidden', !currentState);
             // Save the state as 'true' if checked (show details), 'false' if unchecked (hide details)
-            localStorage.setItem('hideDetails', !currentState); // Invert logic to match 'hideDetails' key
+            // The key 'hideDetails' means: true if details are hidden, false if details are shown.
+            // So, if currentState is true (details shown), we save 'false' to 'hideDetails'.
+            // If currentState is false (details hidden), we save 'true' to 'hideDetails'.
+            if (!setLocalStorageItem('hideDetails', (!currentState).toString())) {
+                alert("Could not save your preference for showing/hiding details.");
+            }
         });
     }
 
@@ -281,8 +355,16 @@ document.addEventListener('DOMContentLoaded', () => {
             amount = parseFloat(amountInput.value); // Assign to the outer 'amount' variable
             
             if (isNaN(amount) || amount <= 0) {
-                alert('Please enter a valid amount.');
+                if (amountErrorDisplay) {
+                    amountErrorDisplay.textContent = 'Please enter a valid positive amount.';
+                    amountErrorDisplay.style.display = 'block';
+                } else {
+                    alert('Please enter a valid amount.'); // Fallback
+                }
                 return;
+            } else if (amountErrorDisplay) {
+                amountErrorDisplay.textContent = '';
+                amountErrorDisplay.style.display = 'none';
             }
 
             qrScannerPopup.style.display = 'block'; // Show QR scanner popup
@@ -306,6 +388,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if(toggleFlashButton) toggleFlashButton.style.display = 'none'; // Hide flash button
                 }).catch(err => console.error("Error stopping or clearing Html5Qrcode on close:", err));
             }
+            if (amountInput) amountInput.readOnly = false; // Reset amount field to editable
             qrCodeDetected = false; // Reset QR detection flag
         });
     } else {
@@ -322,8 +405,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const manualExpenseCategory = toggleDetailsSwitch && toggleDetailsSwitch.checked ? getSelectedCategory() : '';
 
             if (isNaN(manualExpenseAmount) || manualExpenseAmount <= 0) {
-                alert('Please enter a valid expense amount.');
+                if (amountErrorDisplay) {
+                    amountErrorDisplay.textContent = 'Please enter a valid positive amount.';
+                    amountErrorDisplay.style.display = 'block';
+                } else {
+                    alert('Please enter a valid expense amount.'); // Fallback
+                }
                 return;
+            } else if (amountErrorDisplay) {
+                amountErrorDisplay.textContent = '';
+                amountErrorDisplay.style.display = 'none';
             }
 
             const newExpenseTransaction = {
@@ -337,9 +428,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 status: 'success' // Manual entry is directly added as success
             };
 
-            saveTransaction(newExpenseTransaction);
-            console.log("DEBUG (send.js): Saved manual expense to earn_transactions:", newExpenseTransaction);
-            window.location.href = 'index.html'; // Redirect to index page after saving
+            if (saveTransaction(newExpenseTransaction)) {
+                console.log("DEBUG (send.js): Saved manual expense to earn_transactions:", newExpenseTransaction);
+                window.location.href = 'index.html'; // Redirect to index page after saving
+            } else {
+                // Alert is handled by saveTransaction, so just prevent redirection.
+            }
         });
     } else {
         console.warn("Add expense button not found in send.html.");
