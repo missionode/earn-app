@@ -190,11 +190,31 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        console.log("DEBUG (updateOverallSummary): Calculated Total Income:", totalIncome.toFixed(2));
-        console.log("DEBUG (updateOverallSummary): Calculated Total Expenses:", totalExpenses.toFixed(2));
 
-        if (totalIncomeDisplay) totalIncomeDisplay.textContent = `₹${totalIncome.toFixed(2)}`;
-        if (totalExpensesDisplay) totalExpensesDisplay.textContent = `₹${totalExpenses.toFixed(2)}`;
+        function formatMoney(value) {
+            // Convert the number to a string
+            let numStr = value.toString();
+            
+            // Split into whole and decimal parts
+            const parts = numStr.split('.');
+            let wholePart = parts[0];
+            const decimalPart = parts.length > 1 ? '.' + parts[1] : '';
+            
+            // Add commas every 3 digits from the right
+            wholePart = wholePart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            
+            // Combine and return
+            return wholePart + decimalPart;
+        }
+        
+        totalIncome = formatMoney(totalIncome)
+        totalExpenses = formatMoney(totalExpenses)
+
+        console.log("DEBUG (updateOverallSummary): Calculated Total Income:", totalIncome);
+        console.log("DEBUG (updateOverallSummary): Calculated Total Expenses:", totalExpenses);
+
+        if (totalIncomeDisplay) totalIncomeDisplay.textContent = `₹${totalIncome}`;
+        if (totalExpensesDisplay) totalExpensesDisplay.textContent = `₹${totalExpenses}`;
     };
 
     const handleUPISetupSubmit = (event) => {

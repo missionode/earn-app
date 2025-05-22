@@ -343,6 +343,7 @@
 .summary-item p {
     font-size: 18px;
     font-weight: bold;
+    word-break: break-all;
 }
 
 .summary-item img {
