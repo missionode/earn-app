@@ -8,6 +8,10 @@ body {
     border-radius: 8px;
 }
 
+#qr-shaded-region {
+    display: none;
+}
+
 h1 {
     color: var(--text-primary); /* Using a CSS variable */
     text-align: center;
