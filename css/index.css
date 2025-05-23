@@ -23,14 +23,13 @@
 
 .namaste {
     text-align:center;
-    color: #fcb315;
+    color: #ffae00;
     padding: 9px;
 }
 .namaste.devi {
     font-size: 19px;
-    margin-top: 20px;
     margin-bottom: 15px;
-    background: linear-gradient(135deg, #ff0000 0%, #17d35c 100%);
+    background: linear-gradient(to right, #FFFFFF, #FFD700);
     border-radius: 40px;
     font-weight: 500;
 }
@@ -479,6 +478,7 @@
         justify-content: space-between;
         align-items: center;
         margin-top: 5px;
+        padding-bottom: 10px;
         padding-left: 10px;
         padding-right: 10px;
 }
