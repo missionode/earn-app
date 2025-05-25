@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const manualConfirmationPopup = document.getElementById('manualConfirmationPopup');
     const confirmPaidButton = document.getElementById('confirmPaidButton');
     const confirmNotPaidButton = document.getElementById('confirmNotPaidButton');
+    const balanceAds = document.getElementById('adsSpaceaption');
+    
 
     // UPI Setup Popup elements
     const upiSetupPopup = document.getElementById('upiSetupPopup');
@@ -199,6 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("DEBUG (updateOverallSummary): Transactions used for overall summary (status 'success' only):", transactions);
         let totalIncome = 0;
         let totalExpenses = 0;
+        let balance = 0;
 
         transactions.forEach(t => {
             if (t.type === 'income') {
@@ -207,13 +210,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 totalExpenses += parseFloat(t.amount);
             }
         });
+        balance = totalIncome - totalExpenses
 
-        
-        totalIncome = formatMoney(totalIncome)
-        totalExpenses = formatMoney(totalExpenses)
+        balance = formatMoney(balance);
+        console.log("balance balance", balance);
+
+        totalIncome = formatMoney(totalIncome);
+        totalExpenses = formatMoney(totalExpenses);
+   
+
 
         console.log("DEBUG (updateOverallSummary): Calculated Total Income:", totalIncome);
         console.log("DEBUG (updateOverallSummary): Calculated Total Expenses:", totalExpenses);
+        
+        if (balanceAds) balanceAds.textContent = `⚖️ ${balance} ₹`;
 
         if (totalIncomeDisplay) totalIncomeDisplay.textContent = `₹${totalIncome}`;
         if (totalExpensesDisplay) totalExpensesDisplay.textContent = `₹${totalExpenses}`;
