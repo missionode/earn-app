@@ -175,6 +175,7 @@
     align-items: center;
     color: var(--income-color);
     font-weight: bold;
+    word-break: break-all;
 }
 
 .wallet .filter {
