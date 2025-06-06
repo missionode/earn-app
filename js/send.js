@@ -102,8 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const payeeName = merchantNameFromQR || localStorage.getItem('earn_username') || 'Recipient Name';
         const merchantCategoryCode = '0000'; // Generic MCC for now
 
-        // Dynamically construct the success URL using window.location.origin
-        const successUrl = encodeURIComponent(`${window.location.origin}/index.html?status=success&transactionId=${transactionId}`);
+        // FIX: Shorten the successUrl to reduce overall length for UPI apps like Paytm
+        // Use a concise parameter name like 'tx' for transaction ID
+        const successUrl = encodeURIComponent(`${window.location.origin}/index.html?tx=${transactionId}`);
 
         let encodedDescription = encodeURIComponent(description);
         // Replace spaces with '+' for proper URL encoding in UPI intent (some apps prefer +)
@@ -160,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const qrData = extractDataFromQRCode(decodedText);
                     currentExtractedUPIID = qrData.upiId; // Store extracted data
                     currentExtractedMerchantName = qrData.merchantName;
-                    
+                   
                     // Get current category and description from the form
                     const currentDescription = toggleDetailsSwitch && toggleDetailsSwitch.checked ? descriptionInput.value : '';
                     const currentCategory = toggleDetailsSwitch && toggleDetailsSwitch.checked ? getSelectedCategory() : '';
@@ -279,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
 
             amount = parseFloat(amountInput.value); // Assign to the outer 'amount' variable
-            
+           
             if (isNaN(amount) || amount <= 0) {
                 alert('Please enter a valid amount.');
                 return;

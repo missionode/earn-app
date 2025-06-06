@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Version Log ---
-    console.log("DEBUG: index.js version: Truly Unified DOMContentLoaded (2025-05-21) - Enhanced Debugging");
+    console.log("DEBUG: index.js version: Truly Unified DOMContentLoaded (2025-05-21) - Enhanced Debugging with Transaction ID from URL");
 
     // --- Variables (Declared only once at the top of the single DOMContentLoaded block) ---
     const homePage = document.getElementById('homepage');
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const confirmPaidButton = document.getElementById('confirmPaidButton');
     const confirmNotPaidButton = document.getElementById('confirmNotPaidButton');
     const balanceAds = document.getElementById('adsSpaceaption');
-    
+
 
     // UPI Setup Popup elements
     const upiSetupPopup = document.getElementById('upiSetupPopup');
@@ -102,19 +102,19 @@ document.addEventListener('DOMContentLoaded', () => {
         return filteredTransactions;
     };
 
-    // Convert and format numbers 
+    // Convert and format numbers
     function formatMoney(value) {
         // Convert the number to a string
         let numStr = value.toString();
-        
+
         // Split into whole and decimal parts
         const parts = numStr.split('.');
         let wholePart = parts[0];
         const decimalPart = parts.length > 1 ? '.' + parts[1] : '';
-        
+
         // Add commas every 3 digits from the right
         wholePart = wholePart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        
+
         // Combine and return
         return wholePart + decimalPart;
     }
@@ -217,12 +217,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         totalIncome = formatMoney(totalIncome);
         totalExpenses = formatMoney(totalExpenses);
-   
+
 
 
         console.log("DEBUG (updateOverallSummary): Calculated Total Income:", totalIncome);
         console.log("DEBUG (updateOverallSummary): Calculated Total Expenses:", totalExpenses);
-        
+
         if (balanceAds) balanceAds.textContent = `⚖️ ${balance} ₹`;
 
         if (totalIncomeDisplay) totalIncomeDisplay.textContent = `₹${totalIncome}`;
@@ -285,21 +285,40 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const triggerConfirmationPopup = () => {
+        const urlTransactionId = getQueryParam('transactionId'); // Get transactionId from URL
+        let transactionToConfirm = null;
         const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-        // Find the most recent pending transaction
-        const latestPendingTransaction = transactions.find(t => t.status === 'pending');
 
-        if (latestPendingTransaction && upiConfirmationNotification) {
-            console.log("DEBUG (index.js): Found pending transaction. Displaying confirmation popup.");
+        if (urlTransactionId) {
+            // If transactionId is in URL, find that specific transaction
+            transactionToConfirm = transactions.find(t => t.id === urlTransactionId && t.status === 'pending');
+            if (transactionToConfirm) {
+                console.log(`DEBUG (index.js): Found pending transaction from URL param (ID: ${urlTransactionId}).`);
+                // Clear the transactionId from the URL to prevent re-triggering on refresh
+                const url = new URL(window.location.href);
+                url.searchParams.delete('transactionId');
+                window.history.replaceState({}, document.title, url.toString());
+            } else {
+                console.log(`DEBUG (index.js): Transaction ID '${urlTransactionId}' from URL not found or not pending.`);
+            }
+        } else {
+            // If no transactionId in URL, fall back to finding the most recent pending transaction
+            console.log("DEBUG (index.js): No transactionId in URL. Looking for most recent pending transaction in localStorage.");
+            transactionToConfirm = transactions.find(t => t.status === 'pending');
+        }
+
+
+        if (transactionToConfirm && upiConfirmationNotification) {
+            console.log("DEBUG (index.js): Displaying confirmation popup for transaction ID:", transactionToConfirm.id);
             upiConfirmationTitle.textContent = 'Confirm Pending Payment';
-            upiConfirmationAmount.textContent = `Amount: ₹${parseFloat(latestPendingTransaction.amount).toFixed(2)}`;
-            upiConfirmationDescription.textContent = latestPendingTransaction.description || 'No description provided.';
+            upiConfirmationAmount.textContent = `Amount: ₹${parseFloat(transactionToConfirm.amount).toFixed(2)}`;
+            upiConfirmationDescription.textContent = transactionToConfirm.description || 'No description provided.';
             upiConfirmationNotification.classList.add('show'); // Add 'show' class for animation
 
             if (upiConfirmButton) {
                 upiConfirmButton.onclick = () => {
-                    console.log("Confirm button clicked for transaction ID:", latestPendingTransaction.id);
-                    updateTransactionStatus(latestPendingTransaction.id, 'success');
+                    console.log("Confirm button clicked for transaction ID:", transactionToConfirm.id);
+                    updateTransactionStatus(transactionToConfirm.id, 'success');
                     upiConfirmationNotification.classList.remove('show'); // Hide popup
                     alert('Payment confirmed and added to your transactions!');
                     // Clear pending_upi_confirmation from localStorage after user confirms
@@ -309,10 +328,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (upiConfirmCancelButton) {
                 upiConfirmCancelButton.onclick = () => {
-                    console.log("Cancel button clicked for transaction ID:", latestPendingTransaction.id);
+                    console.log("Cancel button clicked for transaction ID:", transactionToConfirm.id);
                     // Remove the pending transaction from the main list if cancelled
                     let currentTransactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-                    const filtered = currentTransactions.filter(t => t.id !== latestPendingTransaction.id);
+                    const filtered = currentTransactions.filter(t => t.id !== transactionToConfirm.id);
                     setLocalStorageItem('earn_transactions', JSON.stringify(filtered));
 
                     upiConfirmationNotification.classList.remove('show'); // Hide popup
@@ -324,7 +343,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
             }
         } else if (upiConfirmationNotification) {
-            console.log("DEBUG (index.js): No pending transaction found or upiConfirmationNotification is null. Ensuring popup is hidden.");
+            console.log("DEBUG (index.js): No relevant pending transaction found to display. Ensuring popup is hidden.");
             upiConfirmationNotification.classList.remove('show'); // Ensure it's hidden if no pending transaction
             // Also clear any stale pending_upi_confirmation if no actual pending transaction exists in earn_transactions
             localStorage.removeItem('pending_upi_confirmation');
@@ -368,7 +387,8 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("DEBUG (index.js): User is not first time user. Loading content normally.");
         loadTransactions();
         updateOverallSummary();
-        setTimeout(triggerConfirmationPopup, 500); // Check for pending UPI transaction
+        // Check for pending UPI transaction after a slight delay to ensure DOM is fully ready
+        setTimeout(triggerConfirmationPopup, 500);
     }
 
 
