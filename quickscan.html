@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Scan UPI</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/quickscan.css"> <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta name="theme-color" content="#f0f4f8">
+</head>
+<body>
+    <div class="quickscan-container">
+        <header>
+            <a href="index.html" class="back-link">← Back to Home</a>
+            <h1>Quick Scan UPI</h1>
+        </header>
+        
+        <main class="scanner-main">
+            <p id="quickscan-message">Quick Scan: Transaction details will not be stored.</p>
+            <div id="video-container">
+                <video id="qr-video" playsinline></video>
+                <canvas id="qr-canvas"></canvas>
+            </div>
+            <p id="scan-status">Scanning...</p>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <script src="js/quickscan.js"></script> </body>
+</html>

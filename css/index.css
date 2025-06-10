@@ -30,8 +30,10 @@
     font-size: 19px;
     margin-bottom: 15px;
     background: linear-gradient(to right, #FFFFFF, #FFD700);
-    border-radius: 40px;
+    border-radius: 10px;
     font-weight: 500;
+    margin-right: 9px;
+    margin-left: 9px ;
 }
 
 .filter-research {
@@ -773,4 +775,36 @@ body:has(> .popup)
 
 .upi-notification-button:hover {
     background-color: #0056b3;
+}
+
+.quickscan {
+    background-color: White;
+    padding: 30px;
+    box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.288);
+    display: flex;
+    width: 96px;
+    height: 96px;
+    border-radius: 10px;
+    position: absolute;
+    bottom: 57px;
+    right: 9px;
+    position: fixed; /* This is key for it to float relative to the viewport */
+    bottom: 20px;    /* Adjust as needed for distance from the bottom */
+    right: 20px;     /* Adjust as needed for distance from the right */
+    /* background-color: #007bff; Example background color */
+    color: white; /* Example text/icon color */
+    border: none;
+    border-radius: 50%; /* Makes it circular */
+   
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional: Adds a subtle shadow */
+    cursor: pointer;
+    z-index: 1000; /* Ensures it stays on top of other content */
+}
+}
+
+.quickscan:hover {
+    opacity: 1;
 }

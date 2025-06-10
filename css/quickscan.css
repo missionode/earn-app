@@ -1,0 +1,119 @@
+/* quickscan.css */
+/* Ensure this file is linked in quickscan.html */
+
+body {
+    background-color: #f0f4f8; /* Consistent with your app's theme */
+    margin: 0;
+    overflow: hidden; /* Hide scrollbars, as content is full-screen */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensure full viewport height */
+    position: relative; /* For back button positioning */
+}
+
+.quickscan-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    position: relative; /* For header positioning */
+    overflow: hidden; /* Prevent content overflow */
+}
+
+header {
+    width: 100%;
+    padding-bottom: 15px;
+    text-align: center;
+}
+
+.back-link {
+    position: absolute;
+    left: 0;
+    bottom: 5px;
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+
+h1 {
+    color: #333;
+    font-size: 1.8em;
+    margin: 0;
+}
+
+.scanner-main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 0;
+    overflow: hidden; /* Important for full-screen video */
+}
+
+#quickscan-message {
+    color: #666;
+    font-size: 0.9em;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+#video-container {
+    position: relative;
+    width: 100%;
+    height: 100%; /* Take full height of parent */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black; /* Background for the video area */
+    overflow: hidden; /* Hide anything outside the container */
+}
+
+#qr-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Cover the entire container, cropping if necessary */
+    transform: scaleX(-1); /* Mirror the camera feed for selfie mode, remove if back camera is desired */
+}
+
+#qr-canvas {
+    display: none; /* Hidden by default, used for processing frames */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#scan-status {
+    margin-top: 15px;
+    color: #555;
+    font-size: 1em;
+    text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .quickscan-container {
+        padding: 10px;
+        border-radius: 0; /* Full width on small screens */
+        box-shadow: none;
+    }
+
+    .back-link {
+        bottom: 10px;
+        left: 10px;
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+}
