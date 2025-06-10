@@ -782,14 +782,14 @@ body:has(> .popup)
     padding: 30px;
     box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.288);
     display: flex;
-    width: 96px;
-    height: 96px;
+    width: 69px;
+    height: 69px;
     border-radius: 10px;
     position: absolute;
     bottom: 57px;
     right: 9px;
     position: fixed; /* This is key for it to float relative to the viewport */
-    bottom: 20px;    /* Adjust as needed for distance from the bottom */
+    bottom: 210px;    /* Adjust as needed for distance from the bottom */
     right: 20px;     /* Adjust as needed for distance from the right */
     /* background-color: #007bff; Example background color */
     color: white; /* Example text/icon color */
