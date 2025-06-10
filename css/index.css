@@ -779,7 +779,7 @@ body:has(> .popup)
 
 .quickscan {
     background-color: White;
-    padding: 30px;
+    padding: 20px;
     box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.288);
     display: flex;
     width: 69px;

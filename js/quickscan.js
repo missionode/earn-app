@@ -68,6 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const defaultAmount = 0; // Default to 0 for a quick scan without amount
                     const defaultNote = 'Quick Scan Payment'; // Default note
                     const upiUrl = `upi://pay?pa=${sellerUpiId}&pn=${encodeURIComponent('Seller Name')}&am=${defaultAmount}&cu=INR&tn=${encodeURIComponent(defaultNote)}`;
+                    upi://pay?pa=${upiId}&pn=${userName}&am=${totalAmount}&cu=INR
                     handleUpiUrl(upiUrl);
                     return; // Stop processing further frames after successful scan
                 } else {
