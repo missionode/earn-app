@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GPay Redesign: Impact Home</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "primary-dark": "#0b5cb5",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar hiding for cleaner mobile look */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Soft shadow utility */
+        .soft-shadow {
+            box-shadow: 0 4px 20px -2px rgba(19, 127, 236, 0.08);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-100 min-h-screen flex flex-col items-center justify-center py-8">
+<!-- Mobile Container -->
+<div class="w-full max-w-sm h-[844px] bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl overflow-hidden relative border-[8px] border-slate-900 dark:border-slate-800 flex flex-col">
+<!-- Status Bar Placeholder (iOS) -->
+<div class="h-12 w-full flex justify-between items-center px-6 pt-2 select-none">
+<span class="text-sm font-semibold">9:41</span>
+<div class="flex space-x-1.5 items-center">
+<span class="material-icons-round text-sm">signal_cellular_alt</span>
+<span class="material-icons-round text-sm">wifi</span>
+<span class="material-icons-round text-sm">battery_full</span>
+</div>
+</div>
+<!-- Scrollable Content Area -->
+<div class="flex-1 overflow-y-auto scrollbar-hide pb-24">
+<!-- Header Section -->
+<header class="px-6 py-4 flex justify-between items-center">
+<div>
+<p class="text-sm text-slate-500 dark:text-slate-400">Good morning,</p>
+<h1 class="text-2xl font-bold text-slate-900 dark:text-white">Alex</h1>
+</div>
+<div class="relative">
+<img alt="User Profile Picture" class="w-10 h-10 rounded-full object-cover border-2 border-primary/20 p-0.5" data-alt="Portrait of a smiling young man" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxnX85X9Zd8A15MYoUUi0AYNGCOkvqVmhdRisgdPlcYBM_sym_c6NzlUuV3rjd94ZeguO7ZekE3WpUaAtQfizyyqcCuH84jzN4vmBcj3hgXNosweqoocqYc1bF5mMOOKwxuMZ1-qqt7EB8q_Mh-28wSyAWAfIlgXgvuVMPwqpOvvrdK1p81lXAcQw0JD9Yu8yg5VP8Jm2sh2DWDgOgv5smFFOOGv3RMPQWVAOQSOxGBls9fxrnA9IpbqyHyFZ5qrB6HPOukdp3qdU"/>
+<div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></div>
+</div>
+</header>
+<!-- Impact & Balance Dual Card -->
+<div class="px-6 mb-8">
+<div class="bg-gradient-to-br from-primary to-blue-600 rounded-3xl p-6 text-white shadow-lg soft-shadow relative overflow-hidden group">
+<!-- Abstract Background Pattern -->
+<div class="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+<div class="absolute -left-10 bottom-0 w-32 h-32 bg-blue-400/20 rounded-full blur-xl"></div>
+<div class="relative z-10 flex flex-col h-full justify-between space-y-6">
+<!-- Top Row: Impact -->
+<div class="flex justify-between items-start">
+<div>
+<div class="flex items-center space-x-2 mb-1">
+<span class="material-icons-round text-lg text-blue-200">volunteer_activism</span>
+<span class="text-xs font-semibold uppercase tracking-wider text-blue-100">Total Impact</span>
+</div>
+<h2 class="text-3xl font-bold tracking-tight">$145.00</h2>
+<p class="text-xs text-blue-100 mt-1">donated across 3 causes</p>
+</div>
+<button class="bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full p-2 transition-colors">
+<span class="material-icons-round text-white">analytics</span>
+</button>
+</div>
+<!-- Divider -->
+<div class="h-px w-full bg-white/20"></div>
+<!-- Bottom Row: Personal Balance -->
+<div class="flex justify-between items-end">
+<div>
+<span class="text-xs font-medium text-blue-100 block mb-1">Personal Balance</span>
+<div class="flex items-baseline space-x-1">
+<span class="text-xl font-semibold">$2,840.50</span>
+</div>
+</div>
+<button class="text-xs font-semibold bg-white text-primary px-3 py-1.5 rounded-full hover:bg-blue-50 transition-colors">
+                                Add Money
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Action Grid -->
+<div class="px-6 mb-8">
+<h3 class="text-sm font-semibold text-slate-900 dark:text-white mb-4">Quick Pay</h3>
+<div class="grid grid-cols-4 gap-4">
+<!-- Scan QR -->
+<button class="flex flex-col items-center space-y-2 group">
+<div class="w-14 h-14 rounded-2xl bg-primary/10 dark:bg-slate-800 flex items-center justify-center group-active:scale-95 transition-transform duration-200">
+<span class="material-icons-round text-primary text-2xl">qr_code_scanner</span>
+</div>
+<span class="text-[11px] font-medium text-slate-600 dark:text-slate-400 text-center leading-tight">Scan QR</span>
+</button>
+<!-- Contacts -->
+<button class="flex flex-col items-center space-y-2 group">
+<div class="w-14 h-14 rounded-2xl bg-primary/10 dark:bg-slate-800 flex items-center justify-center group-active:scale-95 transition-transform duration-200">
+<span class="material-icons-round text-primary text-2xl">contacts</span>
+</div>
+<span class="text-[11px] font-medium text-slate-600 dark:text-slate-400 text-center leading-tight">To Contact</span>
+</button>
+<!-- Phone Number -->
+<button class="flex flex-col items-center space-y-2 group">
+<div class="w-14 h-14 rounded-2xl bg-primary/10 dark:bg-slate-800 flex items-center justify-center group-active:scale-95 transition-transform duration-200">
+<span class="material-icons-round text-primary text-2xl">dialpad</span>
+</div>
+<span class="text-[11px] font-medium text-slate-600 dark:text-slate-400 text-center leading-tight">To Number</span>
+</button>
+<!-- Bank Transfer -->
+<button class="flex flex-col items-center space-y-2 group">
+<div class="w-14 h-14 rounded-2xl bg-primary/10 dark:bg-slate-800 flex items-center justify-center group-active:scale-95 transition-transform duration-200">
+<span class="material-icons-round text-primary text-2xl">account_balance</span>
+</div>
+<span class="text-[11px] font-medium text-slate-600 dark:text-slate-400 text-center leading-tight">Bank Transfer</span>
+</button>
+</div>
+</div>
+<!-- Community & Causes Rail -->
+<div class="mb-8">
+<div class="px-6 flex justify-between items-end mb-4">
+<h3 class="text-sm font-semibold text-slate-900 dark:text-white">Your Causes</h3>
+<a class="text-xs font-semibold text-primary" href="#">See All</a>
+</div>
+<div class="flex overflow-x-auto px-6 space-x-4 scrollbar-hide pb-2">
+<!-- Cause Card 1 -->
+<div class="min-w-[140px] bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl p-3 shadow-sm flex flex-col">
+<div class="w-10 h-10 rounded-full bg-red-50 mb-3 flex items-center justify-center overflow-hidden">
+<img alt="Red Cross Logo" class="w-full h-full object-cover" data-alt="Logo for Red Cross organization" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdl6DsE5VIjU1mlnrj2vKz9VgyEan43JKR1FJcxA_mQ5sHttsngfpuoUD5R0TjDjYxN6t-a7Mk0C0FfcnEUI3prsRPhFzJt1uMX__BEtjgedxtvtV-BnCuzxnhs6hGCASTT2mVc_-SKbyz5RVQRqAFT-Ofh60eh9_E5ywLVSfSd3f-6H1xtOcqRTJnskvA7AVuJG9-djIrsE7cpHdeav6xrOAuDoJEhaOqUHfTEkMjqCImocRtMGZDiQrYMvSLCEsZpyT8hdh3tR8"/>
+</div>
+<h4 class="text-sm font-semibold text-slate-800 dark:text-white truncate">Red Cross</h4>
+<p class="text-[10px] text-slate-500 mb-2">Disaster Relief</p>
+<div class="w-full bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary w-3/4 h-full rounded-full"></div>
+</div>
+</div>
+<!-- Cause Card 2 -->
+<div class="min-w-[140px] bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl p-3 shadow-sm flex flex-col">
+<div class="w-10 h-10 rounded-full bg-green-50 mb-3 flex items-center justify-center overflow-hidden">
+<img alt="Food Bank Logo" class="w-full h-full object-cover" data-alt="Logo for Local Food Bank" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdinM1UFQPJ_i36Rtf3xhaRGyfZAB49MxTH80aDxilg6RWm3QYbWUKKHoelz0Jt7Gq8uWAzx4C-msxctOnCYBhlp33q0nSJbznolfaCG-T8vNkHqEX5i_kThN6WvfCBDsxolXxOjkkdthsHPiF6PfYtiCegHLhRZZtCQiuYQFYoTTPgWPPD8RuPH8kHTuuMG_DC2gQW5j6A1SeC3EhqyJnMDTdzu_wGRfFPkFuRqG4q8JBempXFNEpcYXNt0akGBvv5AhAppjWptc"/>
+</div>
+<h4 class="text-sm font-semibold text-slate-800 dark:text-white truncate">SF Food Bank</h4>
+<p class="text-[10px] text-slate-500 mb-2">Community</p>
+<div class="w-full bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary w-1/2 h-full rounded-full"></div>
+</div>
+</div>
+<!-- Cause Card 3 -->
+<div class="min-w-[140px] bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl p-3 shadow-sm flex flex-col">
+<div class="w-10 h-10 rounded-full bg-blue-50 mb-3 flex items-center justify-center overflow-hidden">
+<span class="material-icons-round text-blue-500 text-lg">school</span>
+</div>
+<h4 class="text-sm font-semibold text-slate-800 dark:text-white truncate">Edu For All</h4>
+<p class="text-[10px] text-slate-500 mb-2">Education</p>
+<div class="w-full bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary w-1/4 h-full rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Transaction Teaser -->
+<div class="px-6 mb-4">
+<h3 class="text-sm font-semibold text-slate-900 dark:text-white mb-4">Recent Activity</h3>
+<div class="space-y-4">
+<!-- Item 1: Payment -->
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-lg">
+                                ☕️
+                            </div>
+<div>
+<p class="text-sm font-medium text-slate-900 dark:text-white">Starbucks Coffee</p>
+<p class="text-xs text-slate-500">Today, 9:00 AM</p>
+</div>
+</div>
+<span class="text-sm font-semibold text-slate-900 dark:text-white">-$5.40</span>
+</div>
+<!-- Item 2: Donation -->
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
+<span class="material-icons-round text-primary text-lg">favorite</span>
+</div>
+<div>
+<p class="text-sm font-medium text-slate-900 dark:text-white">Red Cross Donation</p>
+<p class="text-xs text-primary">Impact contribution</p>
+</div>
+</div>
+<span class="text-sm font-semibold text-primary">-$25.00</span>
+</div>
+<!-- Item 3: Payment -->
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-lg">
+                                🛒
+                            </div>
+<div>
+<p class="text-sm font-medium text-slate-900 dark:text-white">Whole Foods Market</p>
+<p class="text-xs text-slate-500">Yesterday</p>
+</div>
+</div>
+<span class="text-sm font-semibold text-slate-900 dark:text-white">-$84.20</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom Navigation -->
+<nav class="absolute bottom-0 w-full bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 px-6 pb-8 pt-4">
+<div class="flex justify-between items-center">
+<!-- Home (Active) -->
+<button class="flex flex-col items-center space-y-1 text-primary w-16">
+<span class="material-icons-round text-2xl">home_filled</span>
+<span class="text-[10px] font-medium">Home</span>
+</button>
+<!-- Payments -->
+<button class="flex flex-col items-center space-y-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 w-16 transition-colors">
+<span class="material-icons-round text-2xl">receipt_long</span>
+<span class="text-[10px] font-medium">Payments</span>
+</button>
+<!-- Floating Impact Button (Center) -->
+<div class="relative -top-6">
+<button class="w-14 h-14 bg-primary hover:bg-primary-dark rounded-full shadow-lg shadow-primary/30 flex items-center justify-center transition-colors">
+<span class="material-icons-round text-white text-2xl">volunteer_activism</span>
+</button>
+</div>
+<!-- Impact Tab (Actually labeled 'Rewards' or 'Insights' in regular apps, but 'Impact' here) -->
+<button class="flex flex-col items-center space-y-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 w-16 transition-colors">
+<span class="material-icons-round text-2xl">insights</span>
+<span class="text-[10px] font-medium">Impact</span>
+</button>
+<!-- Profile -->
+<button class="flex flex-col items-center space-y-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 w-16 transition-colors">
+<span class="material-icons-round text-2xl">person</span>
+<span class="text-[10px] font-medium">Profile</span>
+</button>
+</div>
+</nav>
+<!-- Bottom Home Indicator (iOS) -->
+<div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-1/3 h-1 bg-slate-300 dark:bg-slate-600 rounded-full"></div>
+</div>
+</body></html>
