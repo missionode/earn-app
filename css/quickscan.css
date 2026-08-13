@@ -77,6 +77,10 @@ h1 {
     overflow: hidden; /* Hide anything outside the container */
 }
 
+#video-container[hidden] {
+    display: none;
+}
+
 #qr-video {
     width: 100%;
     height: 100%;
@@ -97,6 +101,25 @@ h1 {
     margin-top: 15px;
     color: #555;
     font-size: 1em;
+    text-align: center;
+}
+
+#quickscan-launch {
+    margin-top: 8px;
+    text-decoration: none;
+}
+
+#quickscan-launch[hidden],
+#quickscan-launch-help[hidden] {
+    display: none;
+}
+
+#quickscan-launch-help {
+    max-width: 320px;
+    margin: 10px 0 0;
+    color: #666;
+    font-size: 0.85rem;
+    line-height: 1.4;
     text-align: center;
 }
 

@@ -71,7 +71,12 @@
 
     <div id="qrScannerPopup" class="fullscreen-popup" style="display: none;">
        <h2 class="camera-help">Please point your camera at the QR code to scan and complete the payment. <p>Thank you!</p></h2>
-        <div id="qrScannerView">
+       <div id="qrScannerView">
+        </div>
+        <div id="upiLaunchPanel" class="upi-launch-panel" hidden>
+            <p id="upiLaunchStatus">QR code scanned successfully.</p>
+            <a id="upiLaunchButton" class="button primary" href="#">Open UPI app</a>
+            <p class="upi-launch-help">If your payment app only unlocks without showing payment, return and mark this attempt as failed before retrying.</p>
         </div>
             <div class="scanner-controls">
                 <button id="closeScanner">Close Scanner</button>

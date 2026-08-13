@@ -22,6 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeScannerButton = document.getElementById('closeScanner');
     const addExpenseBtn = document.getElementById('addExpenseBtn');
     const toggleFlashButton = document.getElementById('toggleFlash');
+    const upiLaunchPanel = document.getElementById('upiLaunchPanel');
+    const upiLaunchButton = document.getElementById('upiLaunchButton');
+    const upiLaunchStatus = document.getElementById('upiLaunchStatus');
     // Get the switch and the details container for Send page
     const toggleDetailsSwitch = document.getElementById('toggleDetails'); // Correct variable name
     const detailsFields = document.getElementById('detailsFields'); // Correct variable name
@@ -33,6 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentCameraCapabilities = null; // Stores camera capabilities (zoom, torch, etc.)
     let amount = 0; // Declare amount here to make it accessible to initiateUpiPayment
     let paymentAppWasOpened = false;
+    let preparedPayment = null;
+    let paymentLaunchCommitted = false;
 
     // Define Html5QrcodeScannerState (assuming it's not globally available, common for Html5Qrcode)
     const Html5QrcodeScannerState = {
@@ -65,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('earn_transactions', JSON.stringify(transactions));
     }
 
-    function initiateUpiPayment(qrCodeText, paymentAmount, description, category) {
+    function prepareUpiPayment(qrCodeText, paymentAmount, description, category) {
         const transactionId = generateUniqueId();
         const referenceUrl = new URL('index.html', window.location.href).href;
         let paymentRequest;
@@ -78,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         } catch (error) {
             alert(error.message);
-            return;
+            return null;
         }
 
         const pendingTransaction = {
@@ -96,47 +101,70 @@ document.addEventListener('DOMContentLoaded', () => {
             transactionReference: paymentRequest.transactionReference,
         };
 
-        saveTransaction(pendingTransaction);
-        localStorage.setItem('pending_upi_confirmation', JSON.stringify(pendingTransaction));
-        sessionStorage.setItem('earn_upi_return_pending', transactionId);
-        paymentAppWasOpened = true;
-        window.location.href = paymentRequest.uri;
+        return {
+            uri: paymentRequest.uri,
+            transaction: pendingTransaction,
+        };
     }
 
     // --- QR Scanner Control Functions ---
 
-    function startQrScanner() {
+    async function stopQrScanner() {
+        const scanner = html5QrCode;
+        html5QrCode = null;
+        if (!scanner) return;
+
+        try {
+            const state = scanner.getState();
+            if (state === Html5QrcodeScannerState.SCANNING ||
+                state === Html5QrcodeScannerState.PAUSED) {
+                await scanner.stop();
+            }
+        } catch (error) {
+            console.warn('Could not stop QR scanner cleanly:', error);
+        }
+
+        try {
+            await scanner.clear();
+        } catch (error) {
+            console.warn('Could not clear QR scanner cleanly:', error);
+        }
+    }
+
+    async function startQrScanner() {
+        await stopQrScanner();
         qrScannerView.innerHTML = ''; // Clear previous content in scanner view
+        qrScannerView.hidden = false;
+        upiLaunchPanel.hidden = true;
+        upiLaunchButton.removeAttribute('href');
+        preparedPayment = null;
+        paymentLaunchCommitted = false;
         qrCodeDetected = false;
 
-        // Clear any previous Html5Qrcode instance to prevent conflicts
-        if (html5QrCode) {
-            html5QrCode.clear().catch(err => console.error("Error clearing old Html5Qrcode instance:", err));
-        }
         html5QrCode = new Html5Qrcode("qrScannerView"); // Initialize a new Html5Qrcode instance
 
         const qrCodeSuccessCallback = (decodedText, decodedResult) => {
             if (!qrCodeDetected) { // Ensure QR code is processed only once
                 qrCodeDetected = true;
-                // Stop the camera immediately after a successful scan
-                html5QrCode.stop().then(() => {
-                    qrScannerPopup.style.display = 'none'; // Hide the scanner popup
+                const currentDescription = toggleDetailsSwitch && toggleDetailsSwitch.checked ? descriptionInput.value : '';
+                const currentCategory = toggleDetailsSwitch && toggleDetailsSwitch.checked ? getSelectedCategory() : '';
+                preparedPayment = prepareUpiPayment(
+                    decodedText,
+                    amount,
+                    currentDescription,
+                    currentCategory,
+                );
 
-                    // Get current category and description from the form
-                    const currentDescription = toggleDetailsSwitch && toggleDetailsSwitch.checked ? descriptionInput.value : '';
-                    const currentCategory = toggleDetailsSwitch && toggleDetailsSwitch.checked ? getSelectedCategory() : '';
+                if (!preparedPayment) {
+                    qrCodeDetected = false;
+                    return;
+                }
 
-                    initiateUpiPayment(
-                        decodedText,
-                        amount,
-                        currentDescription,
-                        currentCategory,
-                    );
-                }).catch(err => {
-                    console.error("Error stopping QR scanner after success:", err);
-                    // Provide more specific error message to the user
-                    alert(`Error processing QR code after scan: ${err.message || 'An unexpected error occurred while stopping the camera.'}`);
-                });
+                qrScannerView.hidden = true;
+                upiLaunchStatus.textContent = `Ready to pay ₹${preparedPayment.transaction.amount.toFixed(2)} to ${preparedPayment.transaction.merchantName}.`;
+                upiLaunchButton.href = preparedPayment.uri;
+                upiLaunchPanel.hidden = false;
+                stopQrScanner();
             }
         };
 
@@ -211,6 +239,24 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('visibilitychange', returnToManualConfirmation);
     window.addEventListener('pageshow', returnToManualConfirmation);
 
+    upiLaunchButton.addEventListener('click', (event) => {
+        if (!preparedPayment) {
+            event.preventDefault();
+            return;
+        }
+
+        if (!paymentLaunchCommitted) {
+            const pendingTransaction = preparedPayment.transaction;
+            saveTransaction(pendingTransaction);
+            localStorage.setItem('pending_upi_confirmation', JSON.stringify(pendingTransaction));
+            sessionStorage.setItem('earn_upi_return_pending', pendingTransaction.id);
+            paymentLaunchCommitted = true;
+        }
+
+        paymentAppWasOpened = true;
+        upiLaunchStatus.textContent = 'Opening your UPI app…';
+    });
+
     // Load and apply the saved details switch state from local storage
     const savedDetailsState = localStorage.getItem('hideDetails'); // Use 'hideDetails' for unified switch
     // Corrected logic for showDetails: if 'hideDetails' is 'false', then showDetails should be true.
@@ -264,15 +310,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeScannerButton) {
         closeScannerButton.addEventListener('click', () => {
             qrScannerPopup.style.display = 'none'; // Hide the popup
-            if (html5QrCode && html5QrCode.getState() === Html5QrcodeScannerState.SCANNING) { // Only stop if scanning
-                html5QrCode.stop().then(() => { // Stop the camera stream
-                    html5QrCode.clear(); // Clear the Html5Qrcode instance
-                    html5QrCode = null; // Reset the instance
-                    flashEnabled = false; // Reset flash state
-                    if(toggleFlashButton) toggleFlashButton.textContent = 'Enable Flash'; // Reset button text
-                    if(toggleFlashButton) toggleFlashButton.style.display = 'none'; // Hide flash button
-                }).catch(err => console.error("Error stopping or clearing Html5Qrcode on close:", err));
-            }
+            stopQrScanner();
+            flashEnabled = false;
+            if(toggleFlashButton) toggleFlashButton.textContent = 'Enable Flash';
+            if(toggleFlashButton) toggleFlashButton.style.display = 'none';
             qrCodeDetected = false; // Reset QR detection flag
         });
     } else {

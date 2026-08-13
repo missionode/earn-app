@@ -110,3 +110,22 @@ test('PWA updates activate immediately without clearing local data', () => {
   assert.match(serviceWorker, /self\.clients\.claim\(\)/);
   assert.doesNotMatch(serviceWorker, /localStorage|indexedDB/);
 });
+
+test('UPI launches require a user tap after QR detection', () => {
+  const sendHtml = fs.readFileSync('send.html', 'utf8');
+  const sendScript = fs.readFileSync('js/send.js', 'utf8');
+  const quickscanHtml = fs.readFileSync('quickscan.html', 'utf8');
+  const quickscanScript = fs.readFileSync('js/quickscan.js', 'utf8');
+
+  assert.match(sendHtml, /id="upiLaunchButton"/);
+  assert.match(sendScript, /upiLaunchButton\.href = preparedPayment\.uri/);
+  assert.match(sendScript, /upiLaunchButton\.addEventListener\('click'/);
+  assert.doesNotMatch(sendScript, /window\.location\.href = paymentRequest\.uri/);
+
+  assert.match(quickscanHtml, /id="quickscan-launch"/);
+  assert.match(quickscanHtml, /<script src="js\/upi\.js"><\/script>/);
+  assert.match(quickscanScript, /launchButton\.href = upiUrl/);
+  assert.match(quickscanScript, /launchButton\.addEventListener\('click'/);
+  assert.doesNotMatch(quickscanScript, /window\.location\.href = upiUrl/);
+  assert.doesNotMatch(quickscanScript, /&am=\$\{defaultAmount\}/);
+});

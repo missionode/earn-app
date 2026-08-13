@@ -102,3 +102,13 @@
 - Cache checkpoint: `earn-app-v17`.
 - Validation: `static` PASS (JavaScript syntax and diff checks); `unit/protocol` PASS (`node --test tests/*.test.js`, 13/13), including immediate service-worker activation and local-data preservation assertions.
 - Next: commit, push, confirm the GitHub Pages build, then retest after reopening Earn.
+
+### CP-008 — Reliable QR-to-UPI launch
+
+- Status: implemented and validated at the available evidence levels.
+- Objective: fix Add Expense stalling after QR detection, the black camera on retry, and Quick Scan losing the Google Pay intent during app unlock.
+- Finding: external UPI navigation ran from asynchronous camera callbacks; Add Expense additionally waited for camera shutdown before navigation. Mobile browsers may reject that non-user-initiated launch, and an unresolved scanner instance retained the camera.
+- Result: both scanners now stop and release the camera after detection, then expose a direct user-tap UPI link. Add Expense persists one pending transaction only when the link is tapped; Quick Scan keeps the link available for a second tap when Google Pay first opens only to unlock. Raw UPI IDs no longer create an invalid zero-amount request.
+- Cache checkpoint: `earn-app-v18`.
+- Validation: `static` PASS (JavaScript syntax and diff checks); `unit/protocol` PASS (`node --test tests/*.test.js`, 14/14); `browser` BLOCKED (no local or connected browser backend available); `manual` pending on Android/Google Pay.
+- Next: confirm the Pages deployment, then device-test both paths.
