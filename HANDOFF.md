@@ -90,5 +90,5 @@
 - Result: personal QRs now receive only the entered amount, INR currency, and bounded optional note. Merchant QRs continue to retain every merchant field supplied by the QR.
 - Validation: `static` PASS (syntax, 115 cache references, diff check); `protocol` PASS (`node --test tests/*.test.js`, 12/12).
 - Caveat: Google Pay may still show the same message for a genuine payer-bank daily/count/cooling-period limit; only a real device retry can distinguish that external condition.
-- Git checkpoint: pending.
+- Git checkpoint: `db64a17` (`[CP-006] Keep personal UPI requests minimal`).
 - Next: deploy when requested, refresh the installed PWA, and retry ₹10 against the same personal QR.
