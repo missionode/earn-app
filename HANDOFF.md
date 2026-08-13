@@ -79,5 +79,5 @@
   - `runtime` PASS — local HTTP server returned 200 for index and send pages and served the current UPI/confirmation scripts.
   - `browser` BLOCKED — no connected browser backend was available; no real Google Pay financial transaction was attempted.
 - Open risk: device-level behavior still needs a real Android/Google Pay test using a low-value payment; bank status remains user-confirmed.
-- Git checkpoint: pending.
+- Git checkpoint: `6a15312` (`[CP-005] Preserve UPI requests and confirm manually`).
 - Next: device-test merchant and personal QR payments, then push only when explicitly requested.
