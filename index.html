@@ -57,7 +57,7 @@
                 <h3>Total Income</h3>
                 <p><strong id="totalIncome">₹0.00</strong></p>
             </div>
-            <div class="summary-item expense">
+            <div class="summary-item expense" hidden>
                 <img src="assets/icons/money-bill-stack.svg" alt="Expenses">
                 <h3>Total Expenses</h3>
                 <p><strong id="totalExpenses">₹0.00</strong></p>
@@ -70,11 +70,11 @@
                 </label>
             </section>
             <figure class="adsSpace" style="background-image: url(./assets/images/Dhanachakra.png);">
-                <figcaption>Balance<span id="adsSpaceaption"></span></figcaption>
+                <figcaption>Income<span id="adsSpaceaption"></span></figcaption>
                 <img style="opacity: 0;" src="assets/images/Dhanachakra.png" alt="Free Ads Campaign">
             </figure>
             <section class="action-buttons ux-actions">
-                <button id="sendMoneyBtn" class="button">
+                <button id="sendMoneyBtn" class="button" hidden>
                     Expense <img src="assets/icons/arrow-up.svg" alt="Send">
                 </button>
                 <button id="receiveMoneyBtn" class="button">
@@ -93,7 +93,7 @@
                     <div class="filter-group">
                         <select id="filterType">
                             <option value="">All Types</option>
-                            <option value="income">Income</option>
+                            <option value="income" selected>Income</option>
                             <option value="expense">Expense</option>
                         </select>
                     </div>

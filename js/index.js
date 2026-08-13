@@ -212,7 +212,6 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("DEBUG (updateOverallSummary): Transactions used for overall summary (status 'success' only):", transactions);
         let totalIncome = 0;
         let totalExpenses = 0;
-        let balance = 0;
 
         transactions.forEach(t => {
             if (t.type === 'income') {
@@ -221,11 +220,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 totalExpenses += parseFloat(t.amount);
             }
         });
-        balance = totalIncome - totalExpenses
-
-        balance = formatMoney(balance);
-        console.log("balance balance", balance);
-
         totalIncome = formatMoney(totalIncome);
         totalExpenses = formatMoney(totalExpenses);
    
@@ -234,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("DEBUG (updateOverallSummary): Calculated Total Income:", totalIncome);
         console.log("DEBUG (updateOverallSummary): Calculated Total Expenses:", totalExpenses);
         
-        if (balanceAds) balanceAds.textContent = `🪷 ${balance} ₹`;
+        if (balanceAds) balanceAds.textContent = `🪷 ${totalIncome} ₹`;
 
         if (totalIncomeDisplay) totalIncomeDisplay.textContent = `₹${totalIncome}`;
         if (totalExpensesDisplay) totalExpensesDisplay.textContent = `₹${totalExpenses}`;
@@ -417,7 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (endDateInput) endDateInput.addEventListener('change', loadTransactions);
     if (clearFilterButton) {
         clearFilterButton.addEventListener('click', () => {
-            if (filterType) filterType.value = '';
+            if (filterType) filterType.value = 'income';
             if (categoryFilter) categoryFilter.value = '';
             if (searchBox) searchBox.value = '';
             if (startDateInput) startDateInput.value = '';

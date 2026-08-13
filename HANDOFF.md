@@ -112,3 +112,12 @@
 - Cache checkpoint: `earn-app-v18`.
 - Validation: `static` PASS (JavaScript syntax and diff checks); `unit/protocol` PASS (`node --test tests/*.test.js`, 14/14); `browser` BLOCKED (no local or connected browser backend available); `manual` pending on Android/Google Pay.
 - Next: confirm the Pages deployment, then device-test both paths.
+
+### CP-009 — Income-focused landing experience
+
+- Status: implemented and validated.
+- Objective: align Earn's landing page with its earning purpose while preserving the unfinished expense capability.
+- Result: the landing-page Expense button and Total Expenses card are hidden without deletion; the lotus figure now labels and displays total Income; the type filter defaults and resets to Income; the FAQ explains that a refined expense experience is coming soon. Expense files, records, filters, and transaction handling remain intact.
+- Cache checkpoint: `earn-app-v19`.
+- Validation: `static` PASS (JavaScript syntax and diff checks); `unit` PASS (`node --test tests/*.test.js`, 16/16), including hidden-but-preserved expense controls, income default/reset, income lotus total, and FAQ wording.
+- Next: push and confirm the GitHub Pages build when requested.

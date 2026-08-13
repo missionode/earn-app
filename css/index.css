@@ -271,6 +271,11 @@
     background: var(--expense-color);
 }
 
+.summary-item.expense[hidden],
+#sendMoneyBtn[hidden] {
+    display: none;
+}
+
 .popup-help {
     margin-top: 7px;
     font-size: 0.6rem;
