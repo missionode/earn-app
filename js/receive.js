@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     );
     const pendingTransaction = pendingTransactionString ?
         JSON.parse(pendingTransactionString) : null;
+    let amountManuallyEdited = false;
 
     if (isLiteSource && (!Number.isFinite(serviceCharge) || serviceCharge <= 0)) {
         const returnTo = encodeURIComponent('receive.html?Source=Lite');
@@ -32,13 +33,17 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    const updateLiteAmount = () => {
+    const calculateLiteAmount = () => {
         const clients = Number.parseInt(clientsInput.value, 10);
         if (!Number.isInteger(clients) || clients < 1) {
-            amountInput.value = '';
-            return;
+            return null;
         }
-        amountInput.value = (serviceCharge * clients).toFixed(2);
+        return (serviceCharge * clients).toFixed(2);
+    };
+
+    const updateLiteAmount = (force = false) => {
+        if (amountManuallyEdited && !force) return;
+        amountInput.value = calculateLiteAmount() || '';
     };
 
     if (isLiteSource) {
@@ -51,15 +56,24 @@ document.addEventListener('DOMContentLoaded', () => {
         descriptionInput.value = LITE_DESCRIPTION;
         clientsGroup.hidden = false;
         liteAmountHelp.hidden = false;
-        amountInput.readOnly = true;
         receiveBackLink.href = LITE_RETURN_URL;
         if (pendingTransaction && pendingTransaction.source === 'Lite') {
             clientsInput.value = pendingTransaction.clients || 1;
             descriptionInput.value = pendingTransaction.description ||
                 LITE_DESCRIPTION;
         }
-        updateLiteAmount();
-        clientsInput.addEventListener('input', updateLiteAmount);
+        updateLiteAmount(true);
+        if (pendingTransaction && pendingTransaction.source === 'Lite' &&
+            Number.isFinite(Number(pendingTransaction.amount)) &&
+            Number(pendingTransaction.amount) > 0) {
+            const restoredAmount = Number(pendingTransaction.amount).toFixed(2);
+            amountInput.value = restoredAmount;
+            amountManuallyEdited = restoredAmount !== calculateLiteAmount();
+        }
+        amountInput.addEventListener('input', () => {
+            amountManuallyEdited = true;
+        });
+        clientsInput.addEventListener('input', () => updateLiteAmount());
     } else {
         const hideDetailsState = localStorage.getItem('hideDetails');
         const showDetails = hideDetailsState === null ?

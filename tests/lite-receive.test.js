@@ -119,7 +119,7 @@ test('Lite receive prefills and recalculates the collection', () => {
   assert.equal(page.elements.description.value, 'Dakshina recieved for meditation');
   assert.equal(page.elements.categorySadhana.checked, true);
   assert.equal(page.elements.amount.value, '500.00');
-  assert.equal(page.elements.amount.readOnly, true);
+  assert.equal(page.elements.amount.readOnly, false);
   assert.equal(page.elements.clientsGroup.hidden, false);
   assert.equal(page.elements.detailsToggleReceive.hidden, true);
   assert.equal(
@@ -131,13 +131,19 @@ test('Lite receive prefills and recalculates the collection', () => {
   page.elements.clients.listeners.input();
   assert.equal(page.elements.amount.value, '1500.00');
 
+  page.elements.amount.value = '1400.00';
+  page.elements.amount.listeners.input();
+  page.elements.clients.value = '4';
+  page.elements.clients.listeners.input();
+  assert.equal(page.elements.amount.value, '1400.00');
+
   page.elements.receiveForm.listeners.submit({preventDefault() {}});
   const pending = JSON.parse(
     page.localStorage.getItem('pending_receive_transaction'),
   );
-  assert.equal(pending.amount, 1500);
+  assert.equal(pending.amount, 1400);
   assert.equal(pending.category, 'sadhana');
-  assert.equal(pending.clients, 3);
+  assert.equal(pending.clients, 4);
   assert.equal(pending.serviceCharge, 500);
   assert.equal(pending.source, 'Lite');
   assert.equal(page.location.href, 'receive-qr.html?Source=Lite');
@@ -184,6 +190,24 @@ test('Lite receive restores pending details when returning to edit', () => {
     page.elements.description.value,
     'Updated meditation description',
   );
+});
+
+test('Lite receive restores a manually edited pending amount', () => {
+  const pending = {
+    source: 'Lite',
+    amount: 1050,
+    clients: 4,
+    description: 'Dakshina recieved for meditation',
+  };
+  const page = runReceivePage({
+    earn_serviceCharge: '300',
+    pending_receive_transaction: JSON.stringify(pending),
+  });
+
+  assert.equal(page.elements.amount.value, '1050.00');
+  page.elements.clients.value = '5';
+  page.elements.clients.listeners.input();
+  assert.equal(page.elements.amount.value, '1050.00');
 });
 
 test('Lite QR completion saves and returns to Lite', () => {

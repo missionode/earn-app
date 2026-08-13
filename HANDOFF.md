@@ -121,3 +121,12 @@
 - Cache checkpoint: `earn-app-v19`.
 - Validation: `static` PASS (JavaScript syntax and diff checks); `unit` PASS (`node --test tests/*.test.js`, 16/16), including hidden-but-preserved expense controls, income default/reset, income lotus total, and FAQ wording.
 - Next: push and confirm the GitHub Pages build when requested.
+
+### CP-010 — Editable Lite income amount
+
+- Status: implemented and validated.
+- Objective: allow `receive.html?Source=Lite` users to adjust the calculated income amount.
+- Result: service charge × clients remains the initial suggested amount and continues recalculating while untouched. Once the user edits the amount, later client changes preserve that manual value. Returning from the QR edit link restores a manually adjusted pending amount.
+- Cache checkpoint: `earn-app-v20`.
+- Validation: `static` PASS (JavaScript syntax and diff checks); `unit` PASS (`node --test tests/*.test.js`, 17/17), including manual amount preservation and pending-edit restoration.
+- Next: push CP-009 and CP-010 and confirm the GitHub Pages build.
