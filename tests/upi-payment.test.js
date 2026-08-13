@@ -99,3 +99,14 @@ test('payment return remains pending until manual confirmation', () => {
   assert.match(sendScript, /sessionStorage\.setItem\('earn_upi_return_pending'/);
   assert.match(sendScript, /index\.html\?upiReturn=1/);
 });
+
+test('PWA updates activate immediately without clearing local data', () => {
+  const appScript = fs.readFileSync('js/app.js', 'utf8');
+  const serviceWorker = fs.readFileSync('js/sw.js', 'utf8');
+
+  assert.match(appScript, /updateViaCache: 'none'/);
+  assert.match(appScript, /registration\.update\(\)/);
+  assert.match(serviceWorker, /self\.skipWaiting\(\)/);
+  assert.match(serviceWorker, /self\.clients\.claim\(\)/);
+  assert.doesNotMatch(serviceWorker, /localStorage|indexedDB/);
+});

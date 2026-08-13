@@ -92,3 +92,13 @@
 - Caveat: Google Pay may still show the same message for a genuine payer-bank daily/count/cooling-period limit; only a real device retry can distinguish that external condition.
 - Git checkpoint: `db64a17` (`[CP-006] Keep personal UPI requests minimal`).
 - Next: deploy when requested, refresh the installed PWA, and retry ₹10 against the same personal QR.
+
+### CP-007 — Activate PWA fixes immediately
+
+- Status: implemented and validated.
+- Objective: ensure an installed Earn PWA stops serving the previous cached UPI builder after a successful deployment.
+- Finding: GitHub Pages served CP-006 correctly, but the v15 service worker could remain active while v16 waited, leaving the old `mc=0000`, `tr`, and `url` behavior on the device.
+- Result: service-worker updates bypass the browser HTTP cache, explicitly check for updates, activate immediately, remove only obsolete Cache Storage entries, and claim open Earn pages. Financial data in localStorage is untouched.
+- Cache checkpoint: `earn-app-v17`.
+- Validation: `static` PASS (JavaScript syntax and diff checks); `unit/protocol` PASS (`node --test tests/*.test.js`, 13/13), including immediate service-worker activation and local-data preservation assertions.
+- Next: commit, push, confirm the GitHub Pages build, then retest after reopening Earn.

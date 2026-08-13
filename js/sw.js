@@ -1,4 +1,4 @@
-const CACHE_NAME = 'earn-app-v16';
+const CACHE_NAME = 'earn-app-v17';
 const urlsToCache = [
     '../',
     '../index.html',
@@ -138,6 +138,7 @@ self.addEventListener('install', (event) => {
                 console.log('Opened cache');
                 return cache.addAll(urlsToCache);
             })
+            .then(() => self.skipWaiting())
     );
 });
 
@@ -177,14 +178,14 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('activate', (event) => {
     const cacheWhitelist = [CACHE_NAME];
     event.waitUntil(
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
+        caches.keys()
+            .then((cacheNames) => Promise.all(
                 cacheNames.map((cacheName) => {
                     if (cacheWhitelist.indexOf(cacheName) === -1) {
                         return caches.delete(cacheName);
                     }
                 })
-            );
-        })
+            ))
+            .then(() => self.clients.claim())
     );
 });
