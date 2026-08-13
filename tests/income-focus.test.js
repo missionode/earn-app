@@ -9,10 +9,12 @@ test('landing page defaults to an income-focused experience', () => {
 
   assert.match(html, /class="summary-item expense" hidden/);
   assert.match(html, /id="sendMoneyBtn" class="button" hidden/);
+  assert.match(html, /id="quickScanLink" class="quickscan expense-feature"[^>]* hidden/);
   assert.match(html, /<figcaption>Income<span id="adsSpaceaption"><\/span><\/figcaption>/);
   assert.match(html, /<option value="income" selected>Income<\/option>/);
   assert.match(styles, /#sendMoneyBtn\[hidden\][\s\S]*display: none;/);
   assert.match(script, /filterType\.value = 'income'/);
+  assert.match(script, /quickScanLink\.hidden = true/);
 });
 
 test('FAQ preserves expense support while marking its refinement as upcoming', () => {

@@ -130,3 +130,12 @@
 - Cache checkpoint: `earn-app-v20`.
 - Validation: `static` PASS (JavaScript syntax and diff checks); `unit` PASS (`node --test tests/*.test.js`, 17/17), including manual amount preservation and pending-edit restoration.
 - Next: push CP-009 and CP-010 and confirm the GitHub Pages build.
+
+### CP-011 — Hide Quick Scan launcher
+
+- Status: implemented and validated.
+- Objective: remove the outgoing-payment shortcut from Earn's income-focused landing experience without deleting its implementation.
+- Result: Quick Scan remains available in the codebase but its landing-page link stays hidden regardless of setup status.
+- Cache checkpoint: `earn-app-v21`.
+- Validation: `static` PASS (JavaScript syntax and diff checks); `unit` PASS (`node --test tests/*.test.js`, 17/17), including persistent Quick Scan hiding.
+- Next: commit, push, and monitor the superseding GitHub Pages build.

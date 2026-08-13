@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const isFirstTimeUser = () => !getLocalStorageItem('earn_upiId') ||
         !getLocalStorageItem('earn_username') || !hasValidServiceCharge();
     const syncQuickScanVisibility = () => {
-        if (quickScanLink) quickScanLink.hidden = isFirstTimeUser();
+        if (quickScanLink) quickScanLink.hidden = true;
     };
     const displayUPISetupPopup = () => {
         if (upiSetupPopup) upiSetupPopup.style.display = 'block';
