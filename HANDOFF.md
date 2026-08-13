@@ -139,3 +139,12 @@
 - Cache checkpoint: `earn-app-v21`.
 - Validation: `static` PASS (JavaScript syntax and diff checks); `unit` PASS (`node --test tests/*.test.js`, 17/17), including persistent Quick Scan hiding.
 - Next: commit, push, and monitor the superseding GitHub Pages build.
+
+### CP-012 — Remove Quick Scan floating icon
+
+- Status: implemented and validated.
+- Objective: ensure the outgoing-payment shortcut is no longer present on the landing page, including on clients where author CSS could interfere with the HTML `hidden` attribute.
+- Result: the Quick Scan anchor is removed from `index.html`; `quickscan.html`, its scripts, styles, and cached assets remain preserved for future refinement.
+- Cache checkpoint: `earn-app-v22`.
+- Validation: `static` PASS (JavaScript syntax and diff checks); `unit` PASS (`node --test tests/*.test.js`, 17/17), including absence of the landing-page Quick Scan anchor.
+- Next: commit, push, and confirm the newest GitHub Pages build.
