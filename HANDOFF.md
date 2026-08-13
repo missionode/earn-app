@@ -29,5 +29,5 @@
   - `browser` BLOCKED — no connected in-app or external browser backend was available.
 - Security/privacy: service charge and transaction metadata remain in localStorage; setup return route is an exact local allowlist match; Lite return URL is a fixed HTTPS destination.
 - Open risk: EasyQRCodeJS remains an existing external CDN dependency, so first-time QR generation is not fully offline.
-- Git checkpoint: pending.
+- Git checkpoint: `b036607` (`[CP-001] Add Lite meditation collection flow`).
 - Next: browser/manual visual verification when a browser backend is available, then deploy only with explicit user approval.
