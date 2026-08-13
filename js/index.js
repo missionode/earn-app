@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Main action buttons
     const receiveMoneyBtn = document.getElementById('receiveMoneyBtn');
     const sendMoneyBtn = document.getElementById('sendMoneyBtn');
+    const quickScanLink = document.getElementById('quickScanLink');
 
     // Summary displays
     const totalIncomeDisplay = document.getElementById('totalIncome');
@@ -61,6 +62,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const isFirstTimeUser = () => !getLocalStorageItem('earn_upiId') ||
         !getLocalStorageItem('earn_username') || !hasValidServiceCharge();
+    const syncQuickScanVisibility = () => {
+        if (quickScanLink) quickScanLink.hidden = isFirstTimeUser();
+    };
     const displayUPISetupPopup = () => {
         if (upiSetupPopup) upiSetupPopup.style.display = 'block';
         else console.error("ERROR: upiSetupPopup element not found for displayUPISetupPopup.");
@@ -256,6 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setLocalStorageItem('earn_upiId', upiId);
             setLocalStorageItem('earn_username', username);
             setLocalStorageItem('earn_serviceCharge', serviceCharge.toString());
+            syncQuickScanVisibility();
             hideUPISetupPopup();
             loadTransactions();
             updateOverallSummary();
@@ -385,6 +390,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (serviceChargeInput) {
         serviceChargeInput.value = getLocalStorageItem('earn_serviceCharge') || '';
     }
+
+    syncQuickScanVisibility();
 
     // Main application initialization based on user status
     if (isFirstTimeUser()) {

@@ -806,6 +806,10 @@ body:has(> .popup)
 }
 }
 
+.quickscan[hidden] {
+    display: none;
+}
+
 .quickscan:hover {
     opacity: 1;
 }

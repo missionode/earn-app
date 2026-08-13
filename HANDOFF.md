@@ -31,3 +31,15 @@
 - Open risk: EasyQRCodeJS remains an existing external CDN dependency, so first-time QR generation is not fully offline.
 - Git checkpoint: `b036607` (`[CP-001] Add Lite meditation collection flow`).
 - Next: browser/manual visual verification when a browser backend is available, then deploy only with explicit user approval.
+
+### CP-002 — Gate Quick Scan behind completed setup
+
+- Status: implemented and validated.
+- Objective: prevent Quick Scan from appearing until UPI ID, payee name, and service charge are valid.
+- Scope: default HTML visibility, setup-state synchronization, service-worker cache, focused regression test.
+- Result: the link is hidden before JavaScript runs and becomes visible only when UPI ID, payee name, and a positive service charge are stored; successful setup reveals it immediately.
+- Validation: `static` PASS (syntax, cache references, diff check); `unit` PASS (`node --test tests/*.test.js`, 5/5 including the new visibility regression).
+- Browser evidence remains environment-blocked from CP-001; this focused fix introduced no dependency or architecture change.
+- Existing unrelated working state remains modified `.DS_Store` and untracked `Loop/`.
+- Git checkpoint: pending.
+- Next: browser/manual visual verification when available.
