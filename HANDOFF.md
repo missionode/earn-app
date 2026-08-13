@@ -148,3 +148,12 @@
 - Cache checkpoint: `earn-app-v22`.
 - Validation: `static` PASS (JavaScript syntax and diff checks); `unit` PASS (`node --test tests/*.test.js`, 17/17), including absence of the landing-page Quick Scan anchor.
 - Next: commit, push, and confirm the newest GitHub Pages build.
+
+### CP-013 — Remove expense from landing analysis
+
+- Status: implemented and validated.
+- Objective: keep the landing-page analysis interface focused exclusively on income.
+- Result: the Expense type option is hidden and the filtered summary displays only Filtered Income. Expense data and supporting implementation remain preserved.
+- Cache checkpoint: `earn-app-v23`.
+- Validation: `static` PASS (JavaScript syntax and diff checks); `unit` PASS (`node --test tests/*.test.js`, 17/17), including hidden Expense type and absent Filtered Expenses summary.
+- Next: commit, push, and confirm the GitHub Pages build.

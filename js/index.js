@@ -184,20 +184,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const updateFilteredSummary = (transactions, filters) => {
         let totalIncome = 0;
-        let totalExpenses = 0;
         let isFilterActive = Object.values(filters).some(value => value && value !== '');
 
         if (isFilterActive && filteredSummaryContainer) {
             transactions.forEach(t => {
                 if (t.type === 'income') {
                     totalIncome += parseFloat(t.amount);
-                } else if (t.type === 'expense') {
-                    totalExpenses += parseFloat(t.amount);
                 }
             });
             filteredSummaryContainer.innerHTML = `
                 <p><b><b>Filtered Income:</b></b> ₹${totalIncome.toFixed(2)}</p>
-                <p><b><b>Filtered Expenses:</b></b> ₹${totalExpenses.toFixed(2)}</p>
             `;
             filteredSummaryContainer.style.display = 'block';
         } else if (filteredSummaryContainer) {

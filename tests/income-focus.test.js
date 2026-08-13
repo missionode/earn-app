@@ -12,9 +12,11 @@ test('landing page defaults to an income-focused experience', () => {
   assert.doesNotMatch(html, /id="quickScanLink"/);
   assert.match(html, /<figcaption>Income<span id="adsSpaceaption"><\/span><\/figcaption>/);
   assert.match(html, /<option value="income" selected>Income<\/option>/);
+  assert.match(html, /<option value="expense" hidden>Expense<\/option>/);
   assert.match(styles, /#sendMoneyBtn\[hidden\][\s\S]*display: none;/);
   assert.match(script, /filterType\.value = 'income'/);
   assert.match(script, /quickScanLink\.hidden = true/);
+  assert.doesNotMatch(script, /Filtered Expenses:/);
 });
 
 test('FAQ preserves expense support while marking its refinement as upcoming', () => {
