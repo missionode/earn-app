@@ -41,7 +41,7 @@
 - Validation: `static` PASS (syntax, cache references, diff check); `unit` PASS (`node --test tests/*.test.js`, 5/5 including the new visibility regression).
 - Browser evidence remains environment-blocked from CP-001; this focused fix introduced no dependency or architecture change.
 - Existing unrelated working state remains modified `.DS_Store` and untracked `Loop/`.
-- Git checkpoint: pending.
+- Git checkpoint: `27c64e1` (`[CP-003] Add QR edit history navigation`).
 - Next: browser/manual visual verification when available.
 
 ### CP-003 — QR edit-history navigation
