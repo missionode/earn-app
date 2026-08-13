@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'entertainment': 'assets/icons/entertainment.svg',
         'travel': 'assets/icons/travel.svg',
         'others': 'assets/icons/others.svg',
-        'sadhana': 'assets/icons/lotus.svg',
+        'sadhana': 'assets/icons/namaskar.svg',
     })[category] || '';
 
     const loadAllTransactions = () => {

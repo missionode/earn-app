@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-labelledby="namaskarTitle">
+  <title id="namaskarTitle">Namaskar</title>
+  <g fill="none" stroke="#A66A32" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10.5 11.7 8.2 6.1c-.4-1 .1-2.1 1.1-2.5.8-.3 1.8.1 2.2.9l.5 1.1.5-1.1c.4-.8 1.4-1.2 2.2-.9 1 .4 1.5 1.5 1.1 2.5l-2.3 5.6" fill="#FFF2DB"/>
+    <path d="M10.5 11.7 7.8 8.8c-.7-.8-2-.8-2.7 0-.6.7-.6 1.7 0 2.4l4.1 4.9c.7.8 1.1 1.8 1.1 2.9v1.4"/>
+    <path d="m13.5 11.7 2.7-2.9c.7-.8 2-.8 2.7 0 .6.7.6 1.7 0 2.4l-4.1 4.9c-.7.8-1.1 1.8-1.1 2.9v1.4"/>
+    <path d="M12 5.6v9.8M9.2 20.4h5.6"/>
+  </g>
+</svg>

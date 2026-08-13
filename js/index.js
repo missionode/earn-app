@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const getCategoryIcon = (category) => ({
-        'cash': 'assets/icons/cash.svg', 'rent': 'assets/icons/rent.svg', 'salary': 'assets/icons/salary.svg', 'gift': 'assets/icons/gift.svg', 'investment': 'assets/icons/investment.svg', 'other': 'assets/icons/other.svg', 'food': 'assets/icons/food.svg', 'shopping': 'assets/icons/shopping-bag.svg', 'entertainment': 'assets/icons/entertainment.svg', 'travel': 'assets/icons/travel.svg', 'others': 'assets/icons/others.svg', 'sadhana': 'assets/icons/lotus.svg',
+        'cash': 'assets/icons/cash.svg', 'rent': 'assets/icons/rent.svg', 'salary': 'assets/icons/salary.svg', 'gift': 'assets/icons/gift.svg', 'investment': 'assets/icons/investment.svg', 'other': 'assets/icons/other.svg', 'food': 'assets/icons/food.svg', 'shopping': 'assets/icons/shopping-bag.svg', 'entertainment': 'assets/icons/entertainment.svg', 'travel': 'assets/icons/travel.svg', 'others': 'assets/icons/others.svg', 'sadhana': 'assets/icons/namaskar.svg',
     })[category] || '';
 
     const filterTransactions = (transactions, filters) => {

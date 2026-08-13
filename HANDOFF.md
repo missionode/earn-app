@@ -166,3 +166,12 @@
 - Cache checkpoint: `earn-app-v24`.
 - Validation: `static` PASS (JavaScript syntax, SVG presence, cache inclusion, and diff checks); `unit` PASS (`node --test tests/*.test.js`, 18/18), including lotus mapping and responsive dimensions in both transaction views.
 - Next: push and confirm the GitHub Pages build when requested.
+
+### CP-015 — Namaskar icon for Sadhana
+
+- Status: implemented and validated.
+- Objective: distinguish Sadhana/Dakshina entries from the lotus used for total Income.
+- Result: Sadhana now uses a custom square namaskar SVG in the receive selector and both transaction views, retaining the responsive 24×24 category-icon sizing from CP-014. The lotus remains the prosperity symbol for Income.
+- Cache checkpoint: `earn-app-v25`.
+- Validation: `static` PASS (JavaScript syntax, SVG presence, cache inclusion, and diff checks); `unit` PASS (`node --test tests/*.test.js`, 18/18), including namaskar mappings and responsive sizing.
+- Next: commit, push, and confirm the GitHub Pages build.
