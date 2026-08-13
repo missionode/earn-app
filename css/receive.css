@@ -41,6 +41,18 @@ h1 {
     /* background: #f1f1f1; */
 }
 
+.field-help {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    margin: 8px 0 0;
+    text-align: center;
+}
+
+#amount[readonly] {
+    background-color: var(--background-light);
+    cursor: not-allowed;
+}
+
 .radio-group {
     display: flex;
     gap: 15px;

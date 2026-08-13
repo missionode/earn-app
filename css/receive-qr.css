@@ -65,3 +65,8 @@ h1 {
 #descriptionDisplay {
     text-transform: capitalize;
 }
+
+.back-link {
+    display: inline-block;
+    margin-top: 20px;
+}

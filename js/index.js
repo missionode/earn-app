@@ -18,8 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const upiSetupForm = document.getElementById('upiSetupForm');
     const upiIdInput = document.getElementById('upiId');
     const usernameInput = document.getElementById('username');
+    const serviceChargeInput = document.getElementById('serviceCharge');
     const upiIdError = document.getElementById('upiIdError');
     const usernameError = document.getElementById('usernameError');
+    const serviceChargeError = document.getElementById('serviceChargeError');
     const closeUpiSetupButton = document.getElementById('closeUpiSetup'); // Declared once here!
 
     // Main action buttons
@@ -53,7 +55,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Helper Functions ---
     const getLocalStorageItem = (key) => localStorage.getItem(key);
     const setLocalStorageItem = (key, value) => localStorage.setItem(key, value);
-    const isFirstTimeUser = () => !getLocalStorageItem('earn_upiId') || !getLocalStorageItem('earn_username');
+    const hasValidServiceCharge = () => {
+        const serviceCharge = parseFloat(getLocalStorageItem('earn_serviceCharge'));
+        return Number.isFinite(serviceCharge) && serviceCharge > 0;
+    };
+    const isFirstTimeUser = () => !getLocalStorageItem('earn_upiId') ||
+        !getLocalStorageItem('earn_username') || !hasValidServiceCharge();
     const displayUPISetupPopup = () => {
         if (upiSetupPopup) upiSetupPopup.style.display = 'block';
         else console.error("ERROR: upiSetupPopup element not found for displayUPISetupPopup.");
@@ -73,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const getCategoryIcon = (category) => ({
-        'cash': 'assets/icons/cash.svg', 'rent': 'assets/icons/rent.svg', 'salary': 'assets/icons/salary.svg', 'gift': 'assets/icons/gift.svg', 'investment': 'assets/icons/investment.svg', 'other': 'assets/icons/other.svg', 'food': 'assets/icons/food.svg', 'shopping': 'assets/icons/shopping-bag.svg', 'entertainment': 'assets/icons/entertainment.svg', 'travel': 'assets/icons/travel.svg', 'others': 'assets/icons/others.svg',
+        'cash': 'assets/icons/cash.svg', 'rent': 'assets/icons/rent.svg', 'salary': 'assets/icons/salary.svg', 'gift': 'assets/icons/gift.svg', 'investment': 'assets/icons/investment.svg', 'other': 'assets/icons/other.svg', 'food': 'assets/icons/food.svg', 'shopping': 'assets/icons/shopping-bag.svg', 'entertainment': 'assets/icons/entertainment.svg', 'travel': 'assets/icons/travel.svg', 'others': 'assets/icons/others.svg', 'sadhana': 'assets/icons/Jainism.svg',
     })[category] || '';
 
     const filterTransactions = (transactions, filters) => {
@@ -233,17 +240,30 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         const upiId = upiIdInput ? upiIdInput.value.trim() : '';
         const username = usernameInput ? usernameInput.value.trim() : '';
+        const serviceCharge = serviceChargeInput ?
+            parseFloat(serviceChargeInput.value) : NaN;
 
         const upiIdErrorMessage = validateUPIId(upiId);
+        const serviceChargeErrorMessage = Number.isFinite(serviceCharge) &&
+            serviceCharge > 0 ? '' : 'Enter a service charge greater than ₹0.';
         if (upiIdError) upiIdError.textContent = upiIdErrorMessage;
         if (usernameError) usernameError.textContent = username ? '' : 'Please enter your name.';
+        if (serviceChargeError) {
+            serviceChargeError.textContent = serviceChargeErrorMessage;
+        }
 
-        if (!upiIdErrorMessage && username) {
+        if (!upiIdErrorMessage && username && !serviceChargeErrorMessage) {
             setLocalStorageItem('earn_upiId', upiId);
             setLocalStorageItem('earn_username', username);
+            setLocalStorageItem('earn_serviceCharge', serviceCharge.toString());
             hideUPISetupPopup();
             loadTransactions();
             updateOverallSummary();
+
+            const returnTo = new URLSearchParams(window.location.search).get('returnTo');
+            if (returnTo === 'receive.html?Source=Lite') {
+                window.location.href = returnTo;
+            }
         }
     };
 
@@ -253,7 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
             for (let i = 1; i < categoryOptions.length; i++) {
                 const option = categoryOptions[i];
                 const expenseCategories = ['food', 'shopping', 'entertainment', 'travel', 'others'];
-                const incomeCategories = ['salary', 'gift', 'investment', 'cash', 'other'];
+                const incomeCategories = ['salary', 'gift', 'investment', 'cash', 'other', 'sadhana'];
 
                 if (selectedType === 'income') {
                     option.style.display = incomeCategories.includes(option.value) ? 'block' : 'none';
@@ -268,7 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const populateCategoryFilter = () => {
-        const categories = ['food', 'shopping', 'entertainment', 'travel', 'others', 'salary', 'gift', 'investment', 'cash', 'other'];
+        const categories = ['food', 'shopping', 'entertainment', 'travel', 'others', 'salary', 'gift', 'investment', 'cash', 'other', 'sadhana'];
         const categorySelect = document.getElementById('categoryFilter');
         if (categorySelect) {
             // Clear existing options except the first "All Categories"
@@ -358,6 +378,12 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("DEBUG (index.js): upiConfirmationNotification element found on DOMContentLoaded:", debugUpiConfNotification);
     } else {
         console.error("ERROR (index.js): upiConfirmationNotification element NOT found on DOMContentLoaded!");
+    }
+
+    if (upiIdInput) upiIdInput.value = getLocalStorageItem('earn_upiId') || '';
+    if (usernameInput) usernameInput.value = getLocalStorageItem('earn_username') || '';
+    if (serviceChargeInput) {
+        serviceChargeInput.value = getLocalStorageItem('earn_serviceCharge') || '';
     }
 
     // Main application initialization based on user status
