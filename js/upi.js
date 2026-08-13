@@ -89,9 +89,6 @@
 
         parameters.set('am', qrAmount || requestedAmount);
         parameters.set('cu', currency);
-        if (!parameters.get('mc')) parameters.set('mc', '0000');
-        if (!parameters.get('tr')) parameters.set('tr', options.transactionId);
-        if (!parameters.get('url')) parameters.set('url', options.referenceUrl);
 
         const existingNote = parameters.get('tn');
         const note = existingNote || String(options.description || '').trim();

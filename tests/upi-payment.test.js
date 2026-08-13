@@ -37,7 +37,7 @@ test('preserves merchant QR parameters for Google Pay compatibility', () => {
   assert.equal(result.searchParams.get('mode'), '02');
 });
 
-test('adds bounded defaults only when a static personal QR omits them', () => {
+test('keeps a static personal QR personal while adding payment details', () => {
   const upi = loadUpiModule();
   const payment = upi.buildUpiPaymentUri(
     'upi://pay?pa=person%40upi&pn=Person',
@@ -53,12 +53,9 @@ test('adds bounded defaults only when a static personal QR omits them', () => {
   assert.equal(result.searchParams.get('pa'), 'person@upi');
   assert.equal(result.searchParams.get('am'), '125.50');
   assert.equal(result.searchParams.get('cu'), 'INR');
-  assert.equal(result.searchParams.get('mc'), '0000');
-  assert.equal(result.searchParams.get('tr'), 'EARN456');
-  assert.equal(
-    result.searchParams.get('url'),
-    'https://missionode.github.io/earn-app/index.html',
-  );
+  assert.equal(result.searchParams.has('mc'), false);
+  assert.equal(result.searchParams.has('tr'), false);
+  assert.equal(result.searchParams.has('url'), false);
   assert.equal(result.searchParams.get('tn').length, 80);
 });
 

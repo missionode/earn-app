@@ -81,3 +81,14 @@
 - Open risk: device-level behavior still needs a real Android/Google Pay test using a low-value payment; bank status remains user-confirmed.
 - Git checkpoint: `6a15312` (`[CP-005] Preserve UPI requests and confirm manually`).
 - Next: device-test merchant and personal QR payments, then push only when explicitly requested.
+
+### CP-006 — Preserve personal UPI classification
+
+- Status: implemented and validated through protocol evidence.
+- Objective: address Google Pay's low-value “limit exceeded” rejection for personal/static QR payments.
+- Finding: Earn was adding merchant/reconciliation fields (`mc=0000`, `tr`, and `url`) to personal QRs that did not provide them, which can change how the PSP classifies and validates the request.
+- Result: personal QRs now receive only the entered amount, INR currency, and bounded optional note. Merchant QRs continue to retain every merchant field supplied by the QR.
+- Validation: `static` PASS (syntax, 115 cache references, diff check); `protocol` PASS (`node --test tests/*.test.js`, 12/12).
+- Caveat: Google Pay may still show the same message for a genuine payer-bank daily/count/cooling-period limit; only a real device retry can distinguish that external condition.
+- Git checkpoint: pending.
+- Next: deploy when requested, refresh the installed PWA, and retry ₹10 against the same personal QR.
