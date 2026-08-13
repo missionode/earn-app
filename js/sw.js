@@ -1,4 +1,4 @@
-const CACHE_NAME = 'earn-app-v23';
+const CACHE_NAME = 'earn-app-v24';
 const urlsToCache = [
     '../',
     '../index.html',
@@ -119,6 +119,7 @@ const urlsToCache = [
     '../assets/icons/icon-192x192.png',
     '../assets/icons/icon-512x512.png',
     '../assets/icons/investment.svg',
+    '../assets/icons/lotus.svg',
     '../assets/icons/money-bill-stack.svg',
     '../assets/icons/other.svg',
     '../assets/icons/others.svg',

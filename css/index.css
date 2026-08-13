@@ -477,6 +477,14 @@
     border-bottom: none;
 }
 
+#transactionsTable .category-icon {
+    display: block;
+    width: 24px;
+    height: 24px;
+    max-width: 100%;
+    object-fit: contain;
+}
+
 
 #upiSetupPopup {
     display: none;

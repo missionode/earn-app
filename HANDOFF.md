@@ -157,3 +157,12 @@
 - Cache checkpoint: `earn-app-v23`.
 - Validation: `static` PASS (JavaScript syntax and diff checks); `unit` PASS (`node --test tests/*.test.js`, 17/17), including hidden Expense type and absent Filtered Expenses summary.
 - Next: commit, push, and confirm the GitHub Pages build.
+
+### CP-014 — Compact Sadhana lotus icon
+
+- Status: implemented and validated.
+- Objective: replace the oversized Sadhana transaction artwork with a simple responsive symbol.
+- Result: Sadhana now uses a square lotus SVG in the receive selector and both transaction views. Category icons have an explicit responsive 24×24 box, preventing large intrinsic SVG dimensions from stretching table rows.
+- Cache checkpoint: `earn-app-v24`.
+- Validation: `static` PASS (JavaScript syntax, SVG presence, cache inclusion, and diff checks); `unit` PASS (`node --test tests/*.test.js`, 18/18), including lotus mapping and responsive dimensions in both transaction views.
+- Next: push and confirm the GitHub Pages build when requested.

@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'entertainment': 'assets/icons/entertainment.svg',
         'travel': 'assets/icons/travel.svg',
         'others': 'assets/icons/others.svg',
-        'sadhana': 'assets/icons/Jainism.svg',
+        'sadhana': 'assets/icons/lotus.svg',
     })[category] || '';
 
     const loadAllTransactions = () => {
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
             row.insertCell().innerHTML = transaction.type === 'expense' ? '<img src="assets/icons/arrow-up.svg" alt="Expense" class="transaction-icon">' : '<img src="assets/icons/arrow-down.svg" alt="Income" class="transaction-icon">';
             const categoryCell = row.insertCell();
             const icon = getCategoryIcon(transaction.category) || 'assets/icons/default.svg';
-            categoryCell.innerHTML = `<img src="${icon}" alt="${transaction.category}">`;
+            categoryCell.innerHTML = `<img class="category-icon" src="${icon}" alt="${transaction.category}">`;
             row.insertCell().textContent = transaction.description || '-';
             const amountCell = row.insertCell();
             const formattedAmount = `₹${parseFloat(transaction.amount).toFixed(2)}`;
