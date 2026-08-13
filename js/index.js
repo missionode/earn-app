@@ -311,11 +311,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const triggerConfirmationPopup = () => {
         const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
-        // Find the most recent pending transaction
-        const latestPendingTransaction = transactions.find(t => t.status === 'pending');
+        const storedPending = JSON.parse(
+            getLocalStorageItem('pending_upi_confirmation') || 'null',
+        );
+        const latestPendingTransaction = storedPending ?
+            transactions.find(t => t.id === storedPending.id &&
+                t.status === 'pending') : null;
 
         if (latestPendingTransaction && upiConfirmationNotification) {
-            console.log("DEBUG (index.js): Found pending transaction. Displaying confirmation popup.");
             upiConfirmationTitle.textContent = 'Confirm Pending Payment';
             upiConfirmationAmount.textContent = `Amount: ₹${parseFloat(latestPendingTransaction.amount).toFixed(2)}`;
             upiConfirmationDescription.textContent = latestPendingTransaction.description || 'No description provided.';
@@ -323,18 +326,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (upiConfirmButton) {
                 upiConfirmButton.onclick = () => {
-                    console.log("Confirm button clicked for transaction ID:", latestPendingTransaction.id);
                     updateTransactionStatus(latestPendingTransaction.id, 'success');
                     upiConfirmationNotification.classList.remove('show'); // Hide popup
                     alert('Payment confirmed and added to your transactions!');
                     // Clear pending_upi_confirmation from localStorage after user confirms
                     localStorage.removeItem('pending_upi_confirmation');
+                    sessionStorage.removeItem('earn_upi_return_pending');
                 };
             }
 
             if (upiConfirmCancelButton) {
                 upiConfirmCancelButton.onclick = () => {
-                    console.log("Cancel button clicked for transaction ID:", latestPendingTransaction.id);
                     // Remove the pending transaction from the main list if cancelled
                     let currentTransactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
                     const filtered = currentTransactions.filter(t => t.id !== latestPendingTransaction.id);
@@ -344,22 +346,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert('Payment confirmation cancelled. Transaction removed.');
                     // Clear pending_upi_confirmation from localStorage after user cancels
                     localStorage.removeItem('pending_upi_confirmation');
+                    sessionStorage.removeItem('earn_upi_return_pending');
                     loadTransactions(); // Reload to reflect removal
                     updateOverallSummary();
                 };
             }
         } else if (upiConfirmationNotification) {
-            console.log("DEBUG (index.js): No pending transaction found or upiConfirmationNotification is null. Ensuring popup is hidden.");
             upiConfirmationNotification.classList.remove('show'); // Ensure it's hidden if no pending transaction
-            // Also clear any stale pending_upi_confirmation if no actual pending transaction exists in earn_transactions
+            // Clear stale confirmation state when its matching transaction is absent.
             localStorage.removeItem('pending_upi_confirmation');
+            sessionStorage.removeItem('earn_upi_return_pending');
         } else {
             console.error("ERROR (index.js): upiConfirmationNotification element not found! Cannot display/hide popup.");
         }
     };
 
     const updateTransactionStatus = (transactionId, newStatus) => {
-        console.log("DEBUG (index.js): updateTransactionStatus called with ID:", transactionId, "and status:", newStatus);
         const transactions = JSON.parse(getLocalStorageItem('earn_transactions') || '[]');
         const updatedTransactions = transactions.map(t =>
             t.id === transactionId ? { ...t, status: newStatus } : t
@@ -367,24 +369,10 @@ document.addEventListener('DOMContentLoaded', () => {
         setLocalStorageItem('earn_transactions', JSON.stringify(updatedTransactions));
         loadTransactions(); // Reload to show updated status
         updateOverallSummary();
-        console.log("DEBUG (index.js): Transactions reloaded and summary updated after status change.");
     };
 
 
     // --- Initialization ---
-    // Log current URL and localStorage state immediately on DOMContentLoaded
-    console.log("DEBUG (index.js): Page loaded. Current URL:", window.location.href);
-    console.log("DEBUG (index.js): localStorage 'earn_transactions' on load:", localStorage.getItem('earn_transactions'));
-    console.log("DEBUG (index.js): localStorage 'pending_upi_confirmation' on load:", localStorage.getItem('pending_upi_confirmation'));
-
-    // Check if upiConfirmationNotification element is found right at the start
-    const debugUpiConfNotification = document.getElementById('upiConfirmationNotification');
-    if (debugUpiConfNotification) {
-        console.log("DEBUG (index.js): upiConfirmationNotification element found on DOMContentLoaded:", debugUpiConfNotification);
-    } else {
-        console.error("ERROR (index.js): upiConfirmationNotification element NOT found on DOMContentLoaded!");
-    }
-
     if (upiIdInput) upiIdInput.value = getLocalStorageItem('earn_upiId') || '';
     if (usernameInput) usernameInput.value = getLocalStorageItem('earn_username') || '';
     if (serviceChargeInput) {
@@ -401,29 +389,21 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("DEBUG (index.js): User is not first time user. Loading content normally.");
         loadTransactions();
         updateOverallSummary();
-        // Check for URL callback from UPI payment (now using 'tx' parameter)
         const urlParams = new URLSearchParams(window.location.search);
-        const transactionIdFromUrl = urlParams.get('tx'); // Changed from 'transactionId' to 'tx'
-
-        if (transactionIdFromUrl) { // Only check for presence of 'tx', assuming success if redirected back
-            console.log("DEBUG (index.js): URL callback detected. ID:", transactionIdFromUrl);
-            const storedPending = JSON.parse(localStorage.getItem('pending_upi_confirmation'));
-
-            if (storedPending && storedPending.id === transactionIdFromUrl && storedPending.status === 'pending') {
-                updateTransactionStatus(transactionIdFromUrl, 'success');
-                localStorage.removeItem('pending_upi_confirmation'); // Clear the pending state
-                // Clean up the URL by removing the 'tx' parameter
-                const url = new URL(window.location.href);
-                url.searchParams.delete('tx');
-                window.history.replaceState({}, document.title, url);
-            } else {
-                console.warn("DEBUG (index.js): Mismatch or no pending transaction found in localStorage for URL callback.");
-            }
-        } else {
-            // If no 'tx' parameter, then proceed to check for the manual confirmation popup
-            setTimeout(triggerConfirmationPopup, 500); // Check for pending UPI transaction
+        if (urlParams.has('tx') || urlParams.has('upiReturn')) {
+            const url = new URL(window.location.href);
+            url.searchParams.delete('tx');
+            url.searchParams.delete('upiReturn');
+            window.history.replaceState({}, document.title, url);
         }
+        triggerConfirmationPopup();
     }
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && !isFirstTimeUser()) {
+            triggerConfirmationPopup();
+        }
+    });
 
 
     // --- Event Listeners ---

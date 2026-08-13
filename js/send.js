@@ -32,11 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let qrCodeDetected = false; // Flag to ensure QR code is processed only once
     let currentCameraCapabilities = null; // Stores camera capabilities (zoom, torch, etc.)
     let amount = 0; // Declare amount here to make it accessible to initiateUpiPayment
-
-    // Variables to hold data extracted from QR code for confirmation
-    let currentExtractedUPIID = null;
-    let currentExtractedMerchantName = null;
-
+    let paymentAppWasOpened = false;
 
     // Define Html5QrcodeScannerState (assuming it's not globally available, common for Html5Qrcode)
     const Html5QrcodeScannerState = {
@@ -69,74 +65,42 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('earn_transactions', JSON.stringify(transactions));
     }
 
-    function extractDataFromQRCode(qrCodeText) {
-        let upiId = null;
-        let merchantName = null;
-
-        // Extract VPA (Virtual Payment Address) from UPI QR code text
-        if (qrCodeText && qrCodeText.includes("pa=")) {
-            const vpaStart = qrCodeText.indexOf("pa=") + 3;
-            let vpaEnd = qrCodeText.indexOf("&", vpaStart);
-            if (vpaEnd === -1) { // If '&' not found, take till end of string
-                vpaEnd = qrCodeText.length;
-            }
-            upiId = qrCodeText.substring(vpaStart, vpaEnd);
-        }
-
-        // Extract Payee Name from UPI QR code text
-        if (qrCodeText && qrCodeText.includes("pn=")) {
-            const nameStart = qrCodeText.indexOf("pn=") + 3;
-            let nameEnd = qrCodeText.indexOf("&", nameStart);
-            if (nameEnd === -1) { // If '&' not found, take till end of string
-                nameEnd = qrCodeText.length;
-            }
-            merchantName = decodeURIComponent(qrCodeText.substring(nameStart, nameEnd).replace(/\+/g, ' ')); // Decode and replace + with space
-        }
-
-        return { upiId, merchantName };
-    }
-
-    function initiateUpiPayment(recipientVPA, paymentAmount, description, category, merchantNameFromQR) {
+    function initiateUpiPayment(qrCodeText, paymentAmount, description, category) {
         const transactionId = generateUniqueId();
-        // Use merchantName from QR if available, otherwise default or use stored username
-        const payeeName = merchantNameFromQR || localStorage.getItem('earn_username') || 'Recipient Name';
-        const merchantCategoryCode = '0000'; // Generic MCC for now
+        const referenceUrl = new URL('index.html', window.location.href).href;
+        let paymentRequest;
+        try {
+            paymentRequest = window.EarnUpi.buildUpiPaymentUri(qrCodeText, {
+                amount: paymentAmount,
+                description,
+                referenceUrl,
+                transactionId,
+            });
+        } catch (error) {
+            alert(error.message);
+            return;
+        }
 
-        // FIX: Shorten the successUrl to reduce overall length for UPI apps like Paytm
-        // Use a concise parameter name like 'tx' for transaction ID
-        const successUrl = encodeURIComponent(`${window.location.origin}/index.html?tx=${transactionId}`);
-
-        let encodedDescription = encodeURIComponent(description);
-        // Replace spaces with '+' for proper URL encoding in UPI intent (some apps prefer +)
-        encodedDescription = encodedDescription.replace(/%20/g, '+');
-
-        // Construct the UPI Intent URL
-        const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(recipientVPA)}&pn=${encodeURIComponent(payeeName)}&am=${parseFloat(paymentAmount).toFixed(2)}&cu=INR&tr=${encodeURIComponent(transactionId)}&tn=${encodedDescription}&mc=${merchantCategoryCode}&url=${successUrl}`;
-
-        console.log("DEBUG (send.js): Generated UPI Intent URL:", upiIntentUrl);
-
-        // Save a pending transaction to local storage
         const pendingTransaction = {
             id: transactionId,
             type: 'expense',
-            amount: parseFloat(paymentAmount),
+            amount: Number.parseFloat(paymentRequest.amount),
             category: category,
             description: description,
             date: new Date().toISOString().split('T')[0],
             time: new Date().toTimeString().split(' ')[0],
-            status: 'pending', // Mark as pending until confirmed by UPI app callback
-            merchantName: merchantNameFromQR // ADD THIS LINE to save merchant name
+            status: 'pending',
+            merchantName: paymentRequest.payeeName,
+            payeeVpa: paymentRequest.payeeVpa,
+            merchantCategoryCode: paymentRequest.merchantCategoryCode,
+            transactionReference: paymentRequest.transactionReference,
         };
 
         saveTransaction(pendingTransaction);
-        console.log("DEBUG (send.js): Saved pending transaction to earn_transactions:", pendingTransaction);
-
-        // Store this specific pending transaction for potential confirmation on index.html
         localStorage.setItem('pending_upi_confirmation', JSON.stringify(pendingTransaction));
-        console.log("DEBUG (send.js): Set pending_upi_confirmation in localStorage:", localStorage.getItem('pending_upi_confirmation'));
-
-        // Redirect to the UPI application
-        window.location.href = upiIntentUrl;
+        sessionStorage.setItem('earn_upi_return_pending', transactionId);
+        paymentAppWasOpened = true;
+        window.location.href = paymentRequest.uri;
     }
 
     // --- QR Scanner Control Functions ---
@@ -158,23 +122,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 html5QrCode.stop().then(() => {
                     qrScannerPopup.style.display = 'none'; // Hide the scanner popup
 
-                    const qrData = extractDataFromQRCode(decodedText);
-                    currentExtractedUPIID = qrData.upiId; // Store extracted data
-                    currentExtractedMerchantName = qrData.merchantName;
-                   
                     // Get current category and description from the form
                     const currentDescription = toggleDetailsSwitch && toggleDetailsSwitch.checked ? descriptionInput.value : '';
                     const currentCategory = toggleDetailsSwitch && toggleDetailsSwitch.checked ? getSelectedCategory() : '';
 
-                    if (currentExtractedUPIID) {
-                        // Directly initiate UPI payment, the confirmation logic is on index.html
-                        initiateUpiPayment(currentExtractedUPIID, amount, currentDescription, currentCategory, currentExtractedMerchantName);
-                    } else {
-                        alert('Invalid UPI QR code. No UPI ID found.');
-                        // Optionally, restart scanner here if it was an invalid QR and user wants to try again
-                        // qrScannerPopup.style.display = 'block';
-                        // startQrScanner();
-                    }
+                    initiateUpiPayment(
+                        decodedText,
+                        amount,
+                        currentDescription,
+                        currentCategory,
+                    );
                 }).catch(err => {
                     console.error("Error stopping QR scanner after success:", err);
                     // Provide more specific error message to the user
@@ -244,6 +201,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Event Listeners ---
+
+    const returnToManualConfirmation = () => {
+        if (!paymentAppWasOpened || document.visibilityState !== 'visible') return;
+        const pendingId = sessionStorage.getItem('earn_upi_return_pending');
+        if (pendingId) window.location.href = 'index.html?upiReturn=1';
+    };
+
+    document.addEventListener('visibilitychange', returnToManualConfirmation);
+    window.addEventListener('pageshow', returnToManualConfirmation);
 
     // Load and apply the saved details switch state from local storage
     const savedDetailsState = localStorage.getItem('hideDetails'); // Use 'hideDetails' for unified switch

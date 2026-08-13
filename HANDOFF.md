@@ -62,5 +62,22 @@
 - Scope: balance display text, focused regression test, service-worker cache.
 - Result: balance now renders as `🪷 <amount> ₹`.
 - Validation: `static` PASS (syntax, cache references, diff check); `unit` PASS (`node --test tests/*.test.js`, 7/7).
-- Git checkpoint: pending.
+- Git checkpoint: `6375b59` (`[CP-004] Use lotus for balance`).
 - Next: browser/manual visual verification when available.
+
+### CP-005 — Google Pay-compatible UPI preservation and manual confirmation
+
+- Status: implemented and validated through runtime/protocol evidence.
+- Objective: preserve scanned UPI merchant contracts, remove URL-based false success, and prompt for manual confirmation after returning from a UPI app.
+- Scope: bounded UPI parser/builder, send flow, return state, confirmation UX, cache, protocol-focused tests.
+- Security decision: a URL return is never payment proof; transactions remain pending until explicit user confirmation. Automatic verification is deferred until a bank/PSP server integration exists.
+- Result: scanned merchant fields are preserved; missing personal/static-QR fields receive bounded defaults; amount mismatches and unsafe signed-QR mutations are rejected; the reference URL resolves within Earn; UPI app return opens a clearly labeled manual confirmation.
+- Privacy: transaction and pending-state debug logging was removed from the confirmation path.
+- Validation:
+  - `static` PASS — JavaScript syntax, 115 cached assets, and diff checks.
+  - `protocol` PASS — `node --test tests/*.test.js` (12/12), including merchant preservation, personal QR defaults, mismatch rejection, signature preservation, and manual-only return.
+  - `runtime` PASS — local HTTP server returned 200 for index and send pages and served the current UPI/confirmation scripts.
+  - `browser` BLOCKED — no connected browser backend was available; no real Google Pay financial transaction was attempted.
+- Open risk: device-level behavior still needs a real Android/Google Pay test using a low-value payment; bank status remains user-confirmed.
+- Git checkpoint: pending.
+- Next: device-test merchant and personal QR payments, then push only when explicitly requested.
