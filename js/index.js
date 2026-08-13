@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("DEBUG (updateOverallSummary): Calculated Total Income:", totalIncome);
         console.log("DEBUG (updateOverallSummary): Calculated Total Expenses:", totalExpenses);
         
-        if (balanceAds) balanceAds.textContent = `⚖️ ${balance} ₹`;
+        if (balanceAds) balanceAds.textContent = `🪷 ${balance} ₹`;
 
         if (totalIncomeDisplay) totalIncomeDisplay.textContent = `₹${totalIncome}`;
         if (totalExpensesDisplay) totalExpensesDisplay.textContent = `₹${totalExpenses}`;

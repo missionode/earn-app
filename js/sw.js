@@ -1,4 +1,4 @@
-const CACHE_NAME = 'earn-app-v13';
+const CACHE_NAME = 'earn-app-v14';
 const urlsToCache = [
     '../',
     '../index.html',

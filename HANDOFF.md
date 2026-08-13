@@ -41,7 +41,7 @@
 - Validation: `static` PASS (syntax, cache references, diff check); `unit` PASS (`node --test tests/*.test.js`, 5/5 including the new visibility regression).
 - Browser evidence remains environment-blocked from CP-001; this focused fix introduced no dependency or architecture change.
 - Existing unrelated working state remains modified `.DS_Store` and untracked `Loop/`.
-- Git checkpoint: `27c64e1` (`[CP-003] Add QR edit history navigation`).
+- Git checkpoint: included in external commit `799dba7` (`update`).
 - Next: browser/manual visual verification when available.
 
 ### CP-003 — QR edit-history navigation
@@ -52,5 +52,15 @@
 - Baseline: external commit `799dba7` included CP-002 plus broader user files; it was preserved and revalidated.
 - Result: QR page exposes “Edit payment details”; it uses history-back when available, preserves the pending transaction, and has a direct receive-page fallback. Lite forms restore pending clients and description before recalculating the amount.
 - Validation: `static` PASS (syntax, cache references, diff check); `unit` PASS (`node --test tests/*.test.js`, 6/6).
+- Git checkpoint: `27c64e1` (`[CP-003] Add QR edit history navigation`); handoff reference completed by `b07d9ae`.
+- Next: browser/manual visual verification when available.
+
+### CP-004 — Divine balance symbol
+
+- Status: implemented and validated.
+- Objective: replace the balance-scale symbol with the lotus prosperity symbol.
+- Scope: balance display text, focused regression test, service-worker cache.
+- Result: balance now renders as `🪷 <amount> ₹`.
+- Validation: `static` PASS (syntax, cache references, diff check); `unit` PASS (`node --test tests/*.test.js`, 7/7).
 - Git checkpoint: pending.
 - Next: browser/manual visual verification when available.
