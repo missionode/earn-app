@@ -175,3 +175,13 @@
 - Cache checkpoint: `earn-app-v25`.
 - Validation: `static` PASS (JavaScript syntax, SVG presence, cache inclusion, and diff checks); `unit` PASS (`node --test tests/*.test.js`, 18/18), including namaskar mappings and responsive sizing.
 - Next: commit, push, and confirm the GitHub Pages build.
+
+### CP-016 — Earn logo-mark favicon
+
+- Status: implemented and validated.
+- Objective: provide a consistent favicon using the existing Earn logo mark.
+- Result: a scalable blue-and-white Earn logo-mark favicon is referenced from every root application page, including pages that previously had no favicon and the QR page that incorrectly targeted the domain root. The legacy ICO remains available as a compatibility asset.
+- Cache checkpoint: `earn-app-v26`.
+- User artwork: the upgraded `assets/icons/namaskar.svg` supplied after CP-015 is preserved and included in this checkpoint.
+- Validation: `static` PASS (favicon SVG structure, all root-page references, cache inclusion, JavaScript syntax, and diff checks); `unit` PASS (`node --test tests/*.test.js`, 19/19).
+- Next: commit, push, and confirm the GitHub Pages build.

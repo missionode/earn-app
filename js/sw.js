@@ -1,4 +1,4 @@
-const CACHE_NAME = 'earn-app-v25';
+const CACHE_NAME = 'earn-app-v26';
 const urlsToCache = [
     '../',
     '../index.html',
@@ -12,6 +12,7 @@ const urlsToCache = [
     '../reset.html',
     '../subscription.html',
     '../favicon.ico',
+    '../favicon.svg',
     '../manifest.json',
     '../test-data.csv',
 
