@@ -167,6 +167,25 @@ test('Lite custom receipt saves locally and returns to Lite', () => {
   );
 });
 
+test('Lite receive restores pending details when returning to edit', () => {
+  const pending = {
+    source: 'Lite',
+    clients: 4,
+    description: 'Updated meditation description',
+  };
+  const page = runReceivePage({
+    earn_serviceCharge: '300',
+    pending_receive_transaction: JSON.stringify(pending),
+  });
+
+  assert.equal(page.elements.clients.value, 4);
+  assert.equal(page.elements.amount.value, '1200.00');
+  assert.equal(
+    page.elements.description.value,
+    'Updated meditation description',
+  );
+});
+
 test('Lite QR completion saves and returns to Lite', () => {
   const ids = [
     'qrCodeContainer',
@@ -175,6 +194,7 @@ test('Lite QR completion saves and returns to Lite', () => {
     'payeeNameDisplay',
     'doneButton',
     'cancelButton',
+    'editPaymentLink',
     'receiveQrBackLink',
   ];
   const elements = Object.fromEntries(ids.map((id) => [id, createElement()]));
@@ -198,6 +218,13 @@ test('Lite QR completion saves and returns to Lite', () => {
     pending_receive_transaction: JSON.stringify(pending),
   });
   const location = {href: '', search: '?Source=Lite'};
+  let historyBackCalls = 0;
+  const history = {
+    back() {
+      historyBackCalls += 1;
+    },
+    length: 2,
+  };
   let qrOptions;
   function QRCode(container, options) {
     qrOptions = options;
@@ -210,7 +237,7 @@ test('Lite QR completion saves and returns to Lite', () => {
     localStorage,
     QRCode,
     URLSearchParams,
-    window: {location},
+    window: {history, location},
   };
 
   vm.runInNewContext(fs.readFileSync('js/receive-qr.js', 'utf8'), context);
@@ -222,6 +249,11 @@ test('Lite QR completion saves and returns to Lite', () => {
     elements.receiveQrBackLink.href,
     'https://missionode.github.io/lite/index.html',
   );
+  assert.equal(elements.editPaymentLink.href, 'receive.html?Source=Lite');
+
+  elements.editPaymentLink.listeners.click({preventDefault() {}});
+  assert.equal(historyBackCalls, 1);
+  assert.notEqual(localStorage.getItem('pending_receive_transaction'), null);
 
   elements.doneButton.listeners.click();
   const transactions = JSON.parse(localStorage.getItem('earn_transactions'));

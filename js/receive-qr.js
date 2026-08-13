@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const payeeNameDisplay = document.getElementById('payeeNameDisplay');
     const doneButton = document.getElementById('doneButton');
     const cancelButton = document.getElementById('cancelButton');
+    const editPaymentLink = document.getElementById('editPaymentLink');
     const receiveQrBackLink = document.getElementById('receiveQrBackLink');
 
     const payeeVPA = localStorage.getItem('earn_upiId');
@@ -21,6 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
         JSON.parse(pendingTransactionString) : null;
 
     receiveQrBackLink.href = returnUrl;
+    editPaymentLink.href = isLiteSource ?
+        'receive.html?Source=Lite' : 'receive.html';
 
     if (!payeeVPA || !payeeName || !pendingTransaction) {
         alert('Error: Payment details not found.');
@@ -70,6 +73,15 @@ document.addEventListener('DOMContentLoaded', () => {
     cancelButton.addEventListener('click', () => {
         clearPendingTransaction();
         window.location.href = returnUrl;
+    });
+
+    editPaymentLink.addEventListener('click', (event) => {
+        event.preventDefault();
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            window.location.href = editPaymentLink.href;
+        }
     });
 
     receiveQrBackLink.addEventListener('click', clearPendingTransaction);

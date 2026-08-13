@@ -18,6 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const liteAmountHelp = document.getElementById('liteAmountHelp');
     const receiveBackLink = document.getElementById('receiveBackLink');
     const serviceCharge = parseFloat(localStorage.getItem('earn_serviceCharge'));
+    const pendingTransactionString = localStorage.getItem(
+        'pending_receive_transaction',
+    );
+    const pendingTransaction = pendingTransactionString ?
+        JSON.parse(pendingTransactionString) : null;
 
     if (isLiteSource && (!Number.isFinite(serviceCharge) || serviceCharge <= 0)) {
         const returnTo = encodeURIComponent('receive.html?Source=Lite');
@@ -48,6 +53,11 @@ document.addEventListener('DOMContentLoaded', () => {
         liteAmountHelp.hidden = false;
         amountInput.readOnly = true;
         receiveBackLink.href = LITE_RETURN_URL;
+        if (pendingTransaction && pendingTransaction.source === 'Lite') {
+            clientsInput.value = pendingTransaction.clients || 1;
+            descriptionInput.value = pendingTransaction.description ||
+                LITE_DESCRIPTION;
+        }
         updateLiteAmount();
         clientsInput.addEventListener('input', updateLiteAmount);
     } else {

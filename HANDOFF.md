@@ -43,3 +43,14 @@
 - Existing unrelated working state remains modified `.DS_Store` and untracked `Loop/`.
 - Git checkpoint: pending.
 - Next: browser/manual visual verification when available.
+
+### CP-003 — QR edit-history navigation
+
+- Status: implemented and validated.
+- Objective: add a separate QR-page history-back link for editing without discarding the pending collection.
+- Scope: QR navigation, Lite pending-value restoration, focused tests, service-worker cache.
+- Baseline: external commit `799dba7` included CP-002 plus broader user files; it was preserved and revalidated.
+- Result: QR page exposes “Edit payment details”; it uses history-back when available, preserves the pending transaction, and has a direct receive-page fallback. Lite forms restore pending clients and description before recalculating the amount.
+- Validation: `static` PASS (syntax, cache references, diff check); `unit` PASS (`node --test tests/*.test.js`, 6/6).
+- Git checkpoint: pending.
+- Next: browser/manual visual verification when available.
