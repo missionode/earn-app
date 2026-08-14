@@ -24,10 +24,10 @@ const clamp = (value, minimum, maximum) => Math.min(maximum, Math.max(minimum, v
 
 export function getResponsiveProsperityConfig(width, height, pixelRatio = 1) {
     const shortestSide = Math.max(280, Math.min(width, height));
-    const targetPiecePixels = clamp(shortestSide * 0.064, 24, 54);
+    const targetPiecePixels = clamp(shortestSide * 0.028, 10, 22);
     const performanceTier = shortestSide < 520 ? 'mobile' : shortestSide < 900 ? 'tablet' : 'desktop';
-    const maxBodies = performanceTier === 'mobile' ? 36 : performanceTier === 'tablet' ? 48 : 64;
-    const showerSize = performanceTier === 'mobile' ? 22 : performanceTier === 'tablet' ? 27 : 32;
+    const maxBodies = performanceTier === 'mobile' ? 28 : performanceTier === 'tablet' ? 36 : 44;
+    const showerSize = performanceTier === 'mobile' ? 24 : performanceTier === 'tablet' ? 32 : 40;
 
     return Object.freeze({
         width,
@@ -41,8 +41,7 @@ export function getResponsiveProsperityConfig(width, height, pixelRatio = 1) {
 }
 
 export function getShowerPieceCount(dayCount, responsiveConfig) {
-    const celebrationScale = Math.round(Math.log2(Math.max(2, dayCount + 1)) * 2.5);
-    return clamp(celebrationScale, 16, responsiveConfig.showerSize);
+    return Math.min(Math.max(0, dayCount), responsiveConfig.showerSize);
 }
 
 function createEnvironment(renderer) {
@@ -125,16 +124,19 @@ function createCoinFaceTextures(baseColor, highlightColor) {
 function createDiamondGeometry(radius) {
     const positions = [];
     const indices = [];
-    const segments = 8;
-    const tableY = radius * 0.62;
-    const upperY = radius * 0.16;
-    const lowerY = radius * 0.02;
-    const tableRadius = radius * 0.34;
-    const girdleRadius = radius * 0.72;
+    const segments = 16;
+    const tablePercentage = 0.57;
+    const crownAngle = THREE.MathUtils.degToRad(34);
+    const pavilionAngle = THREE.MathUtils.degToRad(41);
+    const girdleRadius = radius;
+    const tableRadius = girdleRadius * tablePercentage;
+    const crownHeight = (girdleRadius - tableRadius) * Math.tan(crownAngle);
+    const girdleHalfThickness = radius * 0.025;
+    const pavilionDepth = girdleRadius * Math.tan(pavilionAngle);
 
     for (let ring = 0; ring < 3; ring += 1) {
         const ringRadius = ring === 0 ? tableRadius : girdleRadius;
-        const y = ring === 0 ? tableY : ring === 1 ? upperY : lowerY;
+        const y = ring === 0 ? crownHeight : ring === 1 ? girdleHalfThickness : -girdleHalfThickness;
         for (let index = 0; index < segments; index += 1) {
             const angle = (index / segments) * Math.PI * 2 + Math.PI / 8;
             positions.push(Math.cos(angle) * ringRadius, y, Math.sin(angle) * ringRadius);
@@ -142,9 +144,9 @@ function createDiamondGeometry(radius) {
     }
 
     const bottomIndex = positions.length / 3;
-    positions.push(0, -radius * 0.86, 0);
+    positions.push(0, -pavilionDepth, 0);
     const topIndex = positions.length / 3;
-    positions.push(0, tableY, 0);
+    positions.push(0, crownHeight, 0);
 
     for (let index = 0; index < segments; index += 1) {
         const next = (index + 1) % segments;
@@ -164,6 +166,12 @@ function createDiamondGeometry(radius) {
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
     geometry.setIndex(indices);
     geometry.computeVertexNormals();
+    geometry.userData.cut = {
+        style: '58-facet-inspired round brilliant',
+        tablePercentage: 57,
+        crownAngle: 34,
+        pavilionAngle: 41,
+    };
     return geometry;
 }
 
@@ -171,6 +179,8 @@ class ProsperityExperience {
     constructor(container) {
         this.container = container;
         this.entries = [];
+        this.staticPieces = [];
+        this.staticMeshes = [];
         this.pieceSequence = 0;
         this.coinSequence = 0;
         this.gemSequence = 0;
@@ -179,6 +189,7 @@ class ProsperityExperience {
         this.lastFrameTime = 0;
         this.settleDeadline = 0;
         this.spawnTimers = new Set();
+        this.onSettled = null;
         this.config = getResponsiveProsperityConfig(
             window.innerWidth,
             window.innerHeight,
@@ -254,7 +265,6 @@ class ProsperityExperience {
     }
 
     updateViewport(initial) {
-        const previous = this.config;
         this.config = getResponsiveProsperityConfig(
             window.innerWidth,
             window.innerHeight,
@@ -277,14 +287,6 @@ class ProsperityExperience {
         this.renderer.domElement.dataset.maxBodies = String(this.config.maxBodies);
         this.createBoundaries();
 
-        const meaningfulResize = !initial && (
-            Math.abs(previous.width - this.config.width) / Math.max(previous.width, 1) > 0.15
-            || Math.abs(previous.height - this.config.height) / Math.max(previous.height, 1) > 0.15
-        );
-        if (meaningfulResize) {
-            this.clearPieces();
-            this.disposePieceResources();
-        }
         this.render();
     }
 
@@ -416,24 +418,27 @@ class ProsperityExperience {
         if (this.gemResources.has(gem.name)) {
             return this.gemResources.get(gem.name);
         }
-        const radius = this.pieceRadius * 1.08;
+        const radius = this.pieceRadius * 0.98;
         const resources = {
             radius,
             geometry: createDiamondGeometry(radius),
             material: new THREE.MeshPhysicalMaterial({
                 color: gem.color,
                 metalness: 0,
-                roughness: gem.name === 'diamond' ? 0.035 : 0.08,
-                transmission: gem.name === 'diamond' ? 0.92 : 0.72,
+                roughness: gem.name === 'diamond' ? 0.012 : 0.055,
+                transmission: gem.name === 'diamond' ? 0.97 : 0.8,
                 transparent: true,
-                opacity: gem.name === 'diamond' ? 0.82 : 0.88,
+                opacity: gem.name === 'diamond' ? 0.72 : 0.84,
                 thickness: radius * 2.2,
                 ior: gem.ior,
                 attenuationColor: gem.attenuation,
                 attenuationDistance: radius * 3,
                 clearcoat: 1,
                 clearcoatRoughness: 0.03,
-                envMapIntensity: 2.1,
+                envMapIntensity: gem.name === 'diamond' ? 3.2 : 2.5,
+                iridescence: gem.name === 'diamond' ? 0.72 : 0.18,
+                iridescenceIOR: 1.3,
+                iridescenceThicknessRange: gem.name === 'diamond' ? [180, 620] : [100, 280],
                 flatShading: true,
                 side: THREE.DoubleSide,
             }),
@@ -462,10 +467,6 @@ class ProsperityExperience {
     }
 
     addPiece(index) {
-        while (this.entries.length >= this.config.maxBodies) {
-            this.removeEntry(this.entries[0]);
-        }
-
         const isGem = index % 3 === 1;
         const entry = isGem ? this.createGem(this.gemSequence) : this.createCoin(this.coinSequence);
         if (isGem) {
@@ -508,9 +509,18 @@ class ProsperityExperience {
         this.startAnimation();
     }
 
-    shower(dayCount) {
-        const pieceCount = getShowerPieceCount(dayCount, this.config);
-        this.settleDeadline = performance.now() + 14000;
+    shower(availableCount, onSettled) {
+        if (this.entries.length || this.spawnTimers.size) {
+            return 0;
+        }
+        const remainingCount = Math.max(0, availableCount - this.staticPieces.length);
+        const pieceCount = getShowerPieceCount(remainingCount, this.config);
+        if (!pieceCount) {
+            onSettled?.(this.getSnapshot());
+            return 0;
+        }
+        this.onSettled = onSettled;
+        this.settleDeadline = performance.now() + 9000;
         this.renderer.domElement.dataset.showerSize = String(pieceCount);
         for (let index = 0; index < pieceCount; index += 1) {
             const pieceIndex = this.pieceSequence;
@@ -523,6 +533,122 @@ class ProsperityExperience {
             this.spawnTimers.add(timer);
         }
         this.renderer.domElement.dataset.spawnPending = String(this.spawnTimers.size);
+        this.renderer.domElement.dataset.availableCount = String(availableCount);
+        return pieceCount;
+    }
+
+    restore(snapshot = []) {
+        if (this.staticPieces.length || !Array.isArray(snapshot)) {
+            return;
+        }
+        this.staticPieces = snapshot.filter((piece) => (
+            piece && ['coin', 'gem'].includes(piece.type)
+            && typeof piece.kind === 'string'
+            && Array.isArray(piece.position) && piece.position.length === 3
+            && Array.isArray(piece.quaternion) && piece.quaternion.length === 4
+        ));
+        this.pieceSequence = this.staticPieces.length;
+        this.coinSequence = this.staticPieces.filter(({ type }) => type === 'coin').length;
+        this.gemSequence = this.staticPieces.filter(({ type }) => type === 'gem').length;
+        this.rebuildStaticMeshes();
+        this.updateCountDiagnostics();
+        this.render();
+    }
+
+    getSnapshot() {
+        return this.staticPieces.map((piece) => ({
+            type: piece.type,
+            kind: piece.kind,
+            position: [...piece.position],
+            quaternion: [...piece.quaternion],
+        }));
+    }
+
+    freezeActivePieces() {
+        for (const entry of [...this.entries]) {
+            const sequenceIndex = this.staticPieces.length;
+            const restingPosition = entry.forcePilePlacement
+                ? this.getPilePosition(sequenceIndex)
+                : entry.mesh.position.toArray();
+            this.staticPieces.push({
+                type: entry.mesh instanceof THREE.Group ? 'coin' : 'gem',
+                kind: entry.mesh.userData.kind,
+                position: restingPosition,
+                quaternion: entry.mesh.quaternion.toArray(),
+            });
+            this.removeEntry(entry);
+        }
+        this.rebuildStaticMeshes();
+        this.updateCountDiagnostics();
+        const callback = this.onSettled;
+        this.onSettled = null;
+        callback?.(this.getSnapshot());
+    }
+
+    getPilePosition(index) {
+        const pileWidth = Math.min(this.visibleWidth * 0.7, 8);
+        const piecesPerLayer = Math.max(8, Math.floor(pileWidth / (this.pieceRadius * 1.55)));
+        const layer = Math.floor(index / piecesPerLayer);
+        const slot = index % piecesPerLayer;
+        const normalizedSlot = piecesPerLayer === 1 ? 0.5 : slot / (piecesPerLayer - 1);
+        const layerInset = Math.min(layer * this.pieceRadius * 0.08, pileWidth * 0.18);
+        const usableWidth = Math.max(this.pieceRadius * 2, pileWidth - layerInset * 2);
+        const x = (normalizedSlot - 0.5) * usableWidth + Math.sin(index * 2.17) * this.pieceRadius * 0.18;
+        const y = this.floorY + this.pieceRadius * (0.7 + layer * 0.5);
+        const z = Math.sin(index * 1.73) * Math.min(this.depthLimit * 0.7, this.pieceRadius * 3.2);
+        return [x, y, z];
+    }
+
+    rebuildStaticMeshes() {
+        this.staticMeshes.forEach((mesh) => this.scene.remove(mesh));
+        this.staticMeshes = [];
+        const matrix = new THREE.Matrix4();
+        const position = new THREE.Vector3();
+        const quaternion = new THREE.Quaternion();
+        const scale = new THREE.Vector3(1, 1, 1);
+
+        const addInstances = (pieces, geometry, material, localMatrix = null) => {
+            if (!pieces.length) return;
+            const instances = new THREE.InstancedMesh(geometry, material, pieces.length);
+            pieces.forEach((piece, index) => {
+                position.fromArray(piece.position);
+                quaternion.fromArray(piece.quaternion);
+                matrix.compose(position, quaternion, scale);
+                if (localMatrix) matrix.multiply(localMatrix);
+                instances.setMatrixAt(index, matrix);
+            });
+            instances.instanceMatrix.needsUpdate = true;
+            instances.frustumCulled = false;
+            this.scene.add(instances);
+            this.staticMeshes.push(instances);
+        };
+
+        for (const metal of METALS) {
+            const pieces = this.staticPieces.filter(({ type, kind }) => type === 'coin' && kind === metal.name);
+            if (!pieces.length) continue;
+            const resources = this.getCoinResources(metal);
+            addInstances(pieces, resources.geometry, resources.materials);
+            for (const direction of [-1, 1]) {
+                const localMatrix = new THREE.Matrix4().compose(
+                    new THREE.Vector3(0, direction * resources.thickness * 0.5, 0),
+                    new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.PI / 2, 0, 0)),
+                    scale,
+                );
+                addInstances(pieces, resources.rimGeometry, resources.rimMaterial, localMatrix);
+            }
+        }
+        for (const gem of GEMS) {
+            const pieces = this.staticPieces.filter(({ type, kind }) => type === 'gem' && kind === gem.name);
+            if (pieces.length) {
+                const resources = this.getGemResources(gem);
+                addInstances(pieces, resources.geometry, resources.material);
+            }
+        }
+    }
+
+    updateCountDiagnostics() {
+        this.renderer.domElement.dataset.collectedCount = String(this.staticPieces.length);
+        this.renderer.domElement.dataset.visiblePieceCount = String(this.staticPieces.length + this.entries.length);
     }
 
     removeEntry(entry) {
@@ -533,6 +659,7 @@ class ProsperityExperience {
             this.entries.splice(index, 1);
         }
         this.renderer.domElement.dataset.bodyCount = String(this.entries.length);
+        this.updateCountDiagnostics();
     }
 
     clearPieces() {
@@ -584,11 +711,8 @@ class ProsperityExperience {
         const horizontalRatios = [];
         for (const entry of this.entries) {
             const { mesh, body } = entry;
-            if (
-                time >= this.settleDeadline
-                && body.position.y < this.floorY + this.pieceRadius * 4
-                && Math.abs(body.velocity.y) < 0.6
-            ) {
+            if (time >= this.settleDeadline) {
+                entry.forcePilePlacement = true;
                 body.sleep();
             }
             mesh.position.copy(body.interpolatedPosition);
@@ -613,6 +737,8 @@ class ProsperityExperience {
             this.frameId = requestAnimationFrame((nextTime) => this.animate(nextTime));
         } else {
             this.frameId = null;
+            this.freezeActivePieces();
+            this.render();
         }
     }
 
@@ -621,12 +747,13 @@ class ProsperityExperience {
     }
 }
 
-export function startProsperityShower(container, dayCount) {
+export function startProsperityShower(container, { availableCount, snapshot = [], onSettled } = {}) {
     let experience = EXPERIENCE_BY_CONTAINER.get(container);
     if (!experience) {
         experience = new ProsperityExperience(container);
         EXPERIENCE_BY_CONTAINER.set(container, experience);
     }
-    experience.shower(dayCount);
-    return experience;
+    experience.restore(snapshot.slice(0, Math.max(0, availableCount)));
+    const releasedCount = experience.shower(availableCount, onSettled);
+    return { experience, releasedCount, collectedCount: experience.staticPieces.length };
 }

@@ -21,15 +21,17 @@ test('prosperity pieces and simulation limits respond to device size', async () 
   assert.equal(desktop.performanceTier, 'desktop');
   assert.ok(mobile.targetPiecePixels < tablet.targetPiecePixels);
   assert.ok(tablet.targetPiecePixels < desktop.targetPiecePixels);
-  assert.deepEqual([mobile.maxBodies, tablet.maxBodies, desktop.maxBodies], [36, 48, 64]);
+  assert.deepEqual([mobile.targetPiecePixels, tablet.targetPiecePixels, desktop.targetPiecePixels], [10.92, 21.504, 22]);
+  assert.deepEqual([mobile.maxBodies, tablet.maxBodies, desktop.maxBodies], [28, 36, 44]);
   assert.deepEqual([mobile.pixelRatio, tablet.pixelRatio, desktop.pixelRatio], [1.5, 2, 2]);
 });
 
-test('each shower is bounded independently of the daily counter', async () => {
+test('each click releases the remaining inventory in responsive batches', async () => {
   const { getResponsiveProsperityConfig, getShowerPieceCount } = await modulePromise;
   const mobile = getResponsiveProsperityConfig(390, 844, 2);
 
-  assert.equal(getShowerPieceCount(0, mobile), 16);
+  assert.equal(getShowerPieceCount(0, mobile), 0);
+  assert.equal(getShowerPieceCount(7, mobile), 7);
   assert.equal(getShowerPieceCount(100000, mobile), mobile.showerSize);
   assert.ok(getShowerPieceCount(460, mobile) <= mobile.maxBodies);
 });
@@ -44,11 +46,17 @@ test('3D scene includes realistic metals, transparent gems, reflections and pile
     assert.match(scene, new RegExp(`name: '${gem}'`));
   }
   assert.match(scene, /transmission:/);
+  assert.match(scene, /tablePercentage: 57/);
+  assert.match(scene, /crownAngle: 34/);
+  assert.match(scene, /pavilionAngle: 41/);
+  assert.match(scene, /iridescence:/);
   assert.match(scene, /EquirectangularReflectionMapping/);
   assert.match(scene, /new CANNON\.Cylinder/);
   assert.match(scene, /new CANNON\.Sphere/);
   assert.match(scene, /createBoundaries\(\)/);
   assert.match(scene, /sleepState !== CANNON\.Body\.SLEEPING/);
+  assert.match(scene, /new THREE\.InstancedMesh/);
+  assert.match(scene, /freezeActivePieces\(\)/);
 });
 
 test('landing page exposes an accessible prosperity trigger and offline 3D modules', () => {
@@ -57,12 +65,24 @@ test('landing page exposes an accessible prosperity trigger and offline 3D modul
 
   assert.match(page, /class="prosperity-container" role="button" tabindex="0"/);
   assert.match(page, /id="prosperityStatus"[^>]+aria-live="polite"/);
-  assert.match(serviceWorker, /earn-app-v27/);
+  assert.match(serviceWorker, /earn-app-v28/);
   assert.match(serviceWorker, /prosperity-3d\.mjs/);
   assert.match(serviceWorker, /three\.module\.min\.mjs/);
   assert.match(serviceWorker, /three\.core\.min\.js/);
   assert.match(serviceWorker, /cannon-es\.mjs/);
   assert.doesNotMatch(serviceWorker, /assets\/coins\//);
+  assert.doesNotMatch(serviceWorker, /coin_drop\.mp3/);
+});
+
+test('prosperity controller persists progressive batches and synthesizes a bounded magical whoosh', () => {
+  const controller = fs.readFileSync('js/prosperity.js', 'utf8');
+
+  assert.match(controller, /earn\.prosperityTreasure\.v1/);
+  assert.match(controller, /localStorage\.setItem/);
+  assert.match(controller, /beginMagicalWhoosh/);
+  assert.match(controller, /context\.createBiquadFilter/);
+  assert.match(controller, /duration = 3\.1/);
+  assert.doesNotMatch(controller, /coin_drop\.mp3/);
 });
 
 test('3D dependencies are pinned exactly and have no transitive packages', () => {

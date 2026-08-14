@@ -212,3 +212,23 @@
 - Git checkpoint: `ca1a7d9` (`[CP-017] Add realistic 3D prosperity treasure`) on `feature/prosperity-coins`.
 - Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: none within agreed local feature scope.
 - Next: push/deploy only when explicitly requested, then perform target-device visual review.
+
+### CP-018 — Progressive prosperity inventory and brilliant-cut gems
+
+- Status: implemented and validated locally.
+- Objective: let the daily prosperity inventory (460 on 2026-08-14, increasing by one each day) accumulate through repeated, non-repetitive showers instead of replacing earlier pieces; reduce object scale; improve diamond realism; and ensure celebration audio ends with the active effect.
+- Progressive model: each tap releases only the remaining inventory, capped at 24 mobile, 32 tablet, or 40 desktop pieces. Settled transforms are saved under `earn.prosperityTreasure.v1`; reloads restore the collected pile, and a future day's additional inventory remains available for the next tap.
+- Performance model: only the newest batch uses Cannon rigid bodies. When it settles, bodies are removed and all retained coins/gems are rebuilt as material-grouped Three.js instanced meshes. This permits the visible pile to approach the complete daily count without hundreds of continuously simulated bodies or unbounded draw calls.
+- Physics endpoint: normal Earth gravity and collisions run first. A nine-second safety boundary sleeps persistent collision outliers and places only those outliers into responsive pile slots, preventing suspended pieces and guaranteeing that animation and audio terminate.
+- Visual scale: rendered geometry radius now ranges from 10–22 CSS pixels (approximately 20–44 px diameter), down from 24–54 px radius. The reduced-motion fallback follows the same smaller visual direction.
+- Gem reference: the round-brilliant-inspired geometry uses the supplied ideal-range reference at a 57% table, 34° crown, and 41° pavilion. Diamond material uses IOR 2.42, increased transmission/reflections, low roughness, and controlled iridescence for brightness, spectral fire, and rotational scintillation; coloured transparent stones retain their individual IOR and attenuation.
+- Audio: the former long `coin_drop.mp3` playback is replaced with a locally synthesized 3.1-second band-pass whoosh and three restrained sine chimes. It has both an intrinsic endpoint and an explicit stop/AudioContext close when the physics batch settles. The legacy MP3 file remains preserved but is no longer precached or played.
+- Cache checkpoint: `earn-app-v28`.
+- Validation:
+  - `static` PASS — JavaScript/MJS syntax and `git diff --check`.
+  - `unit` PASS — `npm test` (26/26), including responsive batch sizing, brilliant-cut proportions, iridescence, instancing, persistence, synthesized sound, and obsolete-audio cache removal.
+  - `browser` PASS — Playwright Chromium mobile `390x844`, tablet `768x1024`, and desktop `1440x900` (3/3). Two consecutive batches per viewport increased retained/visible counts, stayed inside active-body limits, ended with zero pending/awake bodies, and produced no page errors.
+  - `visual` PASS — final mobile, tablet, and desktop screenshots inspected: pieces are materially smaller, faceted materials remain legible, and settled batches form bottom treasure piles without suspended outliers.
+- Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
+- Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device sound/material review.
+- Next: commit locally under the Loop workflow. Push/deploy only when explicitly requested.

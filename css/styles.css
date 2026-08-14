@@ -438,7 +438,7 @@ body.hide-transaction-details #transactionsTable td:nth-child(7)  /* Status */
     position: absolute;
     left: calc(3% + var(--piece-index) * 5.25%);
     bottom: var(--piece-bottom);
-    width: clamp(24px, 6.4vmin, 52px);
+    width: clamp(20px, 5.6vmin, 44px);
     aspect-ratio: 1;
     transform: rotate(var(--piece-rotation)) scale(var(--piece-scale));
     filter: drop-shadow(0 4px 4px rgba(31, 20, 6, 0.3));
