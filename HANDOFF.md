@@ -188,7 +188,7 @@
 
 ### CP-017 — Responsive 3D prosperity treasure physics
 
-- Status: implemented and validated; local checkpoint commit pending.
+- Status: implemented, validated, and committed locally.
 - Objective: replace the flat falling PNG animation with responsive 3D gold coins and faceted gemstones that follow normal Earth gravity, collide, bounce, roll, and remain as a bounded treasure pile at the bottom of the viewport.
 - Branch/baseline: `feature/prosperity-coins` at `9a100e2`; user-owned `Template-earn/qrcode.jpeg` remains untracked and outside scope.
 - Implementation profile: production-shaped vanilla browser PWA; transparent WebGL overlay; local ESM dependencies; no backend, database, queue, worker, or WebSocket.
@@ -209,5 +209,6 @@
   - Dependency/security PASS — `npm audit --omit=dev` found 0 vulnerabilities; `npm ls --all` is healthy. No financial/setup data enters rendering or diagnostics, and no external runtime request was introduced; OWASP ASVS L1 browser-facing dependency/source controls applied.
 - Local run: from `/Users/lekshmisyam/Desktop/Ikigai/earn-app`, run `npm install`, then `python3 -m http.server 8765 --bind 127.0.0.1`; open `http://127.0.0.1:8765/index.html`. Validate with `npm test` and `npm run test:browser`. Stop the server with `Ctrl-C`; no database, queue, environment file, credential, or external service is required.
 - Known limitation: final reflectivity and frame rate still merit manual testing on the target Android device/GPU; unsupported WebGL automatically uses the static fallback.
+- Git checkpoint: `ca1a7d9` (`[CP-017] Add realistic 3D prosperity treasure`) on `feature/prosperity-coins`.
 - Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: none within agreed local feature scope.
-- Next: create the local CP-017 Git checkpoint; push/deploy only when explicitly requested, then perform target-device visual review.
+- Next: push/deploy only when explicitly requested, then perform target-device visual review.
