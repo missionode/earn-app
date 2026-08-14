@@ -185,3 +185,29 @@
 - User artwork: the upgraded `assets/icons/namaskar.svg` supplied after CP-015 is preserved and included in this checkpoint.
 - Validation: `static` PASS (favicon SVG structure, all root-page references, cache inclusion, JavaScript syntax, and diff checks); `unit` PASS (`node --test tests/*.test.js`, 19/19).
 - Next: commit, push, and confirm the GitHub Pages build.
+
+### CP-017 — Responsive 3D prosperity treasure physics
+
+- Status: implemented and validated; local checkpoint commit pending.
+- Objective: replace the flat falling PNG animation with responsive 3D gold coins and faceted gemstones that follow normal Earth gravity, collide, bounce, roll, and remain as a bounded treasure pile at the bottom of the viewport.
+- Branch/baseline: `feature/prosperity-coins` at `9a100e2`; user-owned `Template-earn/qrcode.jpeg` remains untracked and outside scope.
+- Implementation profile: production-shaped vanilla browser PWA; transparent WebGL overlay; local ESM dependencies; no backend, database, queue, worker, or WebSocket.
+- Physics decisions: gravity is fixed at `(0, -9.82, 0)` m/s²; release positions vary horizontally and in depth, while initial linear motion follows gravity; natural variation comes from orientation, angular velocity, collision, friction, and restitution. Static floor and viewport walls retain the pile. Sleeping bodies reduce CPU use.
+- Visual/material direction: use procedural true-3D geometry rather than the legacy flat PNG faces. Coins retain realistic cylindrical thickness, raised rims, face detail, and distinct gold, silver, copper, and platinum physically based metals. The gemstone set uses diamond-cut faceting with clear/white diamond plus ruby, emerald, sapphire, amethyst, and warm topaz colourways; transmission, controlled transparency, environment reflections, specular highlights, and restrained bloom-like glints provide shine without obscuring the app.
+- Lighting decision: a compact studio-style environment with key, fill, rim, and ground lighting will make reflections move as bodies rotate. Rendering remains transparent over the existing landing page, with tone mapping and capped pixel ratio for mobile performance.
+- Responsive/performance decisions: world/camera bounds and coin/gem dimensions scale from viewport size; device-pixel ratio and active rigid bodies are capped; oldest pieces are recycled on repeated showers; reduced-motion and unavailable-WebGL clients receive a lightweight fallback.
+- Result: clicking the keyboard-accessible prosperity container now lazily creates a transparent WebGL scene. Procedural coins and gems fall under Earth gravity, tumble in three axes, collide with one another and responsive boundaries, slide down a shallow basin, then remain as a settled treasure pile. Repeated showers retain a device-specific cap and recycle oldest pieces.
+- Materials: coins use gold, silver, copper, and platinum PBR metals with cylindrical thickness, separate raised rims, reflected studio lighting, and bump-mapped ₹ relief. Faceted diamond, ruby, emerald, sapphire, amethyst, and topaz use transparent/transmissive PBR materials with distinct IOR/attenuation, environment reflections, tone mapping, and moving specular highlights.
+- Responsive/accessibility: piece size scales from 24px mobile to 54px desktop; DPR caps are 1.5 mobile/2 elsewhere; body caps are 36/48/64. Reduced-motion or unavailable-WebGL clients receive a static responsive treasure fallback. The ARIA live region reports preparation, active treasure, or fallback state.
+- Dependencies: approved `three@0.185.1`, `cannon-es@0.20.0`, and development-only `@playwright/test@1.62.0` are exact-lockfile pinned. Three and cannon runtime modules are vendored locally for offline use; no runtime CDN is required. Vendor SHA-256: Three module `86bcee...beb6`, Three core `05b260...fa90`, cannon-es `f0700...d37c`.
+- Cache checkpoint: `earn-app-v27`; obsolete flat coin/jewel PNG cache entries were removed, while their source files remain preserved.
+- Validation:
+  - `static` PASS — JavaScript/MJS syntax, dependency import, service-worker assets, and `git diff --check`.
+  - `unit` PASS — `npm test` (25/25), including Earth gravity, responsive tiers, bounded showers, materials, boundaries, offline modules, and exact dependencies.
+  - `runtime` PASS — temporary Python server on `127.0.0.1:8765` returned HTTP 200 for the page and all 3D modules.
+  - `browser` PASS — Playwright `1.62.0`, headless Chromium, zero retries: mobile `390x844`, tablet `768x1024`, desktop `1440x900` (3/3). Each scene loaded without page errors, rendered all ten material variants, stayed within its device cap, placed at least 90% of bodies in the central basin, and reached zero awake bodies. Temporary screenshots were visually inspected and removed.
+  - Dependency/security PASS — `npm audit --omit=dev` found 0 vulnerabilities; `npm ls --all` is healthy. No financial/setup data enters rendering or diagnostics, and no external runtime request was introduced; OWASP ASVS L1 browser-facing dependency/source controls applied.
+- Local run: from `/Users/lekshmisyam/Desktop/Ikigai/earn-app`, run `npm install`, then `python3 -m http.server 8765 --bind 127.0.0.1`; open `http://127.0.0.1:8765/index.html`. Validate with `npm test` and `npm run test:browser`. Stop the server with `Ctrl-C`; no database, queue, environment file, credential, or external service is required.
+- Known limitation: final reflectivity and frame rate still merit manual testing on the target Android device/GPU; unsupported WebGL automatically uses the static fallback.
+- Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: none within agreed local feature scope.
+- Next: create the local CP-017 Git checkpoint; push/deploy only when explicitly requested, then perform target-device visual review.

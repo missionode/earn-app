@@ -1,0 +1,17 @@
+{
+  "name": "earn-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local-first Earn PWA",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "test:browser": "playwright test"
+  },
+  "dependencies": {
+    "cannon-es": "0.20.0",
+    "three": "0.185.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.62.0"
+  }
+}

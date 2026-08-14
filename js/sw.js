@@ -1,4 +1,4 @@
-const CACHE_NAME = 'earn-app-v26';
+const CACHE_NAME = 'earn-app-v27';
 const urlsToCache = [
     '../',
     '../index.html',
@@ -43,6 +43,10 @@ const urlsToCache = [
     '../js/reset.js',
     '../js/report.js',
     '../js/prosperity.js',
+    '../js/prosperity-3d.mjs',
+    '../js/vendor/three.module.min.mjs',
+    '../js/vendor/three.core.min.js',
+    '../js/vendor/cannon-es.mjs',
     '../js/sw.js',
 
     // Images
@@ -57,45 +61,6 @@ const urlsToCache = [
 
     // Sounds
     '../assets/sounds/coin_drop.mp3',
-
-    // Coins
-    '../assets/coins/copper_coin_.png',
-    '../assets/coins/gold_coin_1.png',
-    '../assets/coins/gold_coin_2.png',
-    '../assets/coins/gold_coin_3.png',
-    '../assets/coins/gold_coin_4.png',
-    '../assets/coins/gold_coin_5.png',
-    '../assets/coins/gold_coin_6.png',
-    '../assets/coins/gold_coin_7.png',
-    '../assets/coins/gold_coin_8.png',
-    '../assets/coins/gold_coin_.png',
-    '../assets/coins/platinum_coin_.png',
-    '../assets/coins/silver_coin_.png',
-    '../assets/coins/jewel_1_.png',
-    '../assets/coins/jewel_2_.png',
-    '../assets/coins/jewel_3_.png',
-    '../assets/coins/jewel_4_.png',
-    '../assets/coins/jewel_5_.png',
-    '../assets/coins/jewel_6_.png',
-    '../assets/coins/jewel_7_.png',
-    '../assets/coins/jewel_8_.png',
-    '../assets/coins/jewel_9_.png',
-    '../assets/coins/jewel_10_.png',
-    '../assets/coins/jewel_11_.png',
-    '../assets/coins/jewel_12_.png',
-    '../assets/coins/jewel_13_.png',
-    '../assets/coins/jewel_14_.png',
-    '../assets/coins/jewel_15_.png',
-    '../assets/coins/jewel_16_.png',
-    '../assets/coins/jewel_nav_1_.png',
-    '../assets/coins/jewel_nav_2_.png',
-    '../assets/coins/jewel_nav_3_.png',
-    '../assets/coins/jewel_nav_4_.png',
-    '../assets/coins/jewel_nav_5_.png',
-    '../assets/coins/jewel_nav_6_.png',
-    '../assets/coins/jewel_nav_7_.png',
-    '../assets/coins/jewel_nav_8_.png',
-    '../assets/coins/jewel_nav_9_.png',
 
     // Icons
     '../assets/icons/Audit.svg',
