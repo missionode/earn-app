@@ -215,7 +215,7 @@
 
 ### CP-018 — Progressive prosperity inventory and brilliant-cut gems
 
-- Status: implemented and validated locally.
+- Status: implemented, validated, and committed locally.
 - Objective: let the daily prosperity inventory (460 on 2026-08-14, increasing by one each day) accumulate through repeated, non-repetitive showers instead of replacing earlier pieces; reduce object scale; improve diamond realism; and ensure celebration audio ends with the active effect.
 - Progressive model: each tap releases only the remaining inventory, capped at 24 mobile, 32 tablet, or 40 desktop pieces. Settled transforms are saved under `earn.prosperityTreasure.v1`; reloads restore the collected pile, and a future day's additional inventory remains available for the next tap.
 - Performance model: only the newest batch uses Cannon rigid bodies. When it settles, bodies are removed and all retained coins/gems are rebuilt as material-grouped Three.js instanced meshes. This permits the visible pile to approach the complete daily count without hundreds of continuously simulated bodies or unbounded draw calls.
@@ -230,5 +230,6 @@
   - `browser` PASS — Playwright Chromium mobile `390x844`, tablet `768x1024`, and desktop `1440x900` (3/3). Two consecutive batches per viewport increased retained/visible counts, stayed inside active-body limits, ended with zero pending/awake bodies, and produced no page errors.
   - `visual` PASS — final mobile, tablet, and desktop screenshots inspected: pieces are materially smaller, faceted materials remain legible, and settled batches form bottom treasure piles without suspended outliers.
 - Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
+- Git checkpoint: `0e04eeb` (`[CP-018] Add progressive prosperity treasure`) on `feature/prosperity-coins`.
 - Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device sound/material review.
-- Next: commit locally under the Loop workflow. Push/deploy only when explicitly requested.
+- Next: push/deploy only when explicitly requested, then review sound and material response on the target Android device/GPU.
