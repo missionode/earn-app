@@ -98,7 +98,7 @@ test('landing page exposes an accessible prosperity trigger and offline 3D modul
   assert.match(page, /class="prosperity-container" role="button" tabindex="0"/);
   assert.match(page, /id="dailyCounter"[^>]+aria-live="polite"[^>]+aria-atomic="true"/);
   assert.doesNotMatch(page, /id="prosperityStatus"/);
-  assert.match(serviceWorker, /earn-app-v39/);
+  assert.match(serviceWorker, /earn-app-v40/);
   assert.match(serviceWorker, /daily-counter\.js/);
   assert.match(serviceWorker, /prosperity-celebration\.js/);
   assert.match(serviceWorker, /prosperity-3d\.mjs/);
@@ -129,7 +129,10 @@ test('successful income celebrations release the complete daily counter', () => 
   assert.match(scene, /const spawnInterval = releaseAll \? 8 : 72/);
   assert.match(celebration, /releaseAll: true/);
   assert.match(celebration, /sound\.loop = true/);
+  assert.match(celebration, /onVisuallySettled: stopSound/);
   assert.match(celebration, /HARD_SETTLEMENT_GRACE_MS = 25000/);
+  assert.match(scene, /this\.visualSettleFrames >= 24/);
+  assert.match(scene, /visuallyMovingBodies <= visualMotionAllowance/);
 });
 
 test('3D dependencies are pinned exactly and have no transitive packages', () => {

@@ -4,15 +4,21 @@
 
     async function play({container, count, onComplete}) {
         let sound = null;
+        let soundStopped = false;
+        const stopSound = () => {
+            if (soundStopped) return;
+            soundStopped = true;
+            if (sound) {
+                sound.pause();
+                sound.currentTime = 0;
+            }
+        };
         const finish = (() => {
             let finished = false;
             return () => {
                 if (finished) return;
                 finished = true;
-                if (sound) {
-                    sound.pause();
-                    sound.currentTime = 0;
-                }
+                stopSound();
                 onComplete();
             };
         })();
@@ -38,6 +44,7 @@
             startProsperityShower(container, {
                 availableCount: pieceCount,
                 releaseAll: true,
+                onVisuallySettled: stopSound,
                 onSettled: () => {
                     global.clearTimeout(fallbackTimer);
                     finish();

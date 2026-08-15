@@ -1,4 +1,4 @@
-const CACHE_NAME = 'earn-app-v39';
+const CACHE_NAME = 'earn-app-v40';
 const urlsToCache = [
     '../',
     '../index.html',
@@ -34,13 +34,13 @@ const urlsToCache = [
     '../js/data.js',
     '../js/index.js',
     '../js/daily-counter.js',
-    '../js/daily-counter.js?v=39',
+    '../js/daily-counter.js?v=40',
     '../js/opening-balance.js',
     '../js/splash.js',
     '../js/receive.js',
-    '../js/receive.js?v=39',
+    '../js/receive.js?v=40',
     '../js/receive-qr.js',
-    '../js/receive-qr.js?v=39',
+    '../js/receive-qr.js?v=40',
     '../js/send.js',
     '../js/transactions.js',
     '../js/upi.js',
@@ -49,7 +49,7 @@ const urlsToCache = [
     '../js/report.js',
     '../js/prosperity.js',
     '../js/prosperity-celebration.js',
-    '../js/prosperity-celebration.js?v=39',
+    '../js/prosperity-celebration.js?v=40',
     '../js/prosperity-3d.mjs',
     '../js/vendor/three.module.min.mjs',
     '../js/vendor/three.core.min.js',

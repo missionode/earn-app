@@ -441,3 +441,17 @@
 - Git checkpoint: `b0723c2` (`[CP-029] Sustain income celebration sound`) on `feature/prosperity-coins`.
 - Progress: 100% implementation and automated/runtime validation complete | Confidence: high | Main remaining scope: listen through one complete target-device shower and confirm the loop transition feels natural.
 - Next: push/deploy only when explicitly requested, refresh the installed PWA to v39, then test Add Income and QR `Recieved Payment` from Lite.
+
+### CP-030 — Stop celebration audio at visual settlement
+
+- Status: implemented and validated locally.
+- Objective: stop the looped prosperity sound when the visible shower settles rather than letting it continue through the later redirect/physics-cleanup interval.
+- Settlement signal: the 3D engine now tracks visibly moving bodies separately from Cannon's stricter awake-body state. After all pieces have spawned, visual settlement requires 24 consecutive frames with no more than 1% of bodies (minimum allowance two) moving faster than the restrained linear/angular thresholds. This avoids sound continuing because of a few imperceptibly awake/jittering rigid bodies.
+- Lifecycle separation: `startProsperityShower` accepts a dedicated `onVisuallySettled` callback. The celebration uses it only to stop/reset the looping audio; the existing `onSettled` callback still clears the safety timer and performs navigation. Final settlement also invokes the visual callback as an idempotent fallback.
+- Cache checkpoint: receive and QR page script URLs advance to `?v=40`; service-worker cache advances to `earn-app-v40` with matching versioned assets.
+- Validation: JavaScript/MJS syntax PASS, `git diff --check` PASS, and `npm test` PASS (35/35), including explicit visual-settlement callback, stable-frame threshold, looped audio, and v40 cache assertions.
+- Browser status: no connected browser backend is available in this session, so target-device audio timing remains the final experiential check.
+- Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
+- Git checkpoint: pending on `feature/prosperity-coins`.
+- Progress: 100% implementation and automated validation complete | Confidence: high | Main remaining scope: confirm the perceived stop point on the target phone.
+- Next: push/deploy only when explicitly requested, refresh to v40, and compare sound stop against the final visibly moving pieces.

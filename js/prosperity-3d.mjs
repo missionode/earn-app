@@ -210,6 +210,8 @@ class ProsperityExperience {
         this.batchBodies = new Set();
         this.batchActive = false;
         this.onSettled = null;
+        this.onVisuallySettled = null;
+        this.visualSettleFrames = 0;
         this.config = getResponsiveProsperityConfig(
             window.innerWidth,
             window.innerHeight,
@@ -692,7 +694,7 @@ class ProsperityExperience {
         this.startAnimation();
     }
 
-    shower(availableCount, onSettled, releaseAll = false) {
+    shower(availableCount, onSettled, releaseAll = false, onVisuallySettled) {
         this.createElementObstacles();
         const committedCount = this.entries.length + this.spawnTimers.size;
         const remainingCount = Math.max(0, availableCount - committedCount);
@@ -709,6 +711,8 @@ class ProsperityExperience {
             this.batchBodies.clear();
         }
         this.onSettled = onSettled;
+        this.onVisuallySettled = onVisuallySettled;
+        this.visualSettleFrames = 0;
         const now = performance.now();
         const spawnInterval = releaseAll ? 8 : 72;
         const spawnDuration = Math.max(0, pieceCount - 1) * spawnInterval;
@@ -735,6 +739,9 @@ class ProsperityExperience {
         this.batchActive = false;
         this.batchBodies.clear();
         this.updateCountDiagnostics();
+        const visualCallback = this.onVisuallySettled;
+        this.onVisuallySettled = null;
+        visualCallback?.(this.entries.length);
         const callback = this.onSettled;
         this.onSettled = null;
         callback?.(this.entries.length);
@@ -801,6 +808,7 @@ class ProsperityExperience {
         this.lastFrameTime = time;
         this.world.step(1 / 60, delta, 3);
         let awakeBodies = 0;
+        let visuallyMovingBodies = 0;
         let elementRestingBodies = 0;
         let maximumHorizontalRatio = 0;
         const horizontalRatios = [];
@@ -824,6 +832,10 @@ class ProsperityExperience {
             mesh.quaternion.copy(body.interpolatedQuaternion);
             if (body.sleepState !== CANNON.Body.SLEEPING) {
                 awakeBodies += 1;
+                if (body.velocity.length() > 0.7 ||
+                    body.angularVelocity.length() > 1.4) {
+                    visuallyMovingBodies += 1;
+                }
             }
             maximumHorizontalRatio = Math.max(
                 maximumHorizontalRatio,
@@ -834,10 +846,28 @@ class ProsperityExperience {
         horizontalRatios.sort((first, second) => first - second);
         const percentileIndex = Math.max(0, Math.ceil(horizontalRatios.length * 0.9) - 1);
         this.renderer.domElement.dataset.awakeBodies = String(awakeBodies);
+        this.renderer.domElement.dataset.visuallyMovingBodies =
+            String(visuallyMovingBodies);
         this.renderer.domElement.dataset.elementRestingBodies = String(elementRestingBodies);
         this.renderer.domElement.dataset.maximumHorizontalRatio = maximumHorizontalRatio.toFixed(3);
         this.renderer.domElement.dataset.pile90HorizontalRatio = (horizontalRatios[percentileIndex] || 0).toFixed(3);
         this.render();
+
+        const visualMotionAllowance = Math.max(
+            2,
+            Math.ceil(this.entries.length * 0.01),
+        );
+        if (this.spawnTimers.size === 0 &&
+            visuallyMovingBodies <= visualMotionAllowance) {
+            this.visualSettleFrames += 1;
+        } else {
+            this.visualSettleFrames = 0;
+        }
+        if (this.visualSettleFrames >= 24 && this.onVisuallySettled) {
+            const visualCallback = this.onVisuallySettled;
+            this.onVisuallySettled = null;
+            visualCallback(this.entries.length);
+        }
 
         if (awakeBodies > 0 || this.spawnTimers.size > 0) {
             this.frameId = requestAnimationFrame((nextTime) => this.animate(nextTime));
@@ -856,6 +886,7 @@ class ProsperityExperience {
 export function startProsperityShower(container, {
     availableCount,
     onSettled,
+    onVisuallySettled,
     releaseAll = false,
 } = {}) {
     let experience = EXPERIENCE_BY_CONTAINER.get(container);
@@ -863,7 +894,12 @@ export function startProsperityShower(container, {
         experience = new ProsperityExperience(container);
         EXPERIENCE_BY_CONTAINER.set(container, experience);
     }
-    const releasedCount = experience.shower(availableCount, onSettled, releaseAll);
+    const releasedCount = experience.shower(
+        availableCount,
+        onSettled,
+        releaseAll,
+        onVisuallySettled,
+    );
     return {
         experience,
         releasedCount,
