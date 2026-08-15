@@ -324,6 +324,6 @@
   - `responsive browser` PASS — Playwright Chromium mobile `390x844`, tablet `768x1024`, desktop `1440x900`, and reload-reset behavior (4/4). Rapid batches spread beyond the former central heap, remain within the container, finish pending timers, settle to zero awake bodies, and produce no page errors.
   - `visual` PASS — final desktop capture inspected: varied coins and gemstones reach both sides and near-corner regions while the main treasure remains naturally distributed along the raised flat floor, with no uniform placement or frozen airborne pieces.
 - Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
-- Git checkpoint: pending (`[CP-023] Add contained bounce distribution`) on `feature/prosperity-coins`.
+- Git checkpoint: `7961d02` (`[CP-023] Add contained bounce distribution`) on `feature/prosperity-coins`.
 - Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device feel/performance review at high accumulated counts.
 - Next: push/deploy only when explicitly requested, then review bounce energy and corner distribution on the target device.
