@@ -293,7 +293,7 @@
 
 ### CP-022 — Responsive rapid clicks, raised floor, and original sound
 
-- Status: implemented and validated locally.
+- Status: implemented, validated, and committed locally.
 - Objective: ensure every prosperity click responds even while an earlier batch is spawning/falling, raise the flat platform slightly, and replace the synthesized whoosh with the earlier simple coin sound.
 - Click diagnosis/fix: the controller-level `isShowerActive` early return and engine-level active/spawn guard caused clicks during the 16–24 second physics cycle to be ignored. Both locks are removed. Every click now calls the shower engine immediately, including during module loading, active timers, or falling bodies.
 - Count safety: the engine calculates committed inventory as `entries.length + spawnTimers.size` before every click. A rapid second click therefore schedules another responsive batch immediately while pending timers count toward the 461 limit, preventing duplicate or excess objects. Additional clicks can keep filling the same live container until no inventory remains.
@@ -306,5 +306,6 @@
   - `responsive browser` PASS — mobile, tablet, and desktop each received a second click after only five first-batch bodies existed, grew beyond the first batch size, completed all pending timers, and settled to zero awake bodies. Reload reset also passed. The former basin-era 70% spread assertion was relaxed to 80% for the flat container; mobile passed on rerun.
   - `visual` PASS — raised-floor screenshots inspected at all three viewports; two rapid batches retain varied natural piles with the platform visibly higher and no uniform placement.
 - Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
+- Git checkpoint: `bf664a7` (`[CP-022] Support rapid prosperity drops`) on `feature/prosperity-coins`.
 - Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device audio preference and repeated-tap feel.
-- Next: commit locally under the Loop workflow. Push/deploy only when explicitly requested.
+- Next: push/deploy only when explicitly requested, then review audio and repeated-tap feel on the target device.
