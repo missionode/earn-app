@@ -501,6 +501,6 @@
 - Validation: `node --check js/prosperity.js` PASS, `git diff --check` PASS, and `npm test` PASS (38/38), including active-click guard, accessible disabled state, settlement ownership, looping audio, and v43 cache assertions.
 - Browser status: no connected browser backend is available in this session; the updated browser regression is ready for the next connected run and target-device pacing remains the experiential check.
 - Scope protection: user-owned QR artwork remains untouched and excluded.
-- Git checkpoint: pending on `main`.
+- Git checkpoint: `52cdeda` (`[CP-033] Serialize prosperity showers`) on `main`.
 - Progress: 100% implementation and automated validation complete | Confidence: high | Main remaining scope: target-device confirmation that the next click becomes available at a comfortable moment.
 - Next: push/deploy only when explicitly requested, refresh to v43, then try repeated taps during a batch and verify only the first is accepted.
