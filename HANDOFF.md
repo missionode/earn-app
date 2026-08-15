@@ -363,6 +363,6 @@
   - `browser` PASS — complete Playwright Chromium suite (5/5): Opening Balance setup/settings plus all mobile/tablet/desktop prosperity and reload checks. The focused opening-balance test also passes at `390x844`, proving first setup at ₹1,250.50, Settings update to ₹1,800, one retained transaction, and synchronized Total Income/lotus Income displays.
   - `visual` PASS — mobile `390x844` setup capture inspected: the new field is clearly positioned below Service Charge, helper copy wraps cleanly, ₹0 default is visible, and Start Earn remains reachable.
 - Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
-- Git checkpoint: pending (`[CP-025] Add opening balance income`) on `feature/prosperity-coins`.
+- Git checkpoint: `40c40d3` (`[CP-025] Add opening balance income`) on `feature/prosperity-coins`.
 - Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device review.
 - Next: push/deploy only when explicitly requested, then confirm the installed PWA refreshes to cache `earn-app-v35` and review setup/settings on the target device.
