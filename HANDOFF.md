@@ -347,3 +347,22 @@
 - Git checkpoint: `7006f17` (`[CP-024] Add live page collision path`) on `feature/prosperity-coins`.
 - Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device motion/performance review with repeated high-count batches.
 - Next: push/deploy only when explicitly requested, then review the live collision feel on the target device.
+
+### CP-025 — Opening balance income setup and synchronization
+
+- Status: implemented, validated, and committed locally.
+- Objective: let a user enter an existing opening income during first-time setup or later through the same Settings form, include it in the lotus Income total, and show it as a normal successful income transaction.
+- Setup/Settings UI: a responsive numeric `Opening balance (₹)` field now appears immediately below Standard Service Charge. It accepts ₹0 or more, defaults to ₹0 for new/legacy profiles, restores the saved amount when Settings reopens, and explains that edits adjust one Opening balance transaction. The full-height setup panel now scrolls vertically on small devices so all fields and the submit button remain reachable.
+- Storage model: the profile amount is saved under backward-compatible localStorage key `earn_openingBalance`. Existing users are not forced through setup merely because that new optional key is absent.
+- Transaction model: a shared helper maintains one stable `earn-opening-balance` transaction with type `income`, category `cash`, description `Opening balance`, and status `success`. A positive setup value creates it; later edits update the same transaction without duplication while preserving its original date/time; changing the amount to ₹0 removes only that opening transaction.
+- Income calculation: because the opening balance is a successful income transaction, the existing summary path automatically includes it in both Total Income and `🪷 … ₹`, as well as the default Income transaction table and filters.
+- Transaction-editor consistency: editing the opening row's amount from All Transactions updates `earn_openingBalance` through the same helper; deleting that row resets the stored opening balance to ₹0. Canonical type/category/description/status remain protected.
+- Reset/offline behavior: factory reset removes `earn_openingBalance`, the warning text now names it, `opening-balance.js` is precached, and the service-worker cache advances to `earn-app-v35`.
+- Validation:
+  - `static/unit` PASS — JavaScript syntax, `git diff --check`, and `npm test` (31/31). Tests cover creation, in-place update/no duplication, zero removal with unrelated-income preservation, invalid/negative rejection, page integration, editor synchronization, and offline caching.
+  - `browser` PASS — complete Playwright Chromium suite (5/5): Opening Balance setup/settings plus all mobile/tablet/desktop prosperity and reload checks. The focused opening-balance test also passes at `390x844`, proving first setup at ₹1,250.50, Settings update to ₹1,800, one retained transaction, and synchronized Total Income/lotus Income displays.
+  - `visual` PASS — mobile `390x844` setup capture inspected: the new field is clearly positioned below Service Charge, helper copy wraps cleanly, ₹0 default is visible, and Start Earn remains reachable.
+- Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
+- Git checkpoint: pending (`[CP-025] Add opening balance income`) on `feature/prosperity-coins`.
+- Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device review.
+- Next: push/deploy only when explicitly requested, then confirm the installed PWA refreshes to cache `earn-app-v35` and review setup/settings on the target device.

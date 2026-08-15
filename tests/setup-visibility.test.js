@@ -13,5 +13,9 @@ test('Quick Scan launcher is absent from the income-focused landing page', () =>
     /quickScanLink\.hidden = true/,
   );
   assert.match(script, /setLocalStorageItem\('earn_serviceCharge'/);
+  assert.match(html, /id="openingBalance"[^>]+min="0"/);
+  assert.match(script, /EarnOpeningBalance\.syncOpeningBalance\(localStorage, openingBalance\)/);
+  assert.match(script, /openingBalanceInput\.value = getLocalStorageItem\('earn_openingBalance'\) \|\| '0'/);
+  assert.match(styles, /#upiSetupPopup\s*{[^}]*overflow-y: auto;/s);
   assert.match(styles, /\.quickscan\[hidden\]\s*{\s*display: none;/);
 });

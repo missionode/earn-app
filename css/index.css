@@ -488,8 +488,11 @@
 
 #upiSetupPopup {
     display: none;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     height: 100vh;
+    height: 100dvh;
+    overscroll-behavior: contain;
 }
 
 .bodymass {

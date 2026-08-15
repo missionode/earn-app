@@ -19,9 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const upiIdInput = document.getElementById('upiId');
     const usernameInput = document.getElementById('username');
     const serviceChargeInput = document.getElementById('serviceCharge');
+    const openingBalanceInput = document.getElementById('openingBalance');
     const upiIdError = document.getElementById('upiIdError');
     const usernameError = document.getElementById('usernameError');
     const serviceChargeError = document.getElementById('serviceChargeError');
+    const openingBalanceError = document.getElementById('openingBalanceError');
     const closeUpiSetupButton = document.getElementById('closeUpiSetup'); // Declared once here!
 
     // Main action buttons
@@ -236,20 +238,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const username = usernameInput ? usernameInput.value.trim() : '';
         const serviceCharge = serviceChargeInput ?
             parseFloat(serviceChargeInput.value) : NaN;
+        const openingBalance = openingBalanceInput ?
+            parseFloat(openingBalanceInput.value) : NaN;
 
         const upiIdErrorMessage = validateUPIId(upiId);
         const serviceChargeErrorMessage = Number.isFinite(serviceCharge) &&
             serviceCharge > 0 ? '' : 'Enter a service charge greater than ₹0.';
+        const openingBalanceErrorMessage = Number.isFinite(openingBalance) &&
+            openingBalance >= 0 ? '' : 'Enter an opening balance of ₹0 or more.';
         if (upiIdError) upiIdError.textContent = upiIdErrorMessage;
         if (usernameError) usernameError.textContent = username ? '' : 'Please enter your name.';
         if (serviceChargeError) {
             serviceChargeError.textContent = serviceChargeErrorMessage;
         }
+        if (openingBalanceError) {
+            openingBalanceError.textContent = openingBalanceErrorMessage;
+        }
 
-        if (!upiIdErrorMessage && username && !serviceChargeErrorMessage) {
+        if (!upiIdErrorMessage && username && !serviceChargeErrorMessage && !openingBalanceErrorMessage) {
             setLocalStorageItem('earn_upiId', upiId);
             setLocalStorageItem('earn_username', username);
             setLocalStorageItem('earn_serviceCharge', serviceCharge.toString());
+            EarnOpeningBalance.syncOpeningBalance(localStorage, openingBalance);
             syncQuickScanVisibility();
             hideUPISetupPopup();
             loadTransactions();
@@ -367,6 +377,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (usernameInput) usernameInput.value = getLocalStorageItem('earn_username') || '';
     if (serviceChargeInput) {
         serviceChargeInput.value = getLocalStorageItem('earn_serviceCharge') || '';
+    }
+    if (openingBalanceInput) {
+        openingBalanceInput.value = getLocalStorageItem('earn_openingBalance') || '0';
     }
 
     syncQuickScanVisibility();

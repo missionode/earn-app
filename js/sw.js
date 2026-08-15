@@ -1,4 +1,4 @@
-const CACHE_NAME = 'earn-app-v34';
+const CACHE_NAME = 'earn-app-v35';
 const urlsToCache = [
     '../',
     '../index.html',
@@ -33,6 +33,7 @@ const urlsToCache = [
     '../js/app.js',
     '../js/data.js',
     '../js/index.js',
+    '../js/opening-balance.js',
     '../js/splash.js',
     '../js/receive.js',
     '../js/receive-qr.js',

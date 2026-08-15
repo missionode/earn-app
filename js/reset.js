@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('earn_upiId');
         localStorage.removeItem('earn_username');
         localStorage.removeItem('earn_serviceCharge');
+        localStorage.removeItem('earn_openingBalance');
 
         // Display confirmation message
         resetMessage.textContent = 'App data has been reset.';

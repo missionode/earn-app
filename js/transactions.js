@@ -196,6 +196,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const saveEditedTransaction = () => {
         if (editingTransactionId) {
+            if (editingTransactionId === EarnOpeningBalance.TRANSACTION_ID) {
+                EarnOpeningBalance.syncOpeningBalance(
+                    localStorage,
+                    parseFloat(editAmountInput.value),
+                );
+                loadAllTransactions();
+                closeEditPopup();
+                return;
+            }
             const updatedTransactions = allTransactions.map(transaction => {
                 if (transaction.id === editingTransactionId) {
                     return {
@@ -225,6 +234,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const deleteTransaction = (transactionIdToDelete) => {
         if (confirm('Are you sure you want to delete this transaction?')) {
+            if (transactionIdToDelete === EarnOpeningBalance.TRANSACTION_ID) {
+                EarnOpeningBalance.syncOpeningBalance(localStorage, 0);
+                loadAllTransactions();
+                return;
+            }
             const updatedTransactions = allTransactions.filter(transaction => transaction.id !== transactionIdToDelete);
             setLocalStorageItem('earn_transactions', JSON.stringify(updatedTransactions));
             loadAllTransactions();

@@ -1,7 +1,7 @@
 # Earn Development Safety
 
 - Preserve existing browser data and maintain backward-compatible localStorage keys.
-- Never place UPI IDs, payee names, transaction data, or service charges in source, logs, screenshots, or test artifacts.
+- Never place UPI IDs, payee names, transaction data, service charges, or opening balances in source, logs, screenshots, or test artifacts.
 - Treat URL parameters as untrusted. Only allow explicitly approved local return routes.
 - Do not claim payment-provider verification; the receive flow records user-confirmed payments locally.
 - Keep third-party QR/PDF dependencies HTTPS-only and document their offline limitations.
