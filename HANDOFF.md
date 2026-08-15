@@ -255,7 +255,7 @@
 
 ### CP-020 — Session-only natural physics treasure
 
-- Status: implemented and validated locally.
+- Status: implemented, validated, and committed locally.
 - Objective: remove remembered and deterministic pile behavior so prosperity feels like a relaxing physics-based game: every visit starts empty, every click adds to the current session, and existing pieces move only through physical contact.
 - State decision: all prosperity local-storage reads/writes are removed. Reloading or reopening the page starts a fresh empty treasure; no previous pile is restored or reflowed. Legacy storage values, if present from an earlier build, are ignored.
 - Physics decision: settled coins and gems remain as sleeping Cannon rigid bodies with their original Three.js meshes and transforms. A new batch collides directly with them and may naturally wake, shift, roll, or tumble earlier pieces. No static instancing, generated slot, transform remapping, collision proxy, or synthetic layer placement remains.
@@ -268,5 +268,6 @@
   - `desktop browser/visual` PASS — two consecutive physics batches settle with retained bodies, all ten materials, and no page errors; inspected screenshot shows a compact irregular mound with no uniform structure or suspended pieces.
   - `responsive browser` PASS — Playwright Chromium mobile `390x844`, tablet `768x1024`, and desktop `1440x900`, plus the reload-reset case (4/4). Every viewport retains more bodies after the second click, respects per-batch limits, reaches zero awake bodies, and produces no browser errors. Reloading creates a fresh first-batch count rather than restoring the prior session.
 - Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
+- Git checkpoint: `e633267` (`[CP-020] Use session-only natural pile physics`) on `feature/prosperity-coins`.
 - Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device feel/performance review at very high session counts.
-- Next: commit locally under the Loop workflow. Push/deploy only when explicitly requested.
+- Next: push/deploy only when explicitly requested, then review the relaxing motion and high-count performance on the target device.
