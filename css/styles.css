@@ -386,6 +386,15 @@ body.hide-transaction-details #transactionsTable td:nth-child(7)  /* Status */
     opacity: 0.72;
 }
 
+.prosperity-container.is-showering {
+    cursor: wait;
+    opacity: 0.78;
+}
+
+.prosperity-container.is-showering:active {
+    transform: none;
+}
+
 #coinRainTrigger {
     width: clamp(28px, 6.4vw, 38px);
     height: clamp(28px, 6.4vw, 38px);

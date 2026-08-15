@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const coinDropSound = new Audio('assets/sounds/coin_drop.mp3');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let experiencePromise;
+    let showerActive = false;
+    let showerSequence = 0;
 
     if (!dailyCounterElement || !prosperityTrigger || !coinRainContainer) {
         return;
@@ -34,6 +36,19 @@ document.addEventListener('DOMContentLoaded', () => {
         coinDropSound.play().catch(() => {});
     }
 
+    function setShowerActive(active) {
+        showerActive = active;
+        prosperityTrigger.classList.toggle('is-showering', active);
+        prosperityTrigger.setAttribute('aria-disabled', String(active));
+        prosperityTrigger.setAttribute('aria-busy', String(active));
+    }
+
+    function finishShower(showerId) {
+        if (showerId !== showerSequence) return;
+        stopCoinDropSound();
+        setShowerActive(false);
+    }
+
     function renderAccessibleTreasure() {
         const metals = ['gold', 'silver', 'copper', 'platinum'];
         const gems = ['diamond', 'ruby', 'emerald', 'sapphire', 'amethyst', 'topaz'];
@@ -59,6 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function startProsperity() {
+        if (showerActive) return;
+
         const count = getDailyCount();
 
         if (reducedMotion.matches) {
@@ -67,6 +84,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         prosperityTrigger.classList.add('is-loading');
+        const showerId = ++showerSequence;
+        setShowerActive(true);
         playCoinDropSound();
 
         try {
@@ -76,20 +95,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = startProsperityShower(coinRainContainer, {
                 availableCount: count,
                 onVisuallySettled: () => {
-                    stopCoinDropSound();
+                    finishShower(showerId);
                 },
                 onSettled: () => {
-                    stopCoinDropSound();
+                    finishShower(showerId);
                 },
             });
             if (result.releasedCount) {
                 showBatchProgress(result.releasedCount, count);
             } else {
-                stopCoinDropSound();
+                finishShower(showerId);
                 showBatchProgress(count, count);
             }
         } catch (error) {
-            stopCoinDropSound();
+            finishShower(showerId);
             console.warn('The 3D prosperity scene is unavailable; using the accessible fallback.');
             renderAccessibleTreasure();
         } finally {
@@ -106,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const dailyCount = getDailyCount();
+    setShowerActive(false);
     dailyCounterElement.textContent = dailyCount;
     dailyCounterElement.setAttribute('aria-label', `${dailyCount} prosperity pieces available today`);
 });

@@ -9,7 +9,7 @@ const viewports = [
 
 for (const viewport of viewports) {
   test(`${viewport.name} renders and settles a responsive 3D treasure pile`, async ({ page }) => {
-    test.setTimeout(70_000);
+    test.setTimeout(180_000);
     const browserErrors = [];
     page.on('pageerror', (error) => browserErrors.push(error.message));
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
@@ -29,6 +29,10 @@ for (const viewport of viewports) {
     await expect(canvas).toHaveAttribute('data-shower-exponent', '1');
     await expect(canvas).toHaveAttribute('data-shower-size', '2');
     await expect(page.locator('#dailyCounter')).toHaveText(/^2\/\d+$/);
+    await expect(page.locator('.prosperity-container')).toHaveAttribute('aria-disabled', 'true');
+    await page.locator('.prosperity-container').dispatchEvent('click');
+    await expect(canvas).toHaveAttribute('data-shower-exponent', '1');
+    await expect(page.locator('.prosperity-container')).toHaveAttribute('aria-disabled', 'false', {timeout: 40000});
 
     const targetPiecePixels = Number(await canvas.getAttribute('data-target-piece-pixels'));
     const bodyLimit = Number(await canvas.getAttribute('data-max-bodies'));
@@ -38,6 +42,7 @@ for (const viewport of viewports) {
       await expect(canvas).toHaveAttribute('data-shower-exponent', String(exponent));
       await expect(canvas).toHaveAttribute('data-shower-size', String(size));
       await expect(page.locator('#dailyCounter')).toHaveText(new RegExp(`^${size}/\\d+$`));
+      await expect(page.locator('.prosperity-container')).toHaveAttribute('aria-disabled', 'false', {timeout: 40000});
     }
     await expect.poll(async () => Number(await canvas.getAttribute('data-body-count')), { timeout: 10_000 })
       .toBe(30);
@@ -72,16 +77,18 @@ for (const viewport of viewports) {
 }
 
 test('a reload starts a fresh relaxing treasure session', async ({ page }) => {
-  test.setTimeout(95_000);
+  test.setTimeout(240_000);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/index.html');
   await page.addStyleTag({ content: '.popup { display: none !important; }' });
   await page.getByRole('button', { name: 'Create a 3D prosperity treasure' }).click();
   let canvas = page.locator('.prosperity-canvas');
   await expect(canvas).toHaveAttribute('data-shower-exponent', '1');
+  await expect(page.locator('.prosperity-container')).toHaveAttribute('aria-disabled', 'false', {timeout: 40000});
   for (const exponent of [2, 3, 4]) {
     await page.getByRole('button', { name: 'Create a 3D prosperity treasure' }).click();
     await expect(canvas).toHaveAttribute('data-shower-exponent', String(exponent));
+    await expect(page.locator('.prosperity-container')).toHaveAttribute('aria-disabled', 'false', {timeout: 40000});
   }
   await expect.poll(async () => Number(await canvas.getAttribute('data-body-count')), { timeout: 10_000 }).toBe(30);
   await expect.poll(async () => Number(await canvas.getAttribute('data-awake-bodies')), { timeout: 40_000 }).toBe(0);
@@ -91,9 +98,11 @@ test('a reload starts a fresh relaxing treasure session', async ({ page }) => {
   await page.getByRole('button', { name: 'Create a 3D prosperity treasure' }).click();
   canvas = page.locator('.prosperity-canvas');
   await expect(canvas).toHaveAttribute('data-shower-exponent', '1');
+  await expect(page.locator('.prosperity-container')).toHaveAttribute('aria-disabled', 'false', {timeout: 40000});
   for (const exponent of [2, 3, 4]) {
     await page.getByRole('button', { name: 'Create a 3D prosperity treasure' }).click();
     await expect(canvas).toHaveAttribute('data-shower-exponent', String(exponent));
+    await expect(page.locator('.prosperity-container')).toHaveAttribute('aria-disabled', 'false', {timeout: 40000});
   }
   await expect.poll(async () => Number(await canvas.getAttribute('data-body-count')), { timeout: 10_000 }).toBe(30);
   await expect.poll(async () => Number(await canvas.getAttribute('data-awake-bodies')), { timeout: 40_000 }).toBe(0);

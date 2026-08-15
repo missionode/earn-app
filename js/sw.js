@@ -1,4 +1,4 @@
-const CACHE_NAME = 'earn-app-v42';
+const CACHE_NAME = 'earn-app-v43';
 const urlsToCache = [
     '../',
     '../index.html',
@@ -51,7 +51,7 @@ const urlsToCache = [
     '../js/reset.js',
     '../js/report.js',
     '../js/prosperity.js',
-    '../js/prosperity.js?v=42',
+    '../js/prosperity.js?v=43',
     '../js/prosperity-celebration.js',
     '../js/prosperity-celebration.js?v=40',
     '../js/prosperity-3d.mjs',

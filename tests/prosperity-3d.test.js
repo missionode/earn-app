@@ -98,7 +98,7 @@ test('landing page exposes an accessible prosperity trigger and offline 3D modul
   assert.match(page, /class="prosperity-container" role="button" tabindex="0"/);
   assert.match(page, /id="dailyCounter"[^>]+aria-live="polite"[^>]+aria-atomic="true"/);
   assert.doesNotMatch(page, /id="prosperityStatus"/);
-  assert.match(serviceWorker, /earn-app-v42/);
+  assert.match(serviceWorker, /earn-app-v43/);
   assert.match(serviceWorker, /daily-counter\.js/);
   assert.match(serviceWorker, /prosperity-celebration\.js/);
   assert.match(serviceWorker, /prosperity-3d\.mjs/);
@@ -116,6 +116,9 @@ test('prosperity controller keeps piles session-only and bounds the original coi
   assert.match(controller, /new Audio\('assets\/sounds\/coin_drop\.mp3'\)/);
   assert.match(controller, /coinDropSound\.loop = true/);
   assert.match(controller, /onVisuallySettled: \(\) =>/);
+  assert.match(controller, /if \(showerActive\) return;/);
+  assert.match(controller, /aria-disabled', String\(active\)/);
+  assert.match(controller, /finishShower\(showerId\)/);
   assert.doesNotMatch(controller, /setTimeout\(stopCoinDropSound/);
   assert.match(controller, /showBatchProgress\(result\.releasedCount, count\)/);
   assert.match(controller, /`\$\{batchCount\}\/\$\{dailyCount\}`/);

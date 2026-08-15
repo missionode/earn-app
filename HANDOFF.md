@@ -487,3 +487,20 @@
 - Git checkpoint: `a023599` (`[CP-032] Sustain landing shower sound`) on `main`.
 - Progress: 100% implementation and automated validation complete | Confidence: high | Main remaining scope: confirm the final shower audio stops at the perceived resting point on the target phone.
 - Next: push/deploy only when explicitly requested, refresh to v42, then play through the complete landing sequence and listen to the final batch.
+
+### CP-033 — One settled prosperity shower per click
+
+- Status: implemented and validated locally.
+- Objective: prevent overlapping landing showers from restarting/stopping the shared audio element or confusing which batch owns the settlement callback.
+- Root cause: the landing trigger accepted unlimited clicks while a prior batch was still spawning/falling. Every click called `stopCoinDropSound()` before replaying the same audio element, and the physics experience stored only the newest settlement callbacks. Rapid clicks could therefore create audible restart gaps and ambiguous completion ownership.
+- Interaction lock: the controller now accepts only one active shower. Further mouse or keyboard activations return immediately until the current batch reaches visual settlement. The trigger gains `aria-disabled=true`, `aria-busy=true`, a restrained waiting cursor/opacity state, and no active press transform while locked; all states reset at settlement, empty inventory, fallback, or error.
+- Callback safety: every accepted shower receives a monotonically increasing ID. Completion callbacks unlock/stop audio only when their ID still matches the current shower, so a stale callback cannot interrupt a newer batch even if underlying rigid bodies finish later.
+- Audio behavior: each accepted batch starts one uninterrupted loop, stops at the existing 24-frame visual-settlement signal, and unlocks the next exponential click at that same perceived resting point. Strict final settlement remains an idempotent fallback.
+- Browser regression update: prosperity scenarios now assert that an immediate second click is ignored at exponent 1, then explicitly wait for `aria-disabled=false` between subsequent 2/4/8/16 batches. Time budgets were expanded for intentionally sequential settlement.
+- Cache checkpoint: `earn-app-v43`; index loads `prosperity.js?v=43`, and the matching versioned controller is precached.
+- Validation: `node --check js/prosperity.js` PASS, `git diff --check` PASS, and `npm test` PASS (38/38), including active-click guard, accessible disabled state, settlement ownership, looping audio, and v43 cache assertions.
+- Browser status: no connected browser backend is available in this session; the updated browser regression is ready for the next connected run and target-device pacing remains the experiential check.
+- Scope protection: user-owned QR artwork remains untouched and excluded.
+- Git checkpoint: pending on `main`.
+- Progress: 100% implementation and automated validation complete | Confidence: high | Main remaining scope: target-device confirmation that the next click becomes available at a comfortable moment.
+- Next: push/deploy only when explicitly requested, refresh to v43, then try repeated taps during a batch and verify only the first is accepted.
