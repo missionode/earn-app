@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const coinDropSound = new Audio('assets/sounds/coin_drop.mp3');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let experiencePromise;
-    let soundStopTimer = null;
 
     if (!dailyCounterElement || !prosperityTrigger || !coinRainContainer) {
         return;
@@ -24,10 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function stopCoinDropSound() {
-        if (soundStopTimer) {
-            window.clearTimeout(soundStopTimer);
-            soundStopTimer = null;
-        }
         coinDropSound.pause();
         coinDropSound.currentTime = 0;
     }
@@ -35,8 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function playCoinDropSound() {
         stopCoinDropSound();
         coinDropSound.volume = 0.72;
+        coinDropSound.loop = true;
         coinDropSound.play().catch(() => {});
-        soundStopTimer = window.setTimeout(stopCoinDropSound, 3200);
     }
 
     function renderAccessibleTreasure() {
@@ -80,6 +75,9 @@ document.addEventListener('DOMContentLoaded', () => {
             coinRainContainer.classList.remove('prosperity-fallback');
             const result = startProsperityShower(coinRainContainer, {
                 availableCount: count,
+                onVisuallySettled: () => {
+                    stopCoinDropSound();
+                },
                 onSettled: () => {
                     stopCoinDropSound();
                 },

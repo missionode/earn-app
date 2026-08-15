@@ -472,3 +472,18 @@
 - Git checkpoint: `fcddacb` (`[CP-031] Accept current UPI handles`) on `main`.
 - Progress: 100% implementation and automated validation complete | Confidence: high | Main remaining scope: target-device setup save using the user's real `@okaxis` VPA.
 - Next: push/deploy only when explicitly requested, refresh to v41, enter the real `@okaxis` address, and generate a low-value QR for device confirmation.
+
+### CP-032 — Settlement-aware landing shower sound
+
+- Status: implemented and validated locally.
+- Objective: restore sound throughout the landing page's large final exponential shower and stop it when the pieces visibly settle.
+- Root cause: the landing controller retained its original fixed `setTimeout(stopCoinDropSound, 3200)`. At the 461 daily count, the final 207-piece batch takes about 14.8 seconds just to spawn at 72ms intervals, so most of that shower ran silently even though receive-page celebrations had already adopted settlement-aware audio.
+- Audio lifecycle: the landing coin sound now loops after each successful user-triggered shower and stops through the 3D engine's `onVisuallySettled` signal. The stricter final `onSettled` callback remains as an idempotent safety stop, and empty/fallback/error branches still stop immediately.
+- Preserved behavior: exponential batches, full-count cap, visual-settlement thresholds, physics, counter progress, reduced-motion fallback, and the original sound asset/volume remain unchanged.
+- Cache checkpoint: `earn-app-v42`; `index.html` references `prosperity.js?v=42`, and both canonical/versioned controller URLs are precached.
+- Validation: `node --check js/prosperity.js` PASS, `git diff --check` PASS, and `npm test` PASS (38/38), including looped landing audio, visual-settlement callback, removal of the fixed cutoff, and v42 cache assertions.
+- Browser status: no connected browser backend is available in this session; target-device listening through the 207-piece final batch remains the experiential check.
+- Scope protection: user-owned QR artwork remains untouched and excluded.
+- Git checkpoint: pending on `main`.
+- Progress: 100% implementation and automated validation complete | Confidence: high | Main remaining scope: confirm the final shower audio stops at the perceived resting point on the target phone.
+- Next: push/deploy only when explicitly requested, refresh to v42, then play through the complete landing sequence and listen to the final batch.
