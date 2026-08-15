@@ -438,6 +438,6 @@
   - `runtime` PASS — a local server on `127.0.0.1:8001` served both Lite pages with v39 script URLs; served celebration code contains `sound.loop = true`; served QR code invokes the celebration and redirects to `index.html` on completion.
   - `browser` BLOCKED — no connected browser backend is available in this session; target-device visual/audio timing remains the final experiential check.
 - Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
-- Git checkpoint: pending on `feature/prosperity-coins`.
+- Git checkpoint: `b0723c2` (`[CP-029] Sustain income celebration sound`) on `feature/prosperity-coins`.
 - Progress: 100% implementation and automated/runtime validation complete | Confidence: high | Main remaining scope: listen through one complete target-device shower and confirm the loop transition feels natural.
 - Next: push/deploy only when explicitly requested, refresh the installed PWA to v39, then test Add Income and QR `Recieved Payment` from Lite.
