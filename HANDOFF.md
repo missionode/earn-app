@@ -421,6 +421,6 @@
   - `runtime` PASS — local HTTP server returned 200 for index, Lite receive, and receive QR pages.
   - `browser` BLOCKED — the browser-control runtime reported no available browser, so interactive animation/navigation and visual checks remain pending on a connected browser or target device.
 - Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
-- Git checkpoint: pending on `feature/prosperity-coins`.
+- Git checkpoint: `b91b0ed` (`[CP-028] Use daily counter for Lite income`) on `feature/prosperity-coins`.
 - Progress: 100% implementation and automated validation complete | Confidence: high | Main remaining scope: target-device visual/performance review of the full 461-piece success shower.
 - Next: push/deploy only when explicitly requested, then verify Lite ₹461 × clients, locked Amount, successful shower timing, and return to Earn on the device.
