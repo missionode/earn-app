@@ -61,10 +61,10 @@ test('3D scene includes realistic metals, transparent gems, reflections and pile
   assert.match(scene, /new CANNON\.Sphere/);
   assert.match(scene, /createBoundaries\(\)/);
   assert.match(scene, /sleepState !== CANNON\.Body\.SLEEPING/);
-  assert.match(scene, /new THREE\.InstancedMesh/);
-  assert.match(scene, /freezeActivePieces\(\)/);
-  assert.match(scene, /updatePileSurface\(\)/);
-  assert.match(scene, /piecesPerLayer: this\.config\.showerSize/);
+  assert.match(scene, /callback\?\.\(this\.entries\.length\)/);
+  assert.match(scene, /this\.batchBodies\.has\(body\)/);
+  assert.doesNotMatch(scene, /new THREE\.InstancedMesh/);
+  assert.doesNotMatch(scene, /getPilePosition|updatePileSurface|staticPieces/);
 });
 
 test('landing page exposes an accessible prosperity trigger and offline 3D modules', () => {
@@ -73,7 +73,7 @@ test('landing page exposes an accessible prosperity trigger and offline 3D modul
 
   assert.match(page, /class="prosperity-container" role="button" tabindex="0"/);
   assert.match(page, /id="prosperityStatus"[^>]+aria-live="polite"/);
-  assert.match(serviceWorker, /earn-app-v29/);
+  assert.match(serviceWorker, /earn-app-v30/);
   assert.match(serviceWorker, /prosperity-3d\.mjs/);
   assert.match(serviceWorker, /three\.module\.min\.mjs/);
   assert.match(serviceWorker, /three\.core\.min\.js/);
@@ -82,11 +82,10 @@ test('landing page exposes an accessible prosperity trigger and offline 3D modul
   assert.doesNotMatch(serviceWorker, /coin_drop\.mp3/);
 });
 
-test('prosperity controller persists progressive batches and synthesizes a bounded magical whoosh', () => {
+test('prosperity controller keeps piles session-only and synthesizes a bounded magical whoosh', () => {
   const controller = fs.readFileSync('js/prosperity.js', 'utf8');
 
-  assert.match(controller, /earn\.prosperityTreasure\.v2/);
-  assert.match(controller, /localStorage\.setItem/);
+  assert.doesNotMatch(controller, /prosperityTreasure|localStorage/);
   assert.match(controller, /beginMagicalWhoosh/);
   assert.match(controller, /context\.createBiquadFilter/);
   assert.match(controller, /duration = 3\.1/);

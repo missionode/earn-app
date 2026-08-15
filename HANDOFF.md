@@ -252,3 +252,21 @@
 - Git checkpoint: `43b4052` (`[CP-019] Build layered prosperity mound`) on `feature/prosperity-coins`.
 - Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device feel review.
 - Next: push/deploy only when explicitly requested, then review the completed mound and rising-layer motion on the target device.
+
+### CP-020 — Session-only natural physics treasure
+
+- Status: implemented and validated locally.
+- Objective: remove remembered and deterministic pile behavior so prosperity feels like a relaxing physics-based game: every visit starts empty, every click adds to the current session, and existing pieces move only through physical contact.
+- State decision: all prosperity local-storage reads/writes are removed. Reloading or reopening the page starts a fresh empty treasure; no previous pile is restored or reflowed. Legacy storage values, if present from an earlier build, are ignored.
+- Physics decision: settled coins and gems remain as sleeping Cannon rigid bodies with their original Three.js meshes and transforms. A new batch collides directly with them and may naturally wake, shift, roll, or tumble earlier pieces. No static instancing, generated slot, transform remapping, collision proxy, or synthetic layer placement remains.
+- Count behavior: the 24/32/40 device limit now applies only to the newly released batch. Session bodies are never recycled or capped, so repeated clicks can progress exactly to the full `#dailyCounter` value (461 on 2026-08-15); the existing unit proof reaches the supplied total without overshoot.
+- Basin behavior: the wide flat centre is replaced with a narrow responsive basin and steeper zero-friction physical slopes. Bodies sleeping high on an invisible slope are awakened to continue sliding under gravity; low, slow bodies may sleep naturally. This gathers one irregular mound without assigning final positions or creating visually suspended outliers.
+- Settling behavior: normal body sleep remains primary. A 16-second soft threshold sleeps only slow current-batch pieces near the visible pile, and a 24-second safety threshold sleeps low/central bodies; high slope pieces continue moving until gravity brings them down. Sound still ends independently after at most 3.1 seconds.
+- Cache checkpoint: `earn-app-v30`.
+- Validation:
+  - `static/unit` PASS — syntax, `git diff --check`, and `npm test` (26/26). Tests assert absence of prosperity persistence, deterministic pile placement, static instancing, and collision proxies, while preserving exact full-counter batch arithmetic.
+  - `desktop browser/visual` PASS — two consecutive physics batches settle with retained bodies, all ten materials, and no page errors; inspected screenshot shows a compact irregular mound with no uniform structure or suspended pieces.
+  - `responsive browser` PASS — Playwright Chromium mobile `390x844`, tablet `768x1024`, and desktop `1440x900`, plus the reload-reset case (4/4). Every viewport retains more bodies after the second click, respects per-batch limits, reaches zero awake bodies, and produces no browser errors. Reloading creates a fresh first-batch count rather than restoring the prior session.
+- Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
+- Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device feel/performance review at very high session counts.
+- Next: commit locally under the Loop workflow. Push/deploy only when explicitly requested.

@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const coinRainContainer = document.getElementById('coinRainContainer');
     const prosperityStatus = document.getElementById('prosperityStatus');
     const initialDate = new Date('2025-05-11T00:00:00');
-    const prosperityStorageKey = 'earn.prosperityTreasure.v2';
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let experiencePromise;
     let isShowerActive = false;
@@ -25,23 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function setStatus(message) {
         if (prosperityStatus) {
             prosperityStatus.textContent = message;
-        }
-    }
-
-    function loadTreasureSnapshot(availableCount) {
-        try {
-            const stored = JSON.parse(localStorage.getItem(prosperityStorageKey) || '{}');
-            return Array.isArray(stored.pieces) ? stored.pieces.slice(0, availableCount) : [];
-        } catch {
-            return [];
-        }
-    }
-
-    function saveTreasureSnapshot(pieces) {
-        try {
-            localStorage.setItem(prosperityStorageKey, JSON.stringify({ version: 1, pieces }));
-        } catch {
-            // The treasure still works when private browsing or storage quotas block persistence.
         }
     }
 
@@ -155,18 +137,15 @@ document.addEventListener('DOMContentLoaded', () => {
             experiencePromise ||= import('./prosperity-3d.mjs');
             const { startProsperityShower } = await experiencePromise;
             coinRainContainer.classList.remove('prosperity-fallback');
-            const snapshot = loadTreasureSnapshot(count);
             const result = startProsperityShower(coinRainContainer, {
                 availableCount: count,
-                snapshot,
-                onSettled: (settledPieces) => {
+                onSettled: (settledCount) => {
                     isShowerActive = false;
                     stopMagicalSound();
                     stopMagicalSound = () => {};
-                    saveTreasureSnapshot(settledPieces);
-                    const remaining = Math.max(0, count - settledPieces.length);
+                    const remaining = Math.max(0, count - settledCount);
                     setStatus(remaining
-                        ? `${settledPieces.length} of ${count} blessings collected. Tap again for the next batch.`
+                        ? `${settledCount} of ${count} blessings collected. Tap again for the next batch.`
                         : `All ${count} prosperity blessings are gathered in the treasure pile.`);
                 },
             });
