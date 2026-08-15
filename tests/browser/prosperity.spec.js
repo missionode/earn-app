@@ -39,12 +39,16 @@ for (const viewport of viewports) {
     expect(browserErrors).toEqual([]);
 
     const firstCollectedCount = Number(await canvas.getAttribute('data-collected-count'));
+    const firstPileLayers = Number(await canvas.getAttribute('data-pile-layers'));
+    const firstPileSurfaceY = Number(await canvas.getAttribute('data-pile-surface-y'));
     expect(firstCollectedCount).toBeGreaterThan(0);
     await page.getByRole('button', { name: 'Create a 3D prosperity treasure' }).click();
     await expect.poll(async () => Number(await canvas.getAttribute('data-collected-count')), { timeout: 20000 })
       .toBeGreaterThan(firstCollectedCount);
     expect(Number(await canvas.getAttribute('data-body-count'))).toBeLessThanOrEqual(bodyLimit);
     expect(Number(await canvas.getAttribute('data-visible-piece-count'))).toBeGreaterThan(firstCollectedCount);
+    expect(Number(await canvas.getAttribute('data-pile-layers'))).toBeGreaterThan(firstPileLayers);
+    expect(Number(await canvas.getAttribute('data-pile-surface-y'))).toBeGreaterThan(firstPileSurfaceY);
 
     await page.screenshot({
       path: path.join('/tmp/earn-prosperity-cp017', `${viewport.name}.png`),
@@ -52,3 +56,39 @@ for (const viewport of viewports) {
     });
   });
 }
+
+test('progressive pile can retain the complete dailyCounter inventory', async ({ page }) => {
+  test.setTimeout(30_000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/index.html');
+  await page.addStyleTag({ content: '.popup { display: none !important; }' });
+  const availableCount = Number(await page.locator('#dailyCounter').textContent());
+  const restoredCount = Math.max(0, availableCount - 20);
+
+  await page.evaluate(({ count }) => {
+    const metals = ['gold', 'silver', 'copper', 'platinum'];
+    const gems = ['diamond', 'ruby', 'emerald', 'sapphire', 'amethyst', 'topaz'];
+    const pieces = Array.from({ length: count }, (_, index) => {
+      const isGem = index % 3 === 1;
+      const halfAngle = (index * 0.73 % (Math.PI * 2)) * 0.5;
+      const quaternion = [0, 0, 0, Math.cos(halfAngle)];
+      quaternion[index % 3] = Math.sin(halfAngle);
+      return {
+        type: isGem ? 'gem' : 'coin',
+        kind: isGem ? gems[index % gems.length] : metals[index % metals.length],
+        position: [0, 0, 0],
+        quaternion,
+      };
+    });
+    localStorage.setItem('earn.prosperityTreasure.v2', JSON.stringify({ version: 2, pieces }));
+  }, { count: restoredCount });
+
+  await page.getByRole('button', { name: 'Create a 3D prosperity treasure' }).click();
+  const canvas = page.locator('.prosperity-canvas');
+  await expect.poll(async () => Number(await canvas.getAttribute('data-collected-count')), { timeout: 20_000 })
+    .toBe(availableCount);
+  await expect(canvas).toHaveAttribute('data-visible-piece-count', String(availableCount));
+  await expect(canvas).toHaveAttribute('data-body-count', '0');
+  expect(Number(await canvas.getAttribute('data-pile-layers'))).toBeGreaterThan(1);
+  await page.screenshot({ path: '/tmp/earn-prosperity-cp019/full-daily-pile.png', fullPage: false });
+});

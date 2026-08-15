@@ -233,3 +233,21 @@
 - Git checkpoint: `0e04eeb` (`[CP-018] Add progressive prosperity treasure`) on `feature/prosperity-coins`.
 - Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device sound/material review.
 - Next: push/deploy only when explicitly requested, then review sound and material response on the target Android device/GPU.
+
+### CP-019 — Layered dynamic treasure mound and exact daily inventory
+
+- Status: implemented and validated locally.
+- Objective: make each progressive batch land visibly on top of the retained treasure instead of visually intersecting it, preserve a dynamic pile effect, and prove that the retained visible total can reach the exact `#dailyCounter` inventory.
+- Layering model: one responsive click batch forms one 3D layer (24 mobile, 32 tablet, 40 desktop). Layers use both horizontal and depth slots with separated centres, subtle deterministic offsets, and physics-derived resting rotations. Lower layers remain broad while upper layers taper to 50% width/depth, producing a mound rather than a rectangular wall.
+- Dynamic collision model: after each batch settles, an invisible Cannon collision surface is rebuilt immediately above the current top layer. The next batch is released only inside that surface's responsive footprint, so falling bodies collide above the retained treasure instead of passing through it or landing behind it. The surface height and layer count rise after every completed batch.
+- Persistence migration: storage advances to `earn.prosperityTreasure.v2`; restored pieces are reflowed into the new separated mound geometry. Invalid kinds or non-finite quaternions are rejected before restoration.
+- Full-count behavior: active rigid bodies remain capped per batch, but retained instanced meshes are not capped by that active limit. Repeated taps therefore reach the entire counter inventory—461 on 2026-08-15—and future daily increments create the next available top-layer piece.
+- Cache checkpoint: `earn-app-v29`.
+- Validation:
+  - `static` PASS — JavaScript/MJS syntax and `git diff --check`.
+  - `unit` PASS — `npm test` (26/26), including an iterative mobile-batch proof that exactly reaches the supplied inventory without overshoot.
+  - `browser` PASS — Playwright Chromium (4/4): two-layer mobile, tablet, and desktop runs verify rising collision-surface height and layer count; the full-inventory case restores 441 pieces, drops the remaining 20, and verifies `collectedCount`, `visiblePieceCount`, and `#dailyCounter` all equal 461 with zero active bodies.
+  - `visual` PASS — final full-count screenshot inspected: 461 varied pieces form a centred tapered mound with a broad base, narrower top, and no suspended or rectangular-wall arrangement.
+- Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
+- Progress: 100% complete | Confidence: high | Current phase: final regression validation and local checkpoint commit | Main remaining scope: target-device feel review.
+- Next: run the final responsive regression suite, commit locally, and push only when explicitly requested.

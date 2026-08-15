@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const coinRainContainer = document.getElementById('coinRainContainer');
     const prosperityStatus = document.getElementById('prosperityStatus');
     const initialDate = new Date('2025-05-11T00:00:00');
-    const prosperityStorageKey = 'earn.prosperityTreasure.v1';
+    const prosperityStorageKey = 'earn.prosperityTreasure.v2';
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let experiencePromise;
     let isShowerActive = false;

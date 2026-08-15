@@ -20,6 +20,7 @@ const GEMS = Object.freeze([
 ]);
 
 const EXPERIENCE_BY_CONTAINER = new WeakMap();
+const PIECE_KINDS = new Set([...METALS, ...GEMS].map(({ name }) => name));
 const clamp = (value, minimum, maximum) => Math.min(maximum, Math.max(minimum, value));
 
 export function getResponsiveProsperityConfig(width, height, pixelRatio = 1) {
@@ -185,6 +186,7 @@ class ProsperityExperience {
         this.coinSequence = 0;
         this.gemSequence = 0;
         this.boundaryBodies = [];
+        this.pileSurfaceBody = null;
         this.frameId = null;
         this.lastFrameTime = 0;
         this.settleDeadline = 0;
@@ -286,6 +288,7 @@ class ProsperityExperience {
         this.renderer.domElement.dataset.targetPiecePixels = this.config.targetPiecePixels.toFixed(2);
         this.renderer.domElement.dataset.maxBodies = String(this.config.maxBodies);
         this.createBoundaries();
+        this.updatePileSurface();
 
         this.render();
     }
@@ -339,6 +342,47 @@ class ProsperityExperience {
         this.shadowFloor.position.y = this.floorY;
         this.shadowFloor.receiveShadow = true;
         this.scene.add(this.shadowFloor);
+    }
+
+    getPileLayout() {
+        const width = Math.min(this.visibleWidth * 0.7, 8);
+        const depth = Math.min(this.depthLimit * 1.45, this.pieceRadius * 10);
+        const aspectRatio = width / Math.max(depth, this.pieceRadius);
+        const columns = Math.max(4, Math.ceil(Math.sqrt(this.config.showerSize * aspectRatio)));
+        const rows = Math.ceil(this.config.showerSize / columns);
+        return { width, depth, columns, rows, piecesPerLayer: this.config.showerSize };
+    }
+
+    getLayerScale(layer) {
+        return Math.max(0.5, 1 - layer * 0.045);
+    }
+
+    updatePileSurface() {
+        if (this.pileSurfaceBody) {
+            this.world.removeBody(this.pileSurfaceBody);
+            this.pileSurfaceBody = null;
+        }
+        if (!this.staticPieces.length) return;
+
+        const layout = this.getPileLayout();
+        const topLayer = Math.floor((this.staticPieces.length - 1) / layout.piecesPerLayer);
+        const topScale = this.getLayerScale(topLayer);
+        const topPieceCenter = this.floorY + this.pieceRadius * (0.95 + topLayer * 1.65);
+        const surfaceTop = topPieceCenter + this.pieceRadius * 0.82;
+        const halfThickness = Math.max(0.04, this.pieceRadius * 0.08);
+        const body = new CANNON.Body({ mass: 0, material: this.boundaryMaterial });
+        body.addShape(new CANNON.Box(new CANNON.Vec3(
+            layout.width * topScale * 0.5,
+            halfThickness,
+            layout.depth * topScale * 0.5,
+        )));
+        body.position.set(0, surfaceTop - halfThickness, 0);
+        this.world.addBody(body);
+        this.pileSurfaceBody = body;
+        this.pileSurfaceWidth = layout.width * topScale;
+        this.pileSurfaceDepth = layout.depth * topScale;
+        this.renderer.domElement.dataset.pileLayers = String(topLayer + 1);
+        this.renderer.domElement.dataset.pileSurfaceY = surfaceTop.toFixed(3);
     }
 
     getCoinResources(metal) {
@@ -474,15 +518,13 @@ class ProsperityExperience {
         } else {
             this.coinSequence += 1;
         }
-        const horizontalMargin = this.pieceRadius * 1.4;
-        const releaseHalfWidth = Math.min(
-            this.visibleWidth * 0.32,
-            Math.max(this.pieceRadius * 5, 6.8),
-        );
+        const pileLayout = this.getPileLayout();
+        const releaseHalfWidth = (this.pileSurfaceWidth || pileLayout.width) * 0.44;
+        const releaseHalfDepth = (this.pileSurfaceDepth || pileLayout.depth) * 0.42;
         entry.body.position.set(
-            THREE.MathUtils.randFloat(-releaseHalfWidth + horizontalMargin, releaseHalfWidth - horizontalMargin),
+            THREE.MathUtils.randFloat(-releaseHalfWidth, releaseHalfWidth),
             this.visibleHeight * 0.52 + THREE.MathUtils.randFloat(0.3, 2.4),
-            THREE.MathUtils.randFloat(-this.depthLimit * 0.72, this.depthLimit * 0.72),
+            THREE.MathUtils.randFloat(-releaseHalfDepth, releaseHalfDepth),
         );
         entry.body.velocity.set(
             THREE.MathUtils.randFloat(-0.12, 0.12),
@@ -543,14 +585,20 @@ class ProsperityExperience {
         }
         this.staticPieces = snapshot.filter((piece) => (
             piece && ['coin', 'gem'].includes(piece.type)
-            && typeof piece.kind === 'string'
-            && Array.isArray(piece.position) && piece.position.length === 3
+            && PIECE_KINDS.has(piece.kind)
             && Array.isArray(piece.quaternion) && piece.quaternion.length === 4
+            && piece.quaternion.every(Number.isFinite)
         ));
+        const restoredCount = this.staticPieces.length;
+        this.staticPieces = this.staticPieces.map((piece, index) => ({
+            ...piece,
+            position: this.getPilePosition(index, restoredCount),
+        }));
         this.pieceSequence = this.staticPieces.length;
         this.coinSequence = this.staticPieces.filter(({ type }) => type === 'coin').length;
         this.gemSequence = this.staticPieces.filter(({ type }) => type === 'gem').length;
         this.rebuildStaticMeshes();
+        this.updatePileSurface();
         this.updateCountDiagnostics();
         this.render();
     }
@@ -566,36 +614,45 @@ class ProsperityExperience {
 
     freezeActivePieces() {
         for (const entry of [...this.entries]) {
-            const sequenceIndex = this.staticPieces.length;
-            const restingPosition = entry.forcePilePlacement
-                ? this.getPilePosition(sequenceIndex)
-                : entry.mesh.position.toArray();
             this.staticPieces.push({
                 type: entry.mesh instanceof THREE.Group ? 'coin' : 'gem',
                 kind: entry.mesh.userData.kind,
-                position: restingPosition,
+                position: [0, 0, 0],
                 quaternion: entry.mesh.quaternion.toArray(),
             });
             this.removeEntry(entry);
         }
+        const settledCount = this.staticPieces.length;
+        this.staticPieces.forEach((piece, index) => {
+            piece.position = this.getPilePosition(index, settledCount);
+        });
         this.rebuildStaticMeshes();
+        this.updatePileSurface();
         this.updateCountDiagnostics();
         const callback = this.onSettled;
         this.onSettled = null;
         callback?.(this.getSnapshot());
     }
 
-    getPilePosition(index) {
-        const pileWidth = Math.min(this.visibleWidth * 0.7, 8);
-        const piecesPerLayer = Math.max(8, Math.floor(pileWidth / (this.pieceRadius * 1.55)));
-        const layer = Math.floor(index / piecesPerLayer);
-        const slot = index % piecesPerLayer;
-        const normalizedSlot = piecesPerLayer === 1 ? 0.5 : slot / (piecesPerLayer - 1);
-        const layerInset = Math.min(layer * this.pieceRadius * 0.08, pileWidth * 0.18);
-        const usableWidth = Math.max(this.pieceRadius * 2, pileWidth - layerInset * 2);
-        const x = (normalizedSlot - 0.5) * usableWidth + Math.sin(index * 2.17) * this.pieceRadius * 0.18;
-        const y = this.floorY + this.pieceRadius * (0.7 + layer * 0.5);
-        const z = Math.sin(index * 1.73) * Math.min(this.depthLimit * 0.7, this.pieceRadius * 3.2);
+    getPilePosition(index, totalCount = this.staticPieces.length) {
+        const layout = this.getPileLayout();
+        const layer = Math.floor(index / layout.piecesPerLayer);
+        const withinLayer = index % layout.piecesPerLayer;
+        const row = Math.floor(withinLayer / layout.columns);
+        const column = withinLayer % layout.columns;
+        const layerCount = Math.min(layout.piecesPerLayer, Math.max(0, totalCount - layer * layout.piecesPerLayer));
+        const rowsUsed = Math.max(1, Math.ceil(layerCount / layout.columns));
+        const piecesInRow = Math.min(layout.columns, Math.max(0, layerCount - row * layout.columns));
+        const layerScale = this.getLayerScale(layer);
+        const xStep = layout.width * layerScale / layout.columns;
+        const zStep = layout.depth * layerScale / layout.rows;
+        const stagger = row % 2 ? xStep * 0.2 : 0;
+        const x = (column - (piecesInRow - 1) * 0.5) * xStep + stagger
+            + Math.sin(index * 2.17) * this.pieceRadius * 0.08;
+        const y = this.floorY + this.pieceRadius * (0.95 + layer * 1.65)
+            + Math.sin(index * 0.91) * this.pieceRadius * 0.06;
+        const z = (row - (rowsUsed - 1) * 0.5) * zStep
+            + Math.cos(index * 1.73) * this.pieceRadius * 0.06;
         return [x, y, z];
     }
 
@@ -712,7 +769,6 @@ class ProsperityExperience {
         for (const entry of this.entries) {
             const { mesh, body } = entry;
             if (time >= this.settleDeadline) {
-                entry.forcePilePlacement = true;
                 body.sleep();
             }
             mesh.position.copy(body.interpolatedPosition);

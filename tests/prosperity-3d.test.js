@@ -34,6 +34,12 @@ test('each click releases the remaining inventory in responsive batches', async 
   assert.equal(getShowerPieceCount(7, mobile), 7);
   assert.equal(getShowerPieceCount(100000, mobile), mobile.showerSize);
   assert.ok(getShowerPieceCount(460, mobile) <= mobile.maxBodies);
+
+  let collected = 0;
+  while (collected < 460) {
+    collected += getShowerPieceCount(460 - collected, mobile);
+  }
+  assert.equal(collected, 460);
 });
 
 test('3D scene includes realistic metals, transparent gems, reflections and pile boundaries', () => {
@@ -57,6 +63,8 @@ test('3D scene includes realistic metals, transparent gems, reflections and pile
   assert.match(scene, /sleepState !== CANNON\.Body\.SLEEPING/);
   assert.match(scene, /new THREE\.InstancedMesh/);
   assert.match(scene, /freezeActivePieces\(\)/);
+  assert.match(scene, /updatePileSurface\(\)/);
+  assert.match(scene, /piecesPerLayer: this\.config\.showerSize/);
 });
 
 test('landing page exposes an accessible prosperity trigger and offline 3D modules', () => {
@@ -65,7 +73,7 @@ test('landing page exposes an accessible prosperity trigger and offline 3D modul
 
   assert.match(page, /class="prosperity-container" role="button" tabindex="0"/);
   assert.match(page, /id="prosperityStatus"[^>]+aria-live="polite"/);
-  assert.match(serviceWorker, /earn-app-v28/);
+  assert.match(serviceWorker, /earn-app-v29/);
   assert.match(serviceWorker, /prosperity-3d\.mjs/);
   assert.match(serviceWorker, /three\.module\.min\.mjs/);
   assert.match(serviceWorker, /three\.core\.min\.js/);
@@ -77,7 +85,7 @@ test('landing page exposes an accessible prosperity trigger and offline 3D modul
 test('prosperity controller persists progressive batches and synthesizes a bounded magical whoosh', () => {
   const controller = fs.readFileSync('js/prosperity.js', 'utf8');
 
-  assert.match(controller, /earn\.prosperityTreasure\.v1/);
+  assert.match(controller, /earn\.prosperityTreasure\.v2/);
   assert.match(controller, /localStorage\.setItem/);
   assert.match(controller, /beginMagicalWhoosh/);
   assert.match(controller, /context\.createBiquadFilter/);
