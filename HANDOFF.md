@@ -402,6 +402,6 @@
   - `regression browser` PASS — Opening Balance setup/settings remains green (1/1), for combined browser evidence of 5/5.
   - `visual` PASS — final mobile capture inspected: only `16/461` appears next to the coin trigger; no popup or status pill obscures the interface or treasure.
 - Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
-- Git checkpoint: pending (`[CP-027] Simplify prosperity progress`) on `feature/prosperity-coins`.
+- Git checkpoint: `e30466d` (`[CP-027] Simplify prosperity progress`) on `feature/prosperity-coins`.
 - Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device review.
 - Next: push/deploy only when explicitly requested, then confirm the compact counter progression on the target device.
