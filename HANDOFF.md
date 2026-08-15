@@ -452,6 +452,6 @@
 - Validation: JavaScript/MJS syntax PASS, `git diff --check` PASS, and `npm test` PASS (35/35), including explicit visual-settlement callback, stable-frame threshold, looped audio, and v40 cache assertions.
 - Browser status: no connected browser backend is available in this session, so target-device audio timing remains the final experiential check.
 - Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
-- Git checkpoint: pending on `feature/prosperity-coins`.
+- Git checkpoint: `4e850e1` (`[CP-030] Stop celebration sound at settlement`) on `feature/prosperity-coins`.
 - Progress: 100% implementation and automated validation complete | Confidence: high | Main remaining scope: confirm the perceived stop point on the target phone.
 - Next: push/deploy only when explicitly requested, refresh to v40, and compare sound stop against the final visibly moving pieces.
