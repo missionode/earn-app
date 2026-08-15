@@ -1,15 +1,14 @@
 (function exposeProsperityCelebration(global) {
-    const REDIRECT_TIMEOUT_MS = 12000;
+    const SPAWN_INTERVAL_MS = 8;
+    const HARD_SETTLEMENT_GRACE_MS = 25000;
 
     async function play({container, count, onComplete}) {
         let sound = null;
-        let soundTimer = null;
         const finish = (() => {
             let finished = false;
             return () => {
                 if (finished) return;
                 finished = true;
-                if (soundTimer) global.clearTimeout(soundTimer);
                 if (sound) {
                     sound.pause();
                     sound.currentTime = 0;
@@ -23,18 +22,21 @@
             return;
         }
 
-        const fallbackTimer = global.setTimeout(finish, REDIRECT_TIMEOUT_MS);
+        const pieceCount = Math.floor(count);
+        const completionTimeout = Math.max(
+            12000,
+            Math.max(0, pieceCount - 1) * SPAWN_INTERVAL_MS +
+                HARD_SETTLEMENT_GRACE_MS,
+        );
+        const fallbackTimer = global.setTimeout(finish, completionTimeout);
         try {
             sound = new Audio('assets/sounds/coin_drop.mp3');
             sound.volume = 0.72;
+            sound.loop = true;
             sound.play().catch(() => {});
-            soundTimer = global.setTimeout(() => {
-                sound.pause();
-                sound.currentTime = 0;
-            }, 3200);
             const {startProsperityShower} = await import('./prosperity-3d.mjs');
             startProsperityShower(container, {
-                availableCount: Math.floor(count),
+                availableCount: pieceCount,
                 releaseAll: true,
                 onSettled: () => {
                     global.clearTimeout(fallbackTimer);

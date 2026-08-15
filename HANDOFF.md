@@ -424,3 +424,20 @@
 - Git checkpoint: `b91b0ed` (`[CP-028] Use daily counter for Lite income`) on `feature/prosperity-coins`.
 - Progress: 100% implementation and automated validation complete | Confidence: high | Main remaining scope: target-device visual/performance review of the full 461-piece success shower.
 - Next: push/deploy only when explicitly requested, then verify Lite ₹461 × clients, locked Amount, successful shower timing, and return to Earn on the device.
+
+### CP-029 — Full-length celebration sound and fresh QR success path
+
+- Status: implemented and validated locally.
+- Objective: keep the prosperity sound active for the whole full-count shower and ensure QR `Recieved Payment` visibly follows the same celebration-and-Earn-return behavior as Add Income instead of executing the older cached Lite redirect.
+- Audio lifecycle: the original coin sound now loops during the celebration and stops only inside the single completion path, whether physics settles normally, initialization fails, or the safety deadline is reached. The former fixed 3.2-second stop is removed.
+- Completion timing: the safety deadline now scales with the complete piece count using the same 8ms full-shower spawn interval plus a 25-second hard-settlement allowance. At the current 461 count this allows roughly 28.7 seconds instead of cutting the experience off at 12 seconds; normal settlement still completes and redirects sooner when possible.
+- QR parity: both Add Income and QR `Recieved Payment` use `EarnProsperityCelebration.play`, release the complete current counter, persist the income once, and navigate to `index.html` from the celebration completion callback. Lite cancellation, back, edit, and missing-data routes retain their existing Lite return behavior.
+- Stale-cache protection: receive, receive QR, counter, and celebration scripts now carry `?v=39` page references, the versioned requests are precached alongside their canonical assets, and the service-worker cache advances to `earn-app-v39`.
+- Validation:
+  - `static/unit` PASS — JavaScript syntax, `git diff --check`, and `npm test` (35/35), including looped audio, settlement allowance, full-count release, QR success persistence, and Earn redirect assertions.
+  - `runtime` PASS — a local server on `127.0.0.1:8001` served both Lite pages with v39 script URLs; served celebration code contains `sound.loop = true`; served QR code invokes the celebration and redirects to `index.html` on completion.
+  - `browser` BLOCKED — no connected browser backend is available in this session; target-device visual/audio timing remains the final experiential check.
+- Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
+- Git checkpoint: pending on `feature/prosperity-coins`.
+- Progress: 100% implementation and automated/runtime validation complete | Confidence: high | Main remaining scope: listen through one complete target-device shower and confirm the loop transition feels natural.
+- Next: push/deploy only when explicitly requested, refresh the installed PWA to v39, then test Add Income and QR `Recieved Payment` from Lite.
