@@ -469,6 +469,6 @@
 - Validation: `node --check` PASS, `git diff --check` PASS, and `npm test` PASS (38/38), including all four Google Pay handles, a future/previously unknown PSP handle, domain normalization, and malformed input rejection.
 - Browser status: no connected browser backend is available in this session; the focused pure validation tests cover the changed behavior.
 - Scope protection: user-owned QR artwork remains untouched and excluded.
-- Git checkpoint: pending on `main`.
+- Git checkpoint: `fcddacb` (`[CP-031] Accept current UPI handles`) on `main`.
 - Progress: 100% implementation and automated validation complete | Confidence: high | Main remaining scope: target-device setup save using the user's real `@okaxis` VPA.
 - Next: push/deploy only when explicitly requested, refresh to v41, enter the real `@okaxis` address, and generate a low-value QR for device confirmation.
