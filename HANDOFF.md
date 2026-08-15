@@ -274,7 +274,7 @@
 
 ### CP-021 — Flat transparent viewport container
 
-- Status: implemented and validated locally.
+- Status: implemented, validated, and committed locally.
 - Objective: make the viewport feel like a large transparent flat-bottomed container that fills from the top centre with the complete session inventory under natural physics.
 - Container physics: the sloped basin, ramp material, funnel geometry, and slope-specific wake/sleep logic are completely removed. The existing responsive floor, left/right viewport walls, and front/back depth walls now form one rectangular flat-bottom container.
 - Container visuals: a subtle transmissive glass floor and faint front floor/side edge highlights make the otherwise transparent container readable without obscuring the application. The WebGL canvas exposes `data-container-shape="flat-bottom-viewport"` for verification.
@@ -287,5 +287,6 @@
   - `responsive browser` PASS — mobile `390x844`, tablet `768x1024`, and desktop `1440x900` each completed two top-centre physics batches with retained counts, all ten materials, zero final awake bodies, and no page errors. The reload-reset check passed separately after aligning its lazy-load startup allowance.
   - `visual` PASS — all three settled screenshots inspected: pieces visibly accumulate and spread from the centre across one flat bottom, with varied physical poses and no uniform arrangement.
 - Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
+- Git checkpoint: `737e310` (`[CP-021] Add flat viewport treasure container`) on `feature/prosperity-coins`.
 - Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device review while progressively approaching all 461 objects.
-- Next: commit locally under the Loop workflow. Push/deploy only when explicitly requested.
+- Next: push/deploy only when explicitly requested, then review the transparent-container feel and high-count filling behavior on the target device.
