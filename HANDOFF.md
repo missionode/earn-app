@@ -344,6 +344,6 @@
   - `responsive browser` PASS — Playwright Chromium mobile `390x844`, tablet `768x1024`, desktop `1440x900`, and reload-reset behavior (4/4). Every responsive fall created more than five live page colliders, recorded real element contacts, completed pending spawns, ended with zero awake bodies, left zero pieces resting on page elements, remained contained, and produced no page errors.
   - `visual` PASS — final desktop and mobile captures inspected: releases originate across the header width, visibly traverse the interface through varied collision paths, and finish distributed along the raised bottom rather than remaining on the Income card or mantra strip.
 - Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
-- Git checkpoint: pending (`[CP-024] Add live page collision path`) on `feature/prosperity-coins`.
+- Git checkpoint: `7006f17` (`[CP-024] Add live page collision path`) on `feature/prosperity-coins`.
 - Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device motion/performance review with repeated high-count batches.
 - Next: push/deploy only when explicitly requested, then review the live collision feel on the target device.
