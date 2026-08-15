@@ -12,7 +12,9 @@ test('Quick Scan launcher is absent from the income-focused landing page', () =>
     script,
     /quickScanLink\.hidden = true/,
   );
-  assert.match(script, /setLocalStorageItem\('earn_serviceCharge'/);
+  assert.doesNotMatch(html, /id="serviceCharge"/);
+  assert.doesNotMatch(script, /earn_serviceCharge/);
+  assert.match(html, /js\/daily-counter\.js/);
   assert.match(html, /id="openingBalance"[^>]+min="0"/);
   assert.match(script, /EarnOpeningBalance\.syncOpeningBalance\(localStorage, openingBalance\)/);
   assert.match(script, /openingBalanceInput\.value = getLocalStorageItem\('earn_openingBalance'\) \|\| '0'/);

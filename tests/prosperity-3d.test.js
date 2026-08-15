@@ -98,7 +98,9 @@ test('landing page exposes an accessible prosperity trigger and offline 3D modul
   assert.match(page, /class="prosperity-container" role="button" tabindex="0"/);
   assert.match(page, /id="dailyCounter"[^>]+aria-live="polite"[^>]+aria-atomic="true"/);
   assert.doesNotMatch(page, /id="prosperityStatus"/);
-  assert.match(serviceWorker, /earn-app-v37/);
+  assert.match(serviceWorker, /earn-app-v38/);
+  assert.match(serviceWorker, /daily-counter\.js/);
+  assert.match(serviceWorker, /prosperity-celebration\.js/);
   assert.match(serviceWorker, /prosperity-3d\.mjs/);
   assert.match(serviceWorker, /three\.module\.min\.mjs/);
   assert.match(serviceWorker, /three\.core\.min\.js/);
@@ -117,6 +119,16 @@ test('prosperity controller keeps piles session-only and bounds the original coi
   assert.match(controller, /`\$\{batchCount\}\/\$\{dailyCount\}`/);
   assert.doesNotMatch(controller, /Preparing the prosperity mint|Treasure settled|Prosperity treasure complete/);
   assert.doesNotMatch(controller, /AudioContext|beginMagicalWhoosh|createBiquadFilter/);
+});
+
+test('successful income celebrations release the complete daily counter', () => {
+  const scene = fs.readFileSync('js/prosperity-3d.mjs', 'utf8');
+  const celebration = fs.readFileSync('js/prosperity-celebration.js', 'utf8');
+
+  assert.match(scene, /releaseAll \? remainingCount/);
+  assert.match(scene, /const spawnInterval = releaseAll \? 8 : 72/);
+  assert.match(celebration, /releaseAll: true/);
+  assert.match(celebration, /REDIRECT_TIMEOUT_MS = 12000/);
 });
 
 test('3D dependencies are pinned exactly and have no transitive packages', () => {

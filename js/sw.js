@@ -1,4 +1,4 @@
-const CACHE_NAME = 'earn-app-v37';
+const CACHE_NAME = 'earn-app-v38';
 const urlsToCache = [
     '../',
     '../index.html',
@@ -33,6 +33,7 @@ const urlsToCache = [
     '../js/app.js',
     '../js/data.js',
     '../js/index.js',
+    '../js/daily-counter.js',
     '../js/opening-balance.js',
     '../js/splash.js',
     '../js/receive.js',
@@ -44,6 +45,7 @@ const urlsToCache = [
     '../js/reset.js',
     '../js/report.js',
     '../js/prosperity.js',
+    '../js/prosperity-celebration.js',
     '../js/prosperity-3d.mjs',
     '../js/vendor/three.module.min.mjs',
     '../js/vendor/three.core.min.js',

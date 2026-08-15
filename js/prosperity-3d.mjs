@@ -692,12 +692,13 @@ class ProsperityExperience {
         this.startAnimation();
     }
 
-    shower(availableCount, onSettled) {
+    shower(availableCount, onSettled, releaseAll = false) {
         this.createElementObstacles();
         const committedCount = this.entries.length + this.spawnTimers.size;
         const remainingCount = Math.max(0, availableCount - committedCount);
         const exponent = this.showerExponent;
-        const pieceCount = getShowerPieceCount(remainingCount, exponent);
+        const pieceCount = releaseAll ? remainingCount :
+            getShowerPieceCount(remainingCount, exponent);
         if (!pieceCount) {
             return 0;
         }
@@ -709,7 +710,8 @@ class ProsperityExperience {
         }
         this.onSettled = onSettled;
         const now = performance.now();
-        const spawnDuration = Math.max(0, pieceCount - 1) * 72;
+        const spawnInterval = releaseAll ? 8 : 72;
+        const spawnDuration = Math.max(0, pieceCount - 1) * spawnInterval;
         this.settleDeadline = Math.max(this.settleDeadline, now + spawnDuration + 16000);
         this.hardSettleDeadline = Math.max(this.hardSettleDeadline, now + spawnDuration + 24000);
         this.renderer.domElement.dataset.showerSize = String(pieceCount);
@@ -721,7 +723,7 @@ class ProsperityExperience {
                 this.spawnTimers.delete(timer);
                 this.renderer.domElement.dataset.spawnPending = String(this.spawnTimers.size);
                 this.addPiece(pieceIndex);
-            }, index * 72);
+            }, index * spawnInterval);
             this.spawnTimers.add(timer);
         }
         this.renderer.domElement.dataset.spawnPending = String(this.spawnTimers.size);
@@ -851,13 +853,17 @@ class ProsperityExperience {
     }
 }
 
-export function startProsperityShower(container, { availableCount, onSettled } = {}) {
+export function startProsperityShower(container, {
+    availableCount,
+    onSettled,
+    releaseAll = false,
+} = {}) {
     let experience = EXPERIENCE_BY_CONTAINER.get(container);
     if (!experience) {
         experience = new ProsperityExperience(container);
         EXPERIENCE_BY_CONTAINER.set(container, experience);
     }
-    const releasedCount = experience.shower(availableCount, onSettled);
+    const releasedCount = experience.shower(availableCount, onSettled, releaseAll);
     return {
         experience,
         releasedCount,

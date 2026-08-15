@@ -61,13 +61,21 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     doneButton.addEventListener('click', () => {
+        doneButton.disabled = true;
+        cancelButton.disabled = true;
         const transactions = JSON.parse(
             localStorage.getItem('earn_transactions') || '[]',
         );
         transactions.unshift(pendingTransaction);
         localStorage.setItem('earn_transactions', JSON.stringify(transactions));
         clearPendingTransaction();
-        window.location.href = returnUrl;
+        EarnProsperityCelebration.play({
+            container: document.getElementById('coinRainContainer'),
+            count: EarnDailyCounter.getValue(),
+            onComplete: () => {
+                window.location.href = 'index.html';
+            },
+        });
     });
 
     cancelButton.addEventListener('click', () => {

@@ -41,12 +41,6 @@
                     <div class="error-message" id="usernameError"></div>
                 </div>
                 <div class="form-group">
-                    <label for="serviceCharge">Standard service charge per client (₹):</label>
-                    <input type="number" id="serviceCharge" name="serviceCharge" placeholder="eg:500" min="0.01" step="0.01" inputmode="decimal">
-                    <span class="popup-help">For Lite collections, Earn multiplies this charge by the number of meditation clients.</span>
-                    <div class="error-message" id="serviceChargeError"></div>
-                </div>
-                <div class="form-group">
                     <label for="openingBalance">Opening balance (₹):</label>
                     <input type="number" id="openingBalance" name="openingBalance" value="0" min="0" step="0.01" inputmode="decimal">
                     <span class="popup-help">Income already available when you start using Earn. Updating it adjusts one Opening balance transaction.</span>
@@ -183,6 +177,7 @@
 
 
     <script src="js/script.js"></script>
+    <script src="js/daily-counter.js"></script>
     <script src="js/opening-balance.js"></script>
     <script src="js/index.js"></script>
     <script src="js/app.js"></script>

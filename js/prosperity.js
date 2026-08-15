@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const prosperityTrigger = document.querySelector('.prosperity-container');
     const coinRainContainer = document.getElementById('coinRainContainer');
     const coinDropSound = new Audio('assets/sounds/coin_drop.mp3');
-    const initialDate = new Date('2025-05-11T00:00:00');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let experiencePromise;
     let soundStopTimer = null;
@@ -13,9 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getDailyCount() {
-        const now = new Date();
-        const diffInDays = Math.floor((now - initialDate) / (1000 * 60 * 60 * 24));
-        return Math.max(0, diffInDays);
+        return EarnDailyCounter.getValue();
     }
 
     function showBatchProgress(batchCount, dailyCount) {

@@ -405,3 +405,22 @@
 - Git checkpoint: `e30466d` (`[CP-027] Simplify prosperity progress`) on `feature/prosperity-coins`.
 - Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device review.
 - Next: push/deploy only when explicitly requested, then confirm the compact counter progression on the target device.
+
+### CP-028 — Automatic counter-priced Lite income celebration
+
+- Status: implemented and validated locally.
+- Objective: remove manual Service Charge setup, use Earn's automatically increasing daily counter as the Lite per-client charge, lock the calculated Lite amount, and celebrate successful income collection before returning to Earn.
+- Daily value model: a shared `EarnDailyCounter` helper documents 11 May 2025 as the day Earn came into existence. It compares local calendar dates through UTC day numbers, preserving the existing value of 461 on 15 August 2026 and increasing exactly once per new calendar day (462 on 16 August 2026) without storage or user input.
+- Setup: Standard Service Charge and its validation/storage requirements are removed. First-time completion now requires only UPI ID, payee name, and a valid opening balance. Existing `earn_serviceCharge` data is ignored but remains removable through factory reset for backward-compatible cleanup.
+- Lite receive: `receive.html?Source=Lite` uses `daily counter × clients`, keeps Sadhana and `Dakshina recieved for meditation`, recalculates when Clients changes, and makes Amount read-only. The existing transaction `serviceCharge` property is retained for data compatibility but now records the daily counter used.
+- Success celebration: Add Income and QR-page Received Payment save exactly once, disable their success action, release the complete daily counter as one accelerated full-width 3D coin/gem shower with the original bounded coin sound, then return to `index.html`. A 12-second fallback guarantees navigation if physics settlement or WebGL is unavailable. Lite back/edit navigation remains unchanged and still returns to Lite where appropriate.
+- Routing verification: the landing Income button continues to open plain `receive.html`; ordinary Add Income is not classified as Lite. Both ordinary and Lite success paths now return to the Earn landing page after the prosperity shower.
+- Offline cache checkpoint: `earn-app-v38`, including the shared counter and celebration controllers.
+- Validation:
+  - `static/unit` PASS — all changed JavaScript/MJS parses, `git diff --check`, and `npm test` (35/35). Coverage proves founding-date arithmetic, one-per-day progression, removed setup charge, locked Lite multiplication, stale pending recalculation, normal-vs-Lite routing, full-count celebration configuration, transaction persistence, and QR completion.
+  - `runtime` PASS — local HTTP server returned 200 for index, Lite receive, and receive QR pages.
+  - `browser` BLOCKED — the browser-control runtime reported no available browser, so interactive animation/navigation and visual checks remain pending on a connected browser or target device.
+- Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
+- Git checkpoint: pending on `feature/prosperity-coins`.
+- Progress: 100% implementation and automated validation complete | Confidence: high | Main remaining scope: target-device visual/performance review of the full 461-piece success shower.
+- Next: push/deploy only when explicitly requested, then verify Lite ₹461 × clients, locked Amount, successful shower timing, and return to Earn on the device.

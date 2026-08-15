@@ -17,32 +17,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const detailsFieldsReceive = document.getElementById('detailsFieldsReceive');
     const liteAmountHelp = document.getElementById('liteAmountHelp');
     const receiveBackLink = document.getElementById('receiveBackLink');
-    const serviceCharge = parseFloat(localStorage.getItem('earn_serviceCharge'));
+    const dailyCounterValue = EarnDailyCounter.getValue();
     const pendingTransactionString = localStorage.getItem(
         'pending_receive_transaction',
     );
     const pendingTransaction = pendingTransactionString ?
         JSON.parse(pendingTransactionString) : null;
-    let amountManuallyEdited = false;
-
-    if (isLiteSource && (!Number.isFinite(serviceCharge) || serviceCharge <= 0)) {
-        const returnTo = encodeURIComponent('receive.html?Source=Lite');
-        window.location.replace(
-            `index.html?triggerUPIPopUp=true&returnTo=${returnTo}`,
-        );
-        return;
-    }
 
     const calculateLiteAmount = () => {
         const clients = Number.parseInt(clientsInput.value, 10);
         if (!Number.isInteger(clients) || clients < 1) {
             return null;
         }
-        return (serviceCharge * clients).toFixed(2);
+        return (dailyCounterValue * clients).toFixed(2);
     };
 
-    const updateLiteAmount = (force = false) => {
-        if (amountManuallyEdited && !force) return;
+    const updateLiteAmount = () => {
         amountInput.value = calculateLiteAmount() || '';
     };
 
@@ -56,23 +46,14 @@ document.addEventListener('DOMContentLoaded', () => {
         descriptionInput.value = LITE_DESCRIPTION;
         clientsGroup.hidden = false;
         liteAmountHelp.hidden = false;
+        amountInput.readOnly = true;
         receiveBackLink.href = LITE_RETURN_URL;
         if (pendingTransaction && pendingTransaction.source === 'Lite') {
             clientsInput.value = pendingTransaction.clients || 1;
             descriptionInput.value = pendingTransaction.description ||
                 LITE_DESCRIPTION;
         }
-        updateLiteAmount(true);
-        if (pendingTransaction && pendingTransaction.source === 'Lite' &&
-            Number.isFinite(Number(pendingTransaction.amount)) &&
-            Number(pendingTransaction.amount) > 0) {
-            const restoredAmount = Number(pendingTransaction.amount).toFixed(2);
-            amountInput.value = restoredAmount;
-            amountManuallyEdited = restoredAmount !== calculateLiteAmount();
-        }
-        amountInput.addEventListener('input', () => {
-            amountManuallyEdited = true;
-        });
+        updateLiteAmount();
         clientsInput.addEventListener('input', () => updateLiteAmount());
     } else {
         const hideDetailsState = localStorage.getItem('hideDetails');
@@ -126,7 +107,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isLiteSource) {
             transaction.source = 'Lite';
             transaction.clients = clients;
-            transaction.serviceCharge = serviceCharge;
+            // Keep the existing transaction field for compatibility; its value
+            // is now Earn's automatic daily counter rather than a manual setting.
+            transaction.serviceCharge = dailyCounterValue;
         }
 
         return transaction;
@@ -149,12 +132,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const transaction = createTransaction();
         if (!transaction) return;
 
+        customReceiptButton.disabled = true;
+
         const transactions = JSON.parse(
             localStorage.getItem('earn_transactions') || '[]',
         );
         transactions.unshift(transaction);
         localStorage.setItem('earn_transactions', JSON.stringify(transactions));
-        window.location.href = isLiteSource ? LITE_RETURN_URL : 'index.html';
+        EarnProsperityCelebration.play({
+            container: document.getElementById('coinRainContainer'),
+            count: dailyCounterValue,
+            onComplete: () => {
+                window.location.href = 'index.html';
+            },
+        });
     });
 
     const iconGrid = document.querySelector('.icon-grid');

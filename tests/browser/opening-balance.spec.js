@@ -8,7 +8,7 @@ test('setup and settings keep one opening-balance income transaction', async ({ 
   await expect(popup).toBeVisible();
   await page.getByLabel('UPI ID:').fill(`opening.balance${String.fromCharCode(64)}oksbi`);
   await page.getByLabel('Name:').fill('Opening Balance Test');
-  await page.getByLabel('Standard service charge per client (₹):').fill('500');
+  await expect(page.locator('#serviceCharge')).toHaveCount(0);
   await page.getByLabel('Opening balance (₹):').fill('1250.50');
   await page.getByRole('button', { name: 'Start Earn' }).click();
 
