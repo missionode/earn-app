@@ -62,6 +62,10 @@ test('3D scene includes realistic materials and a flat transparent viewport cont
   assert.match(scene, /createBoundaries\(\)/);
   assert.match(scene, /flat-bottom-viewport/);
   assert.match(scene, /releaseOrigin = 'top-center'/);
+  assert.match(scene, /bounceProfile = 'lively-contained'/);
+  assert.match(scene, /restitution: 0\.42/);
+  assert.match(scene, /restitution: 0\.3/);
+  assert.match(scene, /horizontalSpeed = Math\.min\(this\.visibleWidth \* 0\.26, 6\.5\)/);
   assert.match(scene, /new THREE\.LineSegments/);
   assert.match(scene, /opacity: 0\.055/);
   assert.doesNotMatch(scene, /rampMaterial|rampAngle|basinHalfWidth/);
@@ -80,7 +84,7 @@ test('landing page exposes an accessible prosperity trigger and offline 3D modul
 
   assert.match(page, /class="prosperity-container" role="button" tabindex="0"/);
   assert.match(page, /id="prosperityStatus"[^>]+aria-live="polite"/);
-  assert.match(serviceWorker, /earn-app-v32/);
+  assert.match(serviceWorker, /earn-app-v33/);
   assert.match(serviceWorker, /prosperity-3d\.mjs/);
   assert.match(serviceWorker, /three\.module\.min\.mjs/);
   assert.match(serviceWorker, /three\.core\.min\.js/);

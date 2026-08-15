@@ -23,6 +23,7 @@ for (const viewport of viewports) {
     await expect(canvas).toHaveAttribute('data-performance-tier', viewport.tier);
     await expect(canvas).toHaveAttribute('data-container-shape', 'flat-bottom-viewport');
     await expect(canvas).toHaveAttribute('data-release-origin', 'top-center');
+    await expect(canvas).toHaveAttribute('data-bounce-profile', 'lively-contained');
 
     const targetPiecePixels = Number(await canvas.getAttribute('data-target-piece-pixels'));
     const bodyLimit = Number(await canvas.getAttribute('data-max-bodies'));
@@ -39,7 +40,9 @@ for (const viewport of viewports) {
     expect(firstShowerSize).toBeLessThanOrEqual(bodyLimit);
     expect(Number(await canvas.getAttribute('data-body-count'))).toBeGreaterThan(firstShowerSize);
     expect(Number(await canvas.getAttribute('data-floor-lift-pixels'))).toBeGreaterThan(40);
-    expect(Number(await canvas.getAttribute('data-pile90-horizontal-ratio'))).toBeLessThan(0.8);
+    expect(Number(await canvas.getAttribute('data-pile90-horizontal-ratio'))).toBeGreaterThan(0.25);
+    expect(Number(await canvas.getAttribute('data-pile90-horizontal-ratio'))).toBeLessThan(1.05);
+    expect(Number(await canvas.getAttribute('data-maximum-horizontal-ratio'))).toBeLessThan(1.05);
     const renderedKinds = (await canvas.getAttribute('data-kinds')).split(',');
     for (const kind of ['gold', 'silver', 'copper', 'platinum', 'diamond', 'ruby', 'emerald', 'sapphire', 'amethyst', 'topaz']) {
       expect(renderedKinds).toContain(kind);

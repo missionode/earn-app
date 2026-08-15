@@ -238,12 +238,12 @@ class ProsperityExperience {
         this.pieceMaterial = new CANNON.Material('prosperity-piece');
         this.boundaryMaterial = new CANNON.Material('prosperity-boundary');
         this.world.addContactMaterial(new CANNON.ContactMaterial(this.pieceMaterial, this.boundaryMaterial, {
-            friction: 0.58,
-            restitution: 0.16,
+            friction: 0.26,
+            restitution: 0.42,
         }));
         this.world.addContactMaterial(new CANNON.ContactMaterial(this.pieceMaterial, this.pieceMaterial, {
-            friction: 0.48,
-            restitution: 0.12,
+            friction: 0.22,
+            restitution: 0.3,
         }));
 
         this.coinResources = new Map();
@@ -285,6 +285,7 @@ class ProsperityExperience {
         this.renderer.domElement.dataset.floorLiftPixels = (floorLift / this.worldUnitsPerPixel).toFixed(2);
         this.renderer.domElement.dataset.containerShape = 'flat-bottom-viewport';
         this.renderer.domElement.dataset.releaseOrigin = 'top-center';
+        this.renderer.domElement.dataset.bounceProfile = 'lively-contained';
         this.createBoundaries();
 
         this.render();
@@ -432,8 +433,8 @@ class ProsperityExperience {
             mass: 1.4 * metal.density,
             material: this.pieceMaterial,
             shape: new CANNON.Cylinder(resources.radius, resources.radius, resources.thickness, 20),
-            linearDamping: 0.24,
-            angularDamping: 0.52,
+            linearDamping: 0.08,
+            angularDamping: 0.24,
             allowSleep: true,
             sleepSpeedLimit: 0.62,
             sleepTimeLimit: 0.45,
@@ -484,8 +485,8 @@ class ProsperityExperience {
             mass: gem.name === 'diamond' ? 0.72 : 0.64,
             material: this.pieceMaterial,
             shape: new CANNON.Sphere(resources.radius * 0.58),
-            linearDamping: 0.28,
-            angularDamping: 0.64,
+            linearDamping: 0.1,
+            angularDamping: 0.3,
             allowSleep: true,
             sleepSpeedLimit: 0.65,
             sleepTimeLimit: 0.4,
@@ -508,10 +509,14 @@ class ProsperityExperience {
             this.visibleHeight * 0.52 + THREE.MathUtils.randFloat(0.25, 1.8),
             THREE.MathUtils.randFloat(-releaseHalfDepth, releaseHalfDepth),
         );
+        const outwardAngle = Math.random() * Math.PI * 2;
+        const outwardStrength = THREE.MathUtils.randFloat(0.45, 1);
+        const horizontalSpeed = Math.min(this.visibleWidth * 0.26, 6.5);
+        const depthSpeed = Math.min(this.depthLimit * 0.9, 2.6);
         entry.body.velocity.set(
-            THREE.MathUtils.randFloat(-0.06, 0.06),
-            THREE.MathUtils.randFloat(-0.12, 0),
-            THREE.MathUtils.randFloat(-0.04, 0.04),
+            Math.cos(outwardAngle) * horizontalSpeed * outwardStrength,
+            THREE.MathUtils.randFloat(-0.18, -0.04),
+            Math.sin(outwardAngle) * depthSpeed * outwardStrength,
         );
         entry.body.quaternion.setFromEuler(
             Math.random() * Math.PI,
@@ -639,11 +644,12 @@ class ProsperityExperience {
         for (const entry of this.entries) {
             const { mesh, body } = entry;
             const isCurrentBatch = this.batchBodies.has(body);
+            const isNearFloor = body.position.y < this.floorY + this.pieceRadius * 6;
             const isRestingNearPile = body.position.y < this.floorY + this.pieceRadius * 8
                 && body.velocity.length() < 0.65
                 && body.angularVelocity.length() < 0.8;
             if ((isCurrentBatch && time >= this.settleDeadline && isRestingNearPile)
-                || time >= this.hardSettleDeadline) {
+                || (time >= this.hardSettleDeadline && isNearFloor)) {
                 body.sleep();
             }
             mesh.position.copy(body.interpolatedPosition);

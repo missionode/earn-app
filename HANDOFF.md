@@ -309,3 +309,21 @@
 - Git checkpoint: `bf664a7` (`[CP-022] Support rapid prosperity drops`) on `feature/prosperity-coins`.
 - Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device audio preference and repeated-tap feel.
 - Next: push/deploy only when explicitly requested, then review audio and repeated-tap feel on the target device.
+
+### CP-023 — Lively contained bounce and edge distribution
+
+- Status: implemented, validated, and committed locally.
+- Objective: prevent top-centre releases from accumulating as one central heap and let coins and gems travel naturally toward the viewport edges and corners through gravity, momentum, bounce, and collision.
+- Release dynamics: pieces still originate from the requested compact top-centre region, but each receives a random full-circle outward impulse. Horizontal speed scales responsively with the visible width (capped at 6.5 world units), while a smaller depth impulse distributes pieces toward the front and back of the transparent container. Random orientations and angular velocities continue to make every fall different.
+- Contact response: wall/floor restitution is raised to `0.42` with friction reduced to `0.26`; piece-to-piece restitution is raised to `0.30` with friction reduced to `0.22`. Coin damping is reduced to `0.08` linear/`0.24` angular and gem damping to `0.10` linear/`0.30` angular, preserving visible rebound, rolling, spinning, and secondary collisions without allowing objects to escape the container.
+- Settling correction: the 24-second safety sleep now applies only near the raised floor. A piece still airborne after a lively collision therefore remains governed by gravity instead of freezing above the pile; low/slow pieces retain the earlier bounded settling behavior.
+- Diagnostics: the WebGL canvas exposes `data-bounce-profile="lively-contained"`; responsive browser assertions verify both meaningful horizontal distribution and containment.
+- Cache checkpoint: `earn-app-v33`.
+- Validation:
+  - `static/unit` PASS — module syntax, `git diff --check`, and `npm test` (26/26), including outward release impulse, restitution profile, diagnostics, and cache version.
+  - `responsive browser` PASS — Playwright Chromium mobile `390x844`, tablet `768x1024`, desktop `1440x900`, and reload-reset behavior (4/4). Rapid batches spread beyond the former central heap, remain within the container, finish pending timers, settle to zero awake bodies, and produce no page errors.
+  - `visual` PASS — final desktop capture inspected: varied coins and gemstones reach both sides and near-corner regions while the main treasure remains naturally distributed along the raised flat floor, with no uniform placement or frozen airborne pieces.
+- Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
+- Git checkpoint: pending (`[CP-023] Add contained bounce distribution`) on `feature/prosperity-coins`.
+- Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device feel/performance review at high accumulated counts.
+- Next: push/deploy only when explicitly requested, then review bounce energy and corner distribution on the target device.
