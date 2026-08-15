@@ -237,7 +237,6 @@ class ProsperityExperience {
         this.world.solver.iterations = 12;
         this.pieceMaterial = new CANNON.Material('prosperity-piece');
         this.boundaryMaterial = new CANNON.Material('prosperity-boundary');
-        this.rampMaterial = new CANNON.Material('prosperity-ramp');
         this.world.addContactMaterial(new CANNON.ContactMaterial(this.pieceMaterial, this.boundaryMaterial, {
             friction: 0.58,
             restitution: 0.16,
@@ -245,10 +244,6 @@ class ProsperityExperience {
         this.world.addContactMaterial(new CANNON.ContactMaterial(this.pieceMaterial, this.pieceMaterial, {
             friction: 0.48,
             restitution: 0.12,
-        }));
-        this.world.addContactMaterial(new CANNON.ContactMaterial(this.pieceMaterial, this.rampMaterial, {
-            friction: 0,
-            restitution: 0.08,
         }));
 
         this.coinResources = new Map();
@@ -286,6 +281,8 @@ class ProsperityExperience {
         this.renderer.domElement.dataset.performanceTier = this.config.performanceTier;
         this.renderer.domElement.dataset.targetPiecePixels = this.config.targetPiecePixels.toFixed(2);
         this.renderer.domElement.dataset.maxBodies = String(this.config.maxBodies);
+        this.renderer.domElement.dataset.containerShape = 'flat-bottom-viewport';
+        this.renderer.domElement.dataset.releaseOrigin = 'top-center';
         this.createBoundaries();
 
         this.render();
@@ -310,27 +307,6 @@ class ProsperityExperience {
         addBox([this.visibleWidth, this.visibleHeight, 0.12], [0, 0, -this.depthLimit - 0.12]);
         addBox([this.visibleWidth, this.visibleHeight, 0.12], [0, 0, this.depthLimit + 0.12]);
 
-        const basinHalfWidth = Math.max(
-            this.pieceRadius * 4,
-            Math.min(this.visibleWidth * 0.07, 1.4),
-        );
-        this.basinHalfWidth = basinHalfWidth;
-        const rampHalfLength = Math.max((this.visibleWidth * 0.5 - basinHalfWidth) * 0.5, 0.2);
-        const rampAngle = 0.38;
-        const rampY = this.floorY + Math.sin(rampAngle) * rampHalfLength;
-        addBox(
-            [rampHalfLength, 0.1, this.depthLimit * 1.05],
-            [-basinHalfWidth - rampHalfLength, rampY, 0],
-            -rampAngle,
-            this.rampMaterial,
-        );
-        addBox(
-            [rampHalfLength, 0.1, this.depthLimit * 1.05],
-            [basinHalfWidth + rampHalfLength, rampY, 0],
-            rampAngle,
-            this.rampMaterial,
-        );
-
         if (this.shadowFloor) {
             this.scene.remove(this.shadowFloor);
             this.shadowFloor.geometry.dispose();
@@ -344,6 +320,50 @@ class ProsperityExperience {
         this.shadowFloor.position.y = this.floorY;
         this.shadowFloor.receiveShadow = true;
         this.scene.add(this.shadowFloor);
+
+        if (this.containerVisuals) {
+            this.scene.remove(this.containerVisuals);
+            this.containerVisuals.traverse((object) => {
+                object.geometry?.dispose();
+                object.material?.dispose();
+            });
+        }
+        this.containerVisuals = new THREE.Group();
+        const glassFloor = new THREE.Mesh(
+            new THREE.PlaneGeometry(this.visibleWidth, this.depthLimit * 2),
+            new THREE.MeshPhysicalMaterial({
+                color: 0xd9f5ff,
+                transparent: true,
+                opacity: 0.055,
+                transmission: 0.8,
+                roughness: 0.08,
+                clearcoat: 1,
+                depthWrite: false,
+                side: THREE.DoubleSide,
+            }),
+        );
+        glassFloor.rotation.x = -Math.PI / 2;
+        glassFloor.position.y = this.floorY + 0.006;
+        this.containerVisuals.add(glassFloor);
+
+        const edgeInset = this.pieceRadius * 0.35;
+        const left = -this.visibleWidth * 0.5 + edgeInset;
+        const right = this.visibleWidth * 0.5 - edgeInset;
+        const top = this.visibleHeight * 0.5;
+        const front = this.depthLimit * 0.96;
+        const edgeGeometry = new THREE.BufferGeometry().setFromPoints([
+            new THREE.Vector3(left, this.floorY, front), new THREE.Vector3(right, this.floorY, front),
+            new THREE.Vector3(left, this.floorY, front), new THREE.Vector3(left, top, front),
+            new THREE.Vector3(right, this.floorY, front), new THREE.Vector3(right, top, front),
+        ]);
+        const edges = new THREE.LineSegments(edgeGeometry, new THREE.LineBasicMaterial({
+            color: 0xc9efff,
+            transparent: true,
+            opacity: 0.13,
+            depthWrite: false,
+        }));
+        this.containerVisuals.add(edges);
+        this.scene.add(this.containerVisuals);
     }
 
     getCoinResources(metal) {
@@ -479,20 +499,17 @@ class ProsperityExperience {
         } else {
             this.coinSequence += 1;
         }
-        const horizontalMargin = this.pieceRadius * 1.4;
-        const releaseHalfWidth = Math.min(
-            this.visibleWidth * 0.32,
-            Math.max(this.pieceRadius * 5, 6.8),
-        );
+        const releaseHalfWidth = clamp(this.visibleWidth * 0.055, this.pieceRadius * 2.2, 1.35);
+        const releaseHalfDepth = Math.min(this.depthLimit * 0.22, this.pieceRadius * 3);
         entry.body.position.set(
-            THREE.MathUtils.randFloat(-releaseHalfWidth + horizontalMargin, releaseHalfWidth - horizontalMargin),
-            this.visibleHeight * 0.52 + THREE.MathUtils.randFloat(0.3, 2.4),
-            THREE.MathUtils.randFloat(-this.depthLimit * 0.72, this.depthLimit * 0.72),
+            THREE.MathUtils.randFloat(-releaseHalfWidth, releaseHalfWidth),
+            this.visibleHeight * 0.52 + THREE.MathUtils.randFloat(0.25, 1.8),
+            THREE.MathUtils.randFloat(-releaseHalfDepth, releaseHalfDepth),
         );
         entry.body.velocity.set(
-            THREE.MathUtils.randFloat(-0.12, 0.12),
+            THREE.MathUtils.randFloat(-0.06, 0.06),
             THREE.MathUtils.randFloat(-0.12, 0),
-            THREE.MathUtils.randFloat(-0.08, 0.08),
+            THREE.MathUtils.randFloat(-0.04, 0.04),
         );
         entry.body.quaternion.setFromEuler(
             Math.random() * Math.PI,
@@ -621,16 +638,11 @@ class ProsperityExperience {
         for (const entry of this.entries) {
             const { mesh, body } = entry;
             const isCurrentBatch = this.batchBodies.has(body);
-            const isInsideBasin = Math.abs(body.position.x) <= this.basinHalfWidth * 1.15;
-            const isLowEnoughToRest = body.position.y < this.floorY + this.pieceRadius * 12;
-            if (!isInsideBasin && !isLowEnoughToRest && body.sleepState === CANNON.Body.SLEEPING) {
-                body.wakeUp();
-            }
             const isRestingNearPile = body.position.y < this.floorY + this.pieceRadius * 8
                 && body.velocity.length() < 0.65
                 && body.angularVelocity.length() < 0.8;
             if ((isCurrentBatch && time >= this.settleDeadline && isRestingNearPile)
-                || (time >= this.hardSettleDeadline && (isInsideBasin || isLowEnoughToRest))) {
+                || time >= this.hardSettleDeadline) {
                 body.sleep();
             }
             mesh.position.copy(body.interpolatedPosition);

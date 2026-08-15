@@ -21,6 +21,8 @@ for (const viewport of viewports) {
     await expect(canvas).toBeVisible();
     await expect(canvas).toHaveAttribute('data-physics', 'earth-gravity');
     await expect(canvas).toHaveAttribute('data-performance-tier', viewport.tier);
+    await expect(canvas).toHaveAttribute('data-container-shape', 'flat-bottom-viewport');
+    await expect(canvas).toHaveAttribute('data-release-origin', 'top-center');
 
     const targetPiecePixels = Number(await canvas.getAttribute('data-target-piece-pixels'));
     const bodyLimit = Number(await canvas.getAttribute('data-max-bodies'));
@@ -61,14 +63,14 @@ test('a reload starts a fresh relaxing treasure session', async ({ page }) => {
   await page.addStyleTag({ content: '.popup { display: none !important; }' });
   await page.getByRole('button', { name: 'Create a 3D prosperity treasure' }).click();
   let canvas = page.locator('.prosperity-canvas');
-  await expect.poll(async () => Number(await canvas.getAttribute('data-body-count'))).toBeGreaterThan(15);
+  await expect.poll(async () => Number(await canvas.getAttribute('data-body-count')), { timeout: 10_000 }).toBeGreaterThan(15);
   await expect.poll(async () => Number(await canvas.getAttribute('data-awake-bodies')), { timeout: 30_000 }).toBe(0);
   const firstSessionCount = Number(await canvas.getAttribute('data-collected-count'));
   await page.reload();
   await page.addStyleTag({ content: '.popup { display: none !important; }' });
   await page.getByRole('button', { name: 'Create a 3D prosperity treasure' }).click();
   canvas = page.locator('.prosperity-canvas');
-  await expect.poll(async () => Number(await canvas.getAttribute('data-body-count'))).toBeGreaterThan(15);
+  await expect.poll(async () => Number(await canvas.getAttribute('data-body-count')), { timeout: 10_000 }).toBeGreaterThan(15);
   await expect.poll(async () => Number(await canvas.getAttribute('data-awake-bodies')), { timeout: 30_000 }).toBe(0);
   expect(Number(await canvas.getAttribute('data-collected-count'))).toBe(firstSessionCount);
 });

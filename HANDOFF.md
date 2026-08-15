@@ -271,3 +271,21 @@
 - Git checkpoint: `e633267` (`[CP-020] Use session-only natural pile physics`) on `feature/prosperity-coins`.
 - Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device feel/performance review at very high session counts.
 - Next: push/deploy only when explicitly requested, then review the relaxing motion and high-count performance on the target device.
+
+### CP-021 — Flat transparent viewport container
+
+- Status: implemented and validated locally.
+- Objective: make the viewport feel like a large transparent flat-bottomed container that fills from the top centre with the complete session inventory under natural physics.
+- Container physics: the sloped basin, ramp material, funnel geometry, and slope-specific wake/sleep logic are completely removed. The existing responsive floor, left/right viewport walls, and front/back depth walls now form one rectangular flat-bottom container.
+- Container visuals: a subtle transmissive glass floor and faint front floor/side edge highlights make the otherwise transparent container readable without obscuring the application. The WebGL canvas exposes `data-container-shape="flat-bottom-viewport"` for verification.
+- Release behavior: every piece begins in a compact responsive region at the top centre (`data-release-origin="top-center"`). Small random x/depth offsets, fully random starting orientation, angular velocity, and restrained lateral velocity keep the fall varied while gravity always begins from the central origin.
+- Accumulation: current-session bodies and meshes remain fully physical and are never reflowed, persisted, recycled, or replaced. Repeated clicks keep adding batches until the exact daily inventory is present; on the flat floor, impacts, friction, restitution, rolling, and inter-body collision determine how the container fills.
+- Settling: without invisible slopes, the standard 16-second low/slow soft sleep and 24-second safety endpoint apply directly to bodies above the visible flat floor. The magical audio remains bounded to 3.1 seconds.
+- Cache checkpoint: `earn-app-v31`.
+- Validation:
+  - `static/unit` PASS — syntax, `git diff --check`, and `npm test` (26/26), including explicit flat-container/top-centre markers and absence of ramp/basin code.
+  - `responsive browser` PASS — mobile `390x844`, tablet `768x1024`, and desktop `1440x900` each completed two top-centre physics batches with retained counts, all ten materials, zero final awake bodies, and no page errors. The reload-reset check passed separately after aligning its lazy-load startup allowance.
+  - `visual` PASS — all three settled screenshots inspected: pieces visibly accumulate and spread from the centre across one flat bottom, with varied physical poses and no uniform arrangement.
+- Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
+- Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device review while progressively approaching all 461 objects.
+- Next: commit locally under the Loop workflow. Push/deploy only when explicitly requested.

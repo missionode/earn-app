@@ -42,7 +42,7 @@ test('each click releases the remaining inventory in responsive batches', async 
   assert.equal(collected, 460);
 });
 
-test('3D scene includes realistic metals, transparent gems, reflections and pile boundaries', () => {
+test('3D scene includes realistic materials and a flat transparent viewport container', () => {
   const scene = fs.readFileSync('js/prosperity-3d.mjs', 'utf8');
 
   for (const metal of ['gold', 'silver', 'copper', 'platinum']) {
@@ -60,6 +60,11 @@ test('3D scene includes realistic metals, transparent gems, reflections and pile
   assert.match(scene, /new CANNON\.Cylinder/);
   assert.match(scene, /new CANNON\.Sphere/);
   assert.match(scene, /createBoundaries\(\)/);
+  assert.match(scene, /flat-bottom-viewport/);
+  assert.match(scene, /releaseOrigin = 'top-center'/);
+  assert.match(scene, /new THREE\.LineSegments/);
+  assert.match(scene, /opacity: 0\.055/);
+  assert.doesNotMatch(scene, /rampMaterial|rampAngle|basinHalfWidth/);
   assert.match(scene, /sleepState !== CANNON\.Body\.SLEEPING/);
   assert.match(scene, /callback\?\.\(this\.entries\.length\)/);
   assert.match(scene, /this\.batchBodies\.has\(body\)/);
@@ -73,7 +78,7 @@ test('landing page exposes an accessible prosperity trigger and offline 3D modul
 
   assert.match(page, /class="prosperity-container" role="button" tabindex="0"/);
   assert.match(page, /id="prosperityStatus"[^>]+aria-live="polite"/);
-  assert.match(serviceWorker, /earn-app-v30/);
+  assert.match(serviceWorker, /earn-app-v31/);
   assert.match(serviceWorker, /prosperity-3d\.mjs/);
   assert.match(serviceWorker, /three\.module\.min\.mjs/);
   assert.match(serviceWorker, /three\.core\.min\.js/);
