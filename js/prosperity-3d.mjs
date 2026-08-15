@@ -276,11 +276,13 @@ class ProsperityExperience {
         this.visibleWidth = this.visibleHeight * this.camera.aspect;
         this.worldUnitsPerPixel = this.visibleHeight / this.config.height;
         this.pieceRadius = this.config.targetPiecePixels * this.worldUnitsPerPixel;
-        this.floorY = -this.visibleHeight * 0.5 + this.pieceRadius * 0.45;
+        const floorLift = Math.max(this.pieceRadius * 0.8, this.visibleHeight * 0.06);
+        this.floorY = -this.visibleHeight * 0.5 + floorLift;
         this.depthLimit = clamp(this.visibleWidth * 0.12, 1.7, 3.2);
         this.renderer.domElement.dataset.performanceTier = this.config.performanceTier;
         this.renderer.domElement.dataset.targetPiecePixels = this.config.targetPiecePixels.toFixed(2);
         this.renderer.domElement.dataset.maxBodies = String(this.config.maxBodies);
+        this.renderer.domElement.dataset.floorLiftPixels = (floorLift / this.worldUnitsPerPixel).toFixed(2);
         this.renderer.domElement.dataset.containerShape = 'flat-bottom-viewport';
         this.renderer.domElement.dataset.releaseOrigin = 'top-center';
         this.createBoundaries();
@@ -533,17 +535,16 @@ class ProsperityExperience {
     }
 
     shower(availableCount, onSettled) {
-        if (this.batchActive || this.spawnTimers.size) {
-            return 0;
-        }
-        const remainingCount = Math.max(0, availableCount - this.entries.length);
+        const committedCount = this.entries.length + this.spawnTimers.size;
+        const remainingCount = Math.max(0, availableCount - committedCount);
         const pieceCount = getShowerPieceCount(remainingCount, this.config);
         if (!pieceCount) {
-            onSettled?.(this.entries.length);
             return 0;
         }
-        this.batchActive = true;
-        this.batchBodies.clear();
+        if (!this.batchActive) {
+            this.batchActive = true;
+            this.batchBodies.clear();
+        }
         this.onSettled = onSettled;
         this.settleDeadline = performance.now() + 16000;
         this.hardSettleDeadline = performance.now() + 24000;
@@ -684,5 +685,10 @@ export function startProsperityShower(container, { availableCount, onSettled } =
         EXPERIENCE_BY_CONTAINER.set(container, experience);
     }
     const releasedCount = experience.shower(availableCount, onSettled);
-    return { experience, releasedCount, collectedCount: experience.entries.length };
+    return {
+        experience,
+        releasedCount,
+        collectedCount: experience.entries.length,
+        committedCount: experience.entries.length + experience.spawnTimers.size,
+    };
 }

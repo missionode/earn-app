@@ -68,6 +68,8 @@ test('3D scene includes realistic materials and a flat transparent viewport cont
   assert.match(scene, /sleepState !== CANNON\.Body\.SLEEPING/);
   assert.match(scene, /callback\?\.\(this\.entries\.length\)/);
   assert.match(scene, /this\.batchBodies\.has\(body\)/);
+  assert.match(scene, /this\.entries\.length \+ this\.spawnTimers\.size/);
+  assert.doesNotMatch(scene, /if \(this\.batchActive \|\| this\.spawnTimers\.size\)/);
   assert.doesNotMatch(scene, /new THREE\.InstancedMesh/);
   assert.doesNotMatch(scene, /getPilePosition|updatePileSurface|staticPieces/);
 });
@@ -78,23 +80,22 @@ test('landing page exposes an accessible prosperity trigger and offline 3D modul
 
   assert.match(page, /class="prosperity-container" role="button" tabindex="0"/);
   assert.match(page, /id="prosperityStatus"[^>]+aria-live="polite"/);
-  assert.match(serviceWorker, /earn-app-v31/);
+  assert.match(serviceWorker, /earn-app-v32/);
   assert.match(serviceWorker, /prosperity-3d\.mjs/);
   assert.match(serviceWorker, /three\.module\.min\.mjs/);
   assert.match(serviceWorker, /three\.core\.min\.js/);
   assert.match(serviceWorker, /cannon-es\.mjs/);
   assert.doesNotMatch(serviceWorker, /assets\/coins\//);
-  assert.doesNotMatch(serviceWorker, /coin_drop\.mp3/);
+  assert.match(serviceWorker, /coin_drop\.mp3/);
 });
 
-test('prosperity controller keeps piles session-only and synthesizes a bounded magical whoosh', () => {
+test('prosperity controller keeps piles session-only and bounds the original coin sound', () => {
   const controller = fs.readFileSync('js/prosperity.js', 'utf8');
 
   assert.doesNotMatch(controller, /prosperityTreasure|localStorage/);
-  assert.match(controller, /beginMagicalWhoosh/);
-  assert.match(controller, /context\.createBiquadFilter/);
-  assert.match(controller, /duration = 3\.1/);
-  assert.doesNotMatch(controller, /coin_drop\.mp3/);
+  assert.match(controller, /new Audio\('assets\/sounds\/coin_drop\.mp3'\)/);
+  assert.match(controller, /setTimeout\(stopCoinDropSound, 3200\)/);
+  assert.doesNotMatch(controller, /AudioContext|beginMagicalWhoosh|createBiquadFilter/);
 });
 
 test('3D dependencies are pinned exactly and have no transitive packages', () => {

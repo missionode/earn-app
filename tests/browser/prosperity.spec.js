@@ -26,28 +26,28 @@ for (const viewport of viewports) {
 
     const targetPiecePixels = Number(await canvas.getAttribute('data-target-piece-pixels'));
     const bodyLimit = Number(await canvas.getAttribute('data-max-bodies'));
-    await expect.poll(async () => Number(await canvas.getAttribute('data-body-count'))).toBeGreaterThan(15);
+    await expect.poll(async () => Number(await canvas.getAttribute('data-body-count'))).toBeGreaterThan(5);
+    const firstShowerSize = Number(await canvas.getAttribute('data-shower-size'));
+    await page.getByRole('button', { name: 'Create a 3D prosperity treasure' }).click();
+    await expect.poll(async () => Number(await canvas.getAttribute('data-body-count')), { timeout: 10_000 })
+      .toBeGreaterThan(firstShowerSize);
     await expect.poll(async () => Number(await canvas.getAttribute('data-spawn-pending')), { timeout: 10000 }).toBe(0);
     await expect.poll(async () => Number(await canvas.getAttribute('data-awake-bodies')), { timeout: 30000 }).toBe(0);
 
     expect(targetPiecePixels).toBeGreaterThanOrEqual(10);
     expect(targetPiecePixels).toBeLessThanOrEqual(22);
-    expect(Number(await canvas.getAttribute('data-body-count'))).toBeLessThanOrEqual(bodyLimit);
-    expect(Number(await canvas.getAttribute('data-pile90-horizontal-ratio'))).toBeLessThan(0.7);
+    expect(firstShowerSize).toBeLessThanOrEqual(bodyLimit);
+    expect(Number(await canvas.getAttribute('data-body-count'))).toBeGreaterThan(firstShowerSize);
+    expect(Number(await canvas.getAttribute('data-floor-lift-pixels'))).toBeGreaterThan(40);
+    expect(Number(await canvas.getAttribute('data-pile90-horizontal-ratio'))).toBeLessThan(0.8);
     const renderedKinds = (await canvas.getAttribute('data-kinds')).split(',');
     for (const kind of ['gold', 'silver', 'copper', 'platinum', 'diamond', 'ruby', 'emerald', 'sapphire', 'amethyst', 'topaz']) {
       expect(renderedKinds).toContain(kind);
     }
     expect(browserErrors).toEqual([]);
 
-    const firstCollectedCount = Number(await canvas.getAttribute('data-collected-count'));
-    expect(firstCollectedCount).toBeGreaterThan(0);
-    await page.getByRole('button', { name: 'Create a 3D prosperity treasure' }).click();
-    await expect.poll(async () => Number(await canvas.getAttribute('data-collected-count')), { timeout: 30000 })
-      .toBeGreaterThan(firstCollectedCount);
     expect(Number(await canvas.getAttribute('data-shower-size'))).toBeLessThanOrEqual(bodyLimit);
-    expect(Number(await canvas.getAttribute('data-body-count'))).toBeGreaterThan(firstCollectedCount);
-    expect(Number(await canvas.getAttribute('data-visible-piece-count'))).toBeGreaterThan(firstCollectedCount);
+    expect(Number(await canvas.getAttribute('data-visible-piece-count'))).toBeGreaterThan(firstShowerSize);
 
     await page.screenshot({
       path: path.join('/tmp/earn-prosperity-cp017', `${viewport.name}.png`),

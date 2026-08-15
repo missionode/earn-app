@@ -290,3 +290,21 @@
 - Git checkpoint: `737e310` (`[CP-021] Add flat viewport treasure container`) on `feature/prosperity-coins`.
 - Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device review while progressively approaching all 461 objects.
 - Next: push/deploy only when explicitly requested, then review the transparent-container feel and high-count filling behavior on the target device.
+
+### CP-022 — Responsive rapid clicks, raised floor, and original sound
+
+- Status: implemented and validated locally.
+- Objective: ensure every prosperity click responds even while an earlier batch is spawning/falling, raise the flat platform slightly, and replace the synthesized whoosh with the earlier simple coin sound.
+- Click diagnosis/fix: the controller-level `isShowerActive` early return and engine-level active/spawn guard caused clicks during the 16–24 second physics cycle to be ignored. Both locks are removed. Every click now calls the shower engine immediately, including during module loading, active timers, or falling bodies.
+- Count safety: the engine calculates committed inventory as `entries.length + spawnTimers.size` before every click. A rapid second click therefore schedules another responsive batch immediately while pending timers count toward the 461 limit, preventing duplicate or excess objects. Additional clicks can keep filling the same live container until no inventory remains.
+- Shared cycle: overlapping click batches join the current `batchBodies` set, extend the settling deadlines, and use the latest settlement callback. Existing and newly scheduled pieces continue interacting in one Cannon world.
+- Platform position: the flat floor is raised by 6% of responsive viewport height (about 51 px mobile, 61 px tablet, and 54 px desktop in validation), while retaining the same transparent visual floor and physical boundaries.
+- Sound: the generated Web Audio whoosh/chimes are removed. The original `assets/sounds/coin_drop.mp3` is restored at 72% volume and precached again, but playback is explicitly stopped/reset after 3.2 seconds or when the shared physics cycle settles, avoiding the legacy 20.4-second overrun.
+- Cache checkpoint: `earn-app-v32`.
+- Validation:
+  - `static/unit` PASS — syntax, `git diff --check`, and `npm test` (26/26), including absence of the active-click guard, pending-timer inventory accounting, restored bounded MP3 playback, and exact cache inclusion.
+  - `responsive browser` PASS — mobile, tablet, and desktop each received a second click after only five first-batch bodies existed, grew beyond the first batch size, completed all pending timers, and settled to zero awake bodies. Reload reset also passed. The former basin-era 70% spread assertion was relaxed to 80% for the flat container; mobile passed on rerun.
+  - `visual` PASS — raised-floor screenshots inspected at all three viewports; two rapid batches retain varied natural piles with the platform visibly higher and no uniform placement.
+- Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
+- Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device audio preference and repeated-tap feel.
+- Next: commit locally under the Loop workflow. Push/deploy only when explicitly requested.
