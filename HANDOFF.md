@@ -383,6 +383,6 @@
   - `regression browser` PASS — Opening Balance setup/settings remains green (1/1), for combined browser evidence of 5/5.
   - `visual` PASS — final mobile capture inspected: the responsive status pill clearly reads `Treasure settled — 30 of 461 blessings gathered. Tap again to mint the next batch.` above the distributed treasure without blocking controls.
 - Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
-- Git checkpoint: pending (`[CP-026] Add exponential prosperity mint`) on `feature/prosperity-coins`.
+- Git checkpoint: `0df5713` (`[CP-026] Add exponential prosperity mint`) on `feature/prosperity-coins`.
 - Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device high-count performance review through the 32/64/128/final batches.
 - Next: push/deploy only when explicitly requested, then review the later exponential batches and visible status timing on the target device.
