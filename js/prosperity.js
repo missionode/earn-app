@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let experiencePromise;
     let soundStopTimer = null;
+    let statusHideTimer = null;
 
     if (!dailyCounterElement || !prosperityTrigger || !coinRainContainer) {
         return;
@@ -21,9 +22,20 @@ document.addEventListener('DOMContentLoaded', () => {
         return count;
     }
 
-    function setStatus(message) {
+    function setStatus(message, hideAfter = 0) {
         if (prosperityStatus) {
+            if (statusHideTimer) {
+                window.clearTimeout(statusHideTimer);
+                statusHideTimer = null;
+            }
             prosperityStatus.textContent = message;
+            prosperityStatus.hidden = false;
+            if (hideAfter > 0) {
+                statusHideTimer = window.setTimeout(() => {
+                    prosperityStatus.hidden = true;
+                    statusHideTimer = null;
+                }, hideAfter);
+            }
         }
     }
 
@@ -67,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         coinRainContainer.appendChild(fragment);
         setStatus(reason === 'reduced-motion'
             ? 'A still prosperity treasure is shown because reduced motion is enabled.'
-            : 'A still prosperity treasure is shown because 3D graphics are unavailable.');
+            : 'A still prosperity treasure is shown because 3D graphics are unavailable.', 8000);
     }
 
     async function startProsperity() {
@@ -79,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         prosperityTrigger.classList.add('is-loading');
-        setStatus('Preparing the prosperity treasure.');
+        setStatus('Preparing the prosperity mint…');
         playCoinDropSound();
 
         try {
@@ -92,16 +104,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     stopCoinDropSound();
                     const remaining = Math.max(0, count - settledCount);
                     setStatus(remaining
-                        ? `${settledCount} of ${count} blessings collected. Tap again for the next batch.`
-                        : `All ${count} prosperity blessings are gathered in the treasure pile.`);
+                        ? `Treasure settled — ${settledCount} of ${count} blessings gathered. Tap again to mint the next batch.`
+                        : `Prosperity treasure complete — all ${count} blessings gathered.`, 8000);
                 },
             });
             if (result.releasedCount) {
                 const afterBatch = Math.min(count, result.committedCount);
-                setStatus(`Releasing ${result.releasedCount} blessings. ${afterBatch} of ${count} will be collected.`);
+                setStatus(`Minting and polishing ${result.releasedCount} prosperity pieces… ${afterBatch} of ${count} are on their way.`);
             } else {
                 stopCoinDropSound();
-                setStatus(`All ${count} prosperity blessings are already gathered.`);
+                setStatus(`Prosperity treasure complete — all ${count} blessings are already gathered.`, 8000);
             }
         } catch (error) {
             stopCoinDropSound();

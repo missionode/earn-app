@@ -40,7 +40,6 @@ export function getResponsiveProsperityConfig(width, height, pixelRatio = 1) {
     const targetPiecePixels = clamp(shortestSide * 0.028, 10, 22);
     const performanceTier = shortestSide < 520 ? 'mobile' : shortestSide < 900 ? 'tablet' : 'desktop';
     const maxBodies = performanceTier === 'mobile' ? 28 : performanceTier === 'tablet' ? 36 : 44;
-    const showerSize = performanceTier === 'mobile' ? 24 : performanceTier === 'tablet' ? 32 : 40;
 
     return Object.freeze({
         width,
@@ -48,13 +47,14 @@ export function getResponsiveProsperityConfig(width, height, pixelRatio = 1) {
         pixelRatio: Math.min(pixelRatio, performanceTier === 'mobile' ? 1.5 : 2),
         targetPiecePixels,
         maxBodies,
-        showerSize,
         performanceTier,
     });
 }
 
-export function getShowerPieceCount(dayCount, responsiveConfig) {
-    return Math.min(Math.max(0, dayCount), responsiveConfig.showerSize);
+export function getShowerPieceCount(remainingCount, showerExponent) {
+    const safeRemainingCount = Math.max(0, Math.floor(Number(remainingCount) || 0));
+    const safeExponent = clamp(Math.floor(Number(showerExponent) || 1), 1, 30);
+    return Math.min(safeRemainingCount, 2 ** safeExponent);
 }
 
 function createEnvironment(renderer) {
@@ -195,6 +195,8 @@ class ProsperityExperience {
         this.pieceSequence = 0;
         this.coinSequence = 0;
         this.gemSequence = 0;
+        this.showerExponent = 1;
+        this.lastShowerExponent = 0;
         this.boundaryBodies = [];
         this.elementObstacleBodies = [];
         this.elementObstacleBodyIds = new Set();
@@ -694,18 +696,24 @@ class ProsperityExperience {
         this.createElementObstacles();
         const committedCount = this.entries.length + this.spawnTimers.size;
         const remainingCount = Math.max(0, availableCount - committedCount);
-        const pieceCount = getShowerPieceCount(remainingCount, this.config);
+        const exponent = this.showerExponent;
+        const pieceCount = getShowerPieceCount(remainingCount, exponent);
         if (!pieceCount) {
             return 0;
         }
+        this.lastShowerExponent = exponent;
+        this.showerExponent += 1;
         if (!this.batchActive) {
             this.batchActive = true;
             this.batchBodies.clear();
         }
         this.onSettled = onSettled;
-        this.settleDeadline = performance.now() + 16000;
-        this.hardSettleDeadline = performance.now() + 24000;
+        const now = performance.now();
+        const spawnDuration = Math.max(0, pieceCount - 1) * 72;
+        this.settleDeadline = Math.max(this.settleDeadline, now + spawnDuration + 16000);
+        this.hardSettleDeadline = Math.max(this.hardSettleDeadline, now + spawnDuration + 24000);
         this.renderer.domElement.dataset.showerSize = String(pieceCount);
+        this.renderer.domElement.dataset.showerExponent = String(exponent);
         for (let index = 0; index < pieceCount; index += 1) {
             const pieceIndex = this.pieceSequence;
             this.pieceSequence += 1;
@@ -855,5 +863,6 @@ export function startProsperityShower(container, { availableCount, onSettled } =
         releasedCount,
         collectedCount: experience.entries.length,
         committedCount: experience.entries.length + experience.spawnTimers.size,
+        showerExponent: experience.lastShowerExponent,
     };
 }

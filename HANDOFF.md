@@ -366,3 +366,23 @@
 - Git checkpoint: `40c40d3` (`[CP-025] Add opening balance income`) on `feature/prosperity-coins`.
 - Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device review.
 - Next: push/deploy only when explicitly requested, then confirm the installed PWA refreshes to cache `earn-app-v35` and review setup/settings on the target device.
+
+### CP-026 — Exponential prosperity mint and visible progress
+
+- Status: implemented, validated, and committed locally.
+- Objective: replace the initially large fixed prosperity showers with the approved `2^x` click progression and visibly explain what is happening while pieces fall, after each batch settles, and when the daily treasure is complete.
+- Exponential model: successful clicks now release `2^x` pieces for click exponent `x`, starting at `x = 1`: 2, 4, 8, 16, 32, 64, 128, and so on. Every batch is capped to the remaining daily inventory, so the current 461 count resolves exactly as `2 + 4 + 8 + 16 + 32 + 64 + 128 + 207 = 461` without overshoot.
+- Session behavior: the exponent starts fresh on every page load, increments only when a non-empty batch is committed, and remains safe during rapid clicks because pending spawn timers still count toward committed inventory. The final all-remaining click cannot create duplicates.
+- Long-batch physics: soft/hard settlement deadlines now include the batch's staggered spawn duration. Large exponential batches therefore receive the same full gravity/collision settling window after their final piece appears instead of having that time consumed while pieces are still being released.
+- Visible status: the former screen-reader-only status is now a compact, non-interactive live pill. It shows `Preparing the prosperity mint…`, then `Minting and polishing N prosperity pieces…`, followed by `Treasure settled — X of Y blessings gathered. Tap again to mint the next batch.` The full-count branch shows `Prosperity treasure complete — all Y blessings gathered.` Settled/completion messages remain visible for eight seconds.
+- Accessibility/usability: the message retains `role="status"` and `aria-live="polite"`, uses responsive sizing and safe-area positioning, does not intercept pointer input, and continues to support reduced-motion/3D-unavailable explanations.
+- Cache checkpoint: `earn-app-v36`.
+- Validation:
+  - `static/unit` PASS — module/controller syntax, `git diff --check`, and `npm test` (31/31). The arithmetic test proves the exact eight-click 461 sequence and final cap; controller tests cover minting/completion copy and existing bounded sound behavior.
+  - `responsive browser` PASS — Playwright Chromium mobile `390x844`, tablet `768x1024`, desktop `1440x900`, and reload-reset behavior (4/4). Each responsive run proves the rapid 2/4/8/16 sequence, 30 committed/visible pieces, element collisions, zero final awake/supported bodies, and the visible 30-of-daily settled message. Reload proves the exponent restarts at 1 and again reaches 30 after four clicks.
+  - `regression browser` PASS — Opening Balance setup/settings remains green (1/1), for combined browser evidence of 5/5.
+  - `visual` PASS — final mobile capture inspected: the responsive status pill clearly reads `Treasure settled — 30 of 461 blessings gathered. Tap again to mint the next batch.` above the distributed treasure without blocking controls.
+- Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
+- Git checkpoint: pending (`[CP-026] Add exponential prosperity mint`) on `feature/prosperity-coins`.
+- Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device high-count performance review through the 32/64/128/final batches.
+- Next: push/deploy only when explicitly requested, then review the later exponential batches and visible status timing on the target device.

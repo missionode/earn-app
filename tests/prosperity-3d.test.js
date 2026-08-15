@@ -26,20 +26,23 @@ test('prosperity pieces and simulation limits respond to device size', async () 
   assert.deepEqual([mobile.pixelRatio, tablet.pixelRatio, desktop.pixelRatio], [1.5, 2, 2]);
 });
 
-test('each click releases the remaining inventory in responsive batches', async () => {
-  const { getResponsiveProsperityConfig, getShowerPieceCount } = await modulePromise;
-  const mobile = getResponsiveProsperityConfig(390, 844, 2);
+test('each click doubles the shower count and caps the last batch at the daily total', async () => {
+  const { getShowerPieceCount } = await modulePromise;
+  assert.equal(getShowerPieceCount(0, 1), 0);
+  assert.equal(getShowerPieceCount(461, 1), 2);
+  assert.equal(getShowerPieceCount(459, 2), 4);
 
-  assert.equal(getShowerPieceCount(0, mobile), 0);
-  assert.equal(getShowerPieceCount(7, mobile), 7);
-  assert.equal(getShowerPieceCount(100000, mobile), mobile.showerSize);
-  assert.ok(getShowerPieceCount(460, mobile) <= mobile.maxBodies);
-
+  const batches = [];
   let collected = 0;
-  while (collected < 460) {
-    collected += getShowerPieceCount(460 - collected, mobile);
+  let exponent = 1;
+  while (collected < 461) {
+    const batch = getShowerPieceCount(461 - collected, exponent);
+    batches.push(batch);
+    collected += batch;
+    exponent += 1;
   }
-  assert.equal(collected, 460);
+  assert.deepEqual(batches, [2, 4, 8, 16, 32, 64, 128, 207]);
+  assert.equal(collected, 461);
 });
 
 test('3D scene includes realistic materials and a flat transparent viewport container', () => {
@@ -94,7 +97,7 @@ test('landing page exposes an accessible prosperity trigger and offline 3D modul
 
   assert.match(page, /class="prosperity-container" role="button" tabindex="0"/);
   assert.match(page, /id="prosperityStatus"[^>]+aria-live="polite"/);
-  assert.match(serviceWorker, /earn-app-v35/);
+  assert.match(serviceWorker, /earn-app-v36/);
   assert.match(serviceWorker, /prosperity-3d\.mjs/);
   assert.match(serviceWorker, /three\.module\.min\.mjs/);
   assert.match(serviceWorker, /three\.core\.min\.js/);
@@ -109,6 +112,8 @@ test('prosperity controller keeps piles session-only and bounds the original coi
   assert.doesNotMatch(controller, /prosperityTreasure|localStorage/);
   assert.match(controller, /new Audio\('assets\/sounds\/coin_drop\.mp3'\)/);
   assert.match(controller, /setTimeout\(stopCoinDropSound, 3200\)/);
+  assert.match(controller, /Minting and polishing/);
+  assert.match(controller, /Prosperity treasure complete/);
   assert.doesNotMatch(controller, /AudioContext|beginMagicalWhoosh|createBiquadFilter/);
 });
 

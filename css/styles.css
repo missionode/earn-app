@@ -422,6 +422,32 @@ body.hide-transaction-details #transactionsTable td:nth-child(7)  /* Status */
     pointer-events: none;
 }
 
+.prosperity-status {
+    position: fixed;
+    left: 50%;
+    bottom: calc(78px + env(safe-area-inset-bottom, 0px));
+    z-index: 950;
+    width: max-content;
+    max-width: min(88vw, 520px);
+    padding: 9px 14px;
+    border: 1px solid rgba(210, 155, 22, 0.3);
+    border-radius: 999px;
+    background: rgba(255, 250, 225, 0.94);
+    box-shadow: 0 5px 18px rgba(93, 62, 0, 0.16);
+    color: #704c00;
+    font-size: clamp(0.78rem, 2.8vw, 0.94rem);
+    font-weight: 600;
+    line-height: 1.35;
+    text-align: center;
+    transform: translateX(-50%);
+    pointer-events: none;
+    backdrop-filter: blur(8px);
+}
+
+.prosperity-status[hidden] {
+    display: none;
+}
+
 .visually-hidden {
     position: absolute !important;
     width: 1px !important;
