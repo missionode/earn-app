@@ -28,6 +28,7 @@ for (const viewport of viewports) {
     expect(Number(await canvas.getAttribute('data-element-obstacle-count'))).toBeGreaterThan(5);
     await expect(canvas).toHaveAttribute('data-shower-exponent', '1');
     await expect(canvas).toHaveAttribute('data-shower-size', '2');
+    await expect(page.locator('#dailyCounter')).toHaveText(/^2\/\d+$/);
 
     const targetPiecePixels = Number(await canvas.getAttribute('data-target-piece-pixels'));
     const bodyLimit = Number(await canvas.getAttribute('data-max-bodies'));
@@ -36,13 +37,13 @@ for (const viewport of viewports) {
       await page.getByRole('button', { name: 'Create a 3D prosperity treasure' }).click();
       await expect(canvas).toHaveAttribute('data-shower-exponent', String(exponent));
       await expect(canvas).toHaveAttribute('data-shower-size', String(size));
+      await expect(page.locator('#dailyCounter')).toHaveText(new RegExp(`^${size}/\\d+$`));
     }
     await expect.poll(async () => Number(await canvas.getAttribute('data-body-count')), { timeout: 10_000 })
       .toBe(30);
     await expect.poll(async () => Number(await canvas.getAttribute('data-spawn-pending')), { timeout: 10000 }).toBe(0);
     await expect.poll(async () => Number(await canvas.getAttribute('data-awake-bodies')), { timeout: 30000 }).toBe(0);
-    await expect(page.locator('#prosperityStatus')).toBeVisible();
-    await expect(page.locator('#prosperityStatus')).toContainText(/Treasure settled — 30 of \d+ blessings gathered/);
+    await expect(page.locator('#dailyCounter')).toHaveText(/^16\/\d+$/);
     expect(Number(await canvas.getAttribute('data-element-collision-count'))).toBeGreaterThan(0);
     expect(Number(await canvas.getAttribute('data-element-resting-bodies'))).toBe(0);
 

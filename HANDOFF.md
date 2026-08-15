@@ -386,3 +386,22 @@
 - Git checkpoint: `0df5713` (`[CP-026] Add exponential prosperity mint`) on `feature/prosperity-coins`.
 - Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device high-count performance review through the 32/64/128/final batches.
 - Next: push/deploy only when explicitly requested, then review the later exponential batches and visible status timing on the target device.
+
+### CP-027 — Minimal exponential counter progress
+
+- Status: implemented, validated, and committed locally.
+- Objective: remove the recently added prosperity popup/status messaging and express exponential progress only through the existing `#dailyCounter` beside the coin icon.
+- Display behavior: the untouched initial state shows the available daily count (`461` on 2026-08-15). Each successful exponential click replaces it with the current batch/available format: `2/461`, `4/461`, `8/461`, `16/461`, and onward. The value remains compact after settling and updates only when the next batch is committed; once no inventory remains, it shows `461/461`.
+- Removed UI: the floating prosperity status element, fixed glass/gold pill styling, preparation text, minting text, settled text, completion text, and associated hide timer are completely removed.
+- Accessibility: `#dailyCounter` itself now has `aria-live="polite"` and `aria-atomic="true"`. Its accessible label changes with every committed batch (for example, `16 of 461 prosperity pieces in this batch`) without adding any separate visual message.
+- Preserved behavior: exponential `2^x` arithmetic, rapid-click inventory safety, sounds, full-width physics, live page-element collisions, roll-off behavior, responsive sizing, reload reset, and reduced-motion fallback remain unchanged.
+- Cache checkpoint: `earn-app-v37`.
+- Validation:
+  - `static/unit` PASS — controller syntax, `git diff --check`, and `npm test` (31/31). Tests assert the live/atomic counter, exact batch display expression, absence of the status element and all removed message strings, and cache version.
+  - `responsive browser` PASS — Playwright Chromium mobile, tablet, desktop, and reload reset (4/4). Each viewport proves counter transitions `2/daily → 4/daily → 8/daily → 16/daily`, 30 physical pieces after four rapid clicks, final settling/containment, and no browser errors.
+  - `regression browser` PASS — Opening Balance setup/settings remains green (1/1), for combined browser evidence of 5/5.
+  - `visual` PASS — final mobile capture inspected: only `16/461` appears next to the coin trigger; no popup or status pill obscures the interface or treasure.
+- Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
+- Git checkpoint: pending (`[CP-027] Simplify prosperity progress`) on `feature/prosperity-coins`.
+- Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device review.
+- Next: push/deploy only when explicitly requested, then confirm the compact counter progression on the target device.

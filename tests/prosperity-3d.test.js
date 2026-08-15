@@ -96,8 +96,9 @@ test('landing page exposes an accessible prosperity trigger and offline 3D modul
   const serviceWorker = fs.readFileSync('js/sw.js', 'utf8');
 
   assert.match(page, /class="prosperity-container" role="button" tabindex="0"/);
-  assert.match(page, /id="prosperityStatus"[^>]+aria-live="polite"/);
-  assert.match(serviceWorker, /earn-app-v36/);
+  assert.match(page, /id="dailyCounter"[^>]+aria-live="polite"[^>]+aria-atomic="true"/);
+  assert.doesNotMatch(page, /id="prosperityStatus"/);
+  assert.match(serviceWorker, /earn-app-v37/);
   assert.match(serviceWorker, /prosperity-3d\.mjs/);
   assert.match(serviceWorker, /three\.module\.min\.mjs/);
   assert.match(serviceWorker, /three\.core\.min\.js/);
@@ -112,8 +113,9 @@ test('prosperity controller keeps piles session-only and bounds the original coi
   assert.doesNotMatch(controller, /prosperityTreasure|localStorage/);
   assert.match(controller, /new Audio\('assets\/sounds\/coin_drop\.mp3'\)/);
   assert.match(controller, /setTimeout\(stopCoinDropSound, 3200\)/);
-  assert.match(controller, /Minting and polishing/);
-  assert.match(controller, /Prosperity treasure complete/);
+  assert.match(controller, /showBatchProgress\(result\.releasedCount, count\)/);
+  assert.match(controller, /`\$\{batchCount\}\/\$\{dailyCount\}`/);
+  assert.doesNotMatch(controller, /Preparing the prosperity mint|Treasure settled|Prosperity treasure complete/);
   assert.doesNotMatch(controller, /AudioContext|beginMagicalWhoosh|createBiquadFilter/);
 });
 
