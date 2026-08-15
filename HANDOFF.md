@@ -484,6 +484,6 @@
 - Validation: `node --check js/prosperity.js` PASS, `git diff --check` PASS, and `npm test` PASS (38/38), including looped landing audio, visual-settlement callback, removal of the fixed cutoff, and v42 cache assertions.
 - Browser status: no connected browser backend is available in this session; target-device listening through the 207-piece final batch remains the experiential check.
 - Scope protection: user-owned QR artwork remains untouched and excluded.
-- Git checkpoint: pending on `main`.
+- Git checkpoint: `a023599` (`[CP-032] Sustain landing shower sound`) on `main`.
 - Progress: 100% implementation and automated validation complete | Confidence: high | Main remaining scope: confirm the final shower audio stops at the perceived resting point on the target phone.
 - Next: push/deploy only when explicitly requested, refresh to v42, then play through the complete landing sequence and listen to the final batch.
