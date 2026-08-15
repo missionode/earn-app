@@ -327,3 +327,23 @@
 - Git checkpoint: `7961d02` (`[CP-023] Add contained bounce distribution`) on `feature/prosperity-coins`.
 - Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device feel/performance review at high accumulated counts.
 - Next: push/deploy only when explicitly requested, then review bounce energy and corner distribution on the target device.
+
+### CP-024 — Full-width falling path with live page collisions
+
+- Status: implemented, validated, and committed locally.
+- Objective: release prosperity pieces from anywhere across the top of the viewport, let them visibly interact with the actual Earn interface on their downward path, and ensure they ultimately leave those elements and gather at the bottom.
+- Release model: each responsive batch now uses nearly the complete safe viewport width (`data-release-origin="full-width-top"`) with random x/depth positions, restrained lateral momentum, random orientation, and angular velocity. The same normal Earth gravity remains authoritative after release.
+- Live element physics: visible logo/help controls, Total Income card, wallet controls, Income artwork/button, Transactions heading/table, mantra strip, and footer marks are measured with `getBoundingClientRect()` and projected from screen coordinates into the Three/Cannon world. Matching static bodies are rebuilt for the current responsive layout and updated on resize, scroll, and every shower (`data-obstacle-model="dom-elements"`). Hidden/offscreen/tiny elements are excluded.
+- Interaction feel: page-element contacts use a dedicated low-friction `0.035`, restitution `0.48` material, subtle alternating depth slopes, and bounded collision impulses. Coins and gems therefore bounce, spin, roll, and deflect across the visible interface instead of passing through it.
+- Bottom guarantee: element colliders occupy only a shallow central depth, leaving front/back escape paths. A supported-body check continues a gentle physical roll-off whenever a piece slows on a page element. Diagnostics and browser tests require recorded element collisions and zero bodies remaining supported by page elements when the batch settles.
+- Usability: the WebGL layer remains `pointer-events: none`; all links, icons, buttons, filters, and prosperity-trigger clicks continue passing directly to the real page controls.
+- Responsive behavior: element colliders are derived from each viewport's actual layout rather than hard-coded coordinates. Full-width release margins, obstacle depth, piece size, velocity, floor height, and container walls continue scaling by viewport/performance tier.
+- Cache checkpoint: `earn-app-v34`.
+- Validation:
+  - `static/unit` PASS — module syntax, `git diff --check`, and `npm test` (26/26), including full-width origin, DOM projection, dedicated contact material, roll-off safeguard, diagnostics, and cache version.
+  - `responsive browser` PASS — Playwright Chromium mobile `390x844`, tablet `768x1024`, desktop `1440x900`, and reload-reset behavior (4/4). Every responsive fall created more than five live page colliders, recorded real element contacts, completed pending spawns, ended with zero awake bodies, left zero pieces resting on page elements, remained contained, and produced no page errors.
+  - `visual` PASS — final desktop and mobile captures inspected: releases originate across the header width, visibly traverse the interface through varied collision paths, and finish distributed along the raised bottom rather than remaining on the Income card or mantra strip.
+- Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
+- Git checkpoint: pending (`[CP-024] Add live page collision path`) on `feature/prosperity-coins`.
+- Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device motion/performance review with repeated high-count batches.
+- Next: push/deploy only when explicitly requested, then review the live collision feel on the target device.

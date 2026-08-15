@@ -61,11 +61,21 @@ test('3D scene includes realistic materials and a flat transparent viewport cont
   assert.match(scene, /new CANNON\.Sphere/);
   assert.match(scene, /createBoundaries\(\)/);
   assert.match(scene, /flat-bottom-viewport/);
-  assert.match(scene, /releaseOrigin = 'top-center'/);
+  assert.match(scene, /releaseOrigin = 'full-width-top'/);
   assert.match(scene, /bounceProfile = 'lively-contained'/);
+  assert.match(scene, /obstacleModel = 'dom-elements'/);
+  assert.match(scene, /ELEMENT_OBSTACLE_SELECTOR/);
+  assert.match(scene, /getBoundingClientRect\(\)/);
+  assert.match(scene, /createElementObstacles\(\)/);
+  assert.match(scene, /friction: 0\.035/);
+  assert.match(scene, /restitution: 0\.48/);
+  assert.match(scene, /setFromEuler\(obstacleIndex % 2 \? 0\.065 : -0\.065/);
+  assert.match(scene, /handleElementCollision\(body, otherBody\)/);
+  assert.match(scene, /keepRollingOffElement\(body, time\)/);
+  assert.match(scene, /elementCollisionCount/);
   assert.match(scene, /restitution: 0\.42/);
   assert.match(scene, /restitution: 0\.3/);
-  assert.match(scene, /horizontalSpeed = Math\.min\(this\.visibleWidth \* 0\.26, 6\.5\)/);
+  assert.match(scene, /releaseHalfWidth = Math\.max\(this\.pieceRadius, this\.visibleWidth \* 0\.5/);
   assert.match(scene, /new THREE\.LineSegments/);
   assert.match(scene, /opacity: 0\.055/);
   assert.doesNotMatch(scene, /rampMaterial|rampAngle|basinHalfWidth/);
@@ -84,7 +94,7 @@ test('landing page exposes an accessible prosperity trigger and offline 3D modul
 
   assert.match(page, /class="prosperity-container" role="button" tabindex="0"/);
   assert.match(page, /id="prosperityStatus"[^>]+aria-live="polite"/);
-  assert.match(serviceWorker, /earn-app-v33/);
+  assert.match(serviceWorker, /earn-app-v34/);
   assert.match(serviceWorker, /prosperity-3d\.mjs/);
   assert.match(serviceWorker, /three\.module\.min\.mjs/);
   assert.match(serviceWorker, /three\.core\.min\.js/);

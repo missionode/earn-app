@@ -21,6 +21,19 @@ const GEMS = Object.freeze([
 
 const EXPERIENCE_BY_CONTAINER = new WeakMap();
 const clamp = (value, minimum, maximum) => Math.min(maximum, Math.max(minimum, value));
+const ELEMENT_OBSTACLE_SELECTOR = [
+    '.action-buttons.into .responsive-image',
+    '.header-logo-section .footer-faq-link',
+    '.summary-item:not([hidden])',
+    '#walletfilter',
+    '.adsSpace',
+    '.ux-actions .button:not([hidden])',
+    '.transactions h2',
+    '.table_wrap',
+    '.namaste',
+    '.footer_arranged .bodymass',
+    '.footer_arranged .faqlink',
+].join(',');
 
 export function getResponsiveProsperityConfig(width, height, pixelRatio = 1) {
     const shortestSide = Math.max(280, Math.min(width, height));
@@ -183,6 +196,10 @@ class ProsperityExperience {
         this.coinSequence = 0;
         this.gemSequence = 0;
         this.boundaryBodies = [];
+        this.elementObstacleBodies = [];
+        this.elementObstacleBodyIds = new Set();
+        this.elementCollisionCount = 0;
+        this.obstacleUpdateFrame = null;
         this.frameId = null;
         this.lastFrameTime = 0;
         this.settleDeadline = 0;
@@ -237,6 +254,7 @@ class ProsperityExperience {
         this.world.solver.iterations = 12;
         this.pieceMaterial = new CANNON.Material('prosperity-piece');
         this.boundaryMaterial = new CANNON.Material('prosperity-boundary');
+        this.elementObstacleMaterial = new CANNON.Material('prosperity-element-obstacle');
         this.world.addContactMaterial(new CANNON.ContactMaterial(this.pieceMaterial, this.boundaryMaterial, {
             friction: 0.26,
             restitution: 0.42,
@@ -245,12 +263,18 @@ class ProsperityExperience {
             friction: 0.22,
             restitution: 0.3,
         }));
+        this.world.addContactMaterial(new CANNON.ContactMaterial(this.pieceMaterial, this.elementObstacleMaterial, {
+            friction: 0.035,
+            restitution: 0.48,
+        }));
 
         this.coinResources = new Map();
         this.gemResources = new Map();
         this.updateViewport(true);
         this.resizeHandler = () => this.updateViewport(false);
+        this.scrollHandler = () => this.scheduleElementObstacleUpdate();
         window.addEventListener('resize', this.resizeHandler, { passive: true });
+        window.addEventListener('scroll', this.scrollHandler, { passive: true });
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 this.stopAnimation();
@@ -284,11 +308,90 @@ class ProsperityExperience {
         this.renderer.domElement.dataset.maxBodies = String(this.config.maxBodies);
         this.renderer.domElement.dataset.floorLiftPixels = (floorLift / this.worldUnitsPerPixel).toFixed(2);
         this.renderer.domElement.dataset.containerShape = 'flat-bottom-viewport';
-        this.renderer.domElement.dataset.releaseOrigin = 'top-center';
+        this.renderer.domElement.dataset.releaseOrigin = 'full-width-top';
         this.renderer.domElement.dataset.bounceProfile = 'lively-contained';
+        this.renderer.domElement.dataset.obstacleModel = 'dom-elements';
         this.createBoundaries();
+        this.createElementObstacles();
 
         this.render();
+    }
+
+    screenPointToWorld(screenX, screenY, worldZ = 0) {
+        this.camera.updateMatrixWorld(true);
+        const point = new THREE.Vector3(
+            (screenX / this.config.width) * 2 - 1,
+            -(screenY / this.config.height) * 2 + 1,
+            0.5,
+        ).unproject(this.camera);
+        const direction = point.sub(this.camera.position).normalize();
+        const distance = (worldZ - this.camera.position.z) / direction.z;
+        return this.camera.position.clone().add(direction.multiplyScalar(distance));
+    }
+
+    scheduleElementObstacleUpdate() {
+        if (this.obstacleUpdateFrame) {
+            return;
+        }
+        this.obstacleUpdateFrame = requestAnimationFrame(() => {
+            this.obstacleUpdateFrame = null;
+            this.createElementObstacles();
+        });
+    }
+
+    createElementObstacles() {
+        this.elementObstacleBodies.forEach((body) => this.world.removeBody(body));
+        this.elementObstacleBodies = [];
+        this.elementObstacleBodyIds.clear();
+
+        const viewportRect = {
+            left: 0,
+            top: 0,
+            right: this.config.width,
+            bottom: this.config.height,
+        };
+        const horizontalLimit = this.visibleWidth * 0.5 - this.pieceRadius * 1.15;
+        const obstacleHalfDepth = Math.min(
+            this.depthLimit * 0.34,
+            Math.max(this.pieceRadius * 2.2, this.depthLimit * 0.22),
+        );
+
+        document.querySelectorAll(ELEMENT_OBSTACLE_SELECTOR).forEach((element, obstacleIndex) => {
+            const style = window.getComputedStyle(element);
+            const rect = element.getBoundingClientRect();
+            if (style.display === 'none' || style.visibility === 'hidden' || Number(style.opacity) === 0
+                || rect.width < 6 || rect.height < 6
+                || rect.right <= viewportRect.left || rect.left >= viewportRect.right
+                || rect.bottom <= viewportRect.top || rect.top >= viewportRect.bottom) {
+                return;
+            }
+
+            const clippedLeft = clamp(rect.left, viewportRect.left, viewportRect.right);
+            const clippedRight = clamp(rect.right, viewportRect.left, viewportRect.right);
+            const clippedTop = clamp(rect.top, viewportRect.top, viewportRect.bottom);
+            const clippedBottom = clamp(rect.bottom, viewportRect.top, viewportRect.bottom);
+            const topLeft = this.screenPointToWorld(clippedLeft, clippedTop);
+            const bottomRight = this.screenPointToWorld(clippedRight, clippedBottom);
+            const left = clamp(Math.min(topLeft.x, bottomRight.x), -horizontalLimit, horizontalLimit);
+            const right = clamp(Math.max(topLeft.x, bottomRight.x), -horizontalLimit, horizontalLimit);
+            const top = Math.max(topLeft.y, bottomRight.y);
+            const bottom = Math.max(this.floorY + this.pieceRadius * 1.15, Math.min(topLeft.y, bottomRight.y));
+            const halfWidth = (right - left) * 0.5;
+            const halfHeight = (top - bottom) * 0.5;
+            if (halfWidth < this.worldUnitsPerPixel * 3 || halfHeight < this.worldUnitsPerPixel * 3) {
+                return;
+            }
+
+            const body = new CANNON.Body({ mass: 0, material: this.elementObstacleMaterial });
+            body.addShape(new CANNON.Box(new CANNON.Vec3(halfWidth, halfHeight, obstacleHalfDepth)));
+            body.position.set((left + right) * 0.5, (top + bottom) * 0.5, 0);
+            body.quaternion.setFromEuler(obstacleIndex % 2 ? 0.065 : -0.065, 0, 0);
+            this.world.addBody(body);
+            this.elementObstacleBodies.push(body);
+            this.elementObstacleBodyIds.add(body.id);
+        });
+
+        this.renderer.domElement.dataset.elementObstacleCount = String(this.elementObstacleBodies.length);
     }
 
     createBoundaries() {
@@ -436,8 +539,8 @@ class ProsperityExperience {
             linearDamping: 0.08,
             angularDamping: 0.24,
             allowSleep: true,
-            sleepSpeedLimit: 0.62,
-            sleepTimeLimit: 0.45,
+            sleepSpeedLimit: 0.2,
+            sleepTimeLimit: 0.8,
         });
         return { mesh: group, body };
     }
@@ -488,10 +591,57 @@ class ProsperityExperience {
             linearDamping: 0.1,
             angularDamping: 0.3,
             allowSleep: true,
-            sleepSpeedLimit: 0.65,
-            sleepTimeLimit: 0.4,
+            sleepSpeedLimit: 0.2,
+            sleepTimeLimit: 0.8,
         });
         return { mesh, body };
+    }
+
+    handleElementCollision(body, otherBody) {
+        if (!this.elementObstacleBodyIds.has(otherBody.id)) {
+            return;
+        }
+        const now = performance.now();
+        if (now - (body.prosperityLastElementBounce || 0) < 140) {
+            return;
+        }
+        body.prosperityLastElementBounce = now;
+        const depthDirection = Math.abs(body.position.z) > 0.08
+            ? Math.sign(body.position.z)
+            : (Math.random() < 0.5 ? -1 : 1);
+        body.velocity.z += depthDirection * Math.min(this.depthLimit * 0.82, 2.35);
+        body.velocity.y = Math.max(body.velocity.y, THREE.MathUtils.randFloat(0.38, 0.82));
+        body.angularVelocity.x += THREE.MathUtils.randFloat(-2.4, 2.4);
+        body.angularVelocity.z += THREE.MathUtils.randFloat(-2.4, 2.4);
+        body.wakeUp();
+        this.elementCollisionCount += 1;
+        this.renderer.domElement.dataset.elementCollisionCount = String(this.elementCollisionCount);
+    }
+
+    isSupportedByElement(body) {
+        return this.elementObstacleBodies.some((obstacle) => {
+            obstacle.updateAABB();
+            const { lowerBound, upperBound } = obstacle.aabb;
+            return body.position.x > lowerBound.x - this.pieceRadius
+                && body.position.x < upperBound.x + this.pieceRadius
+                && body.position.z > lowerBound.z - this.pieceRadius
+                && body.position.z < upperBound.z + this.pieceRadius
+                && Math.abs(body.position.y - upperBound.y) < this.pieceRadius * 2.2;
+        });
+    }
+
+    keepRollingOffElement(body, time) {
+        if (time < (body.prosperityNextRollOffAt || 0) || body.velocity.length() >= 0.42) {
+            return;
+        }
+        body.prosperityNextRollOffAt = time + 520;
+        const depthDirection = Math.abs(body.position.z) > 0.08
+            ? Math.sign(body.position.z)
+            : (Math.random() < 0.5 ? -1 : 1);
+        body.velocity.z += depthDirection * Math.min(this.depthLimit * 0.72, 2.1);
+        body.velocity.y = Math.max(body.velocity.y, 0.34);
+        body.angularVelocity.y += THREE.MathUtils.randFloat(-2, 2);
+        body.wakeUp();
     }
 
     addPiece(index) {
@@ -502,21 +652,19 @@ class ProsperityExperience {
         } else {
             this.coinSequence += 1;
         }
-        const releaseHalfWidth = clamp(this.visibleWidth * 0.055, this.pieceRadius * 2.2, 1.35);
+        const releaseHalfWidth = Math.max(this.pieceRadius, this.visibleWidth * 0.5 - this.pieceRadius * 1.8);
         const releaseHalfDepth = Math.min(this.depthLimit * 0.22, this.pieceRadius * 3);
         entry.body.position.set(
             THREE.MathUtils.randFloat(-releaseHalfWidth, releaseHalfWidth),
             this.visibleHeight * 0.52 + THREE.MathUtils.randFloat(0.25, 1.8),
             THREE.MathUtils.randFloat(-releaseHalfDepth, releaseHalfDepth),
         );
-        const outwardAngle = Math.random() * Math.PI * 2;
-        const outwardStrength = THREE.MathUtils.randFloat(0.45, 1);
-        const horizontalSpeed = Math.min(this.visibleWidth * 0.26, 6.5);
-        const depthSpeed = Math.min(this.depthLimit * 0.9, 2.6);
+        const horizontalSpeed = Math.min(this.visibleWidth * 0.075, 1.8);
+        const depthSpeed = Math.min(this.depthLimit * 0.55, 1.6);
         entry.body.velocity.set(
-            Math.cos(outwardAngle) * horizontalSpeed * outwardStrength,
+            THREE.MathUtils.randFloat(-horizontalSpeed, horizontalSpeed),
             THREE.MathUtils.randFloat(-0.18, -0.04),
-            Math.sin(outwardAngle) * depthSpeed * outwardStrength,
+            THREE.MathUtils.randFloat(-depthSpeed, depthSpeed),
         );
         entry.body.quaternion.setFromEuler(
             Math.random() * Math.PI,
@@ -528,6 +676,9 @@ class ProsperityExperience {
             THREE.MathUtils.randFloat(-7, 7),
             THREE.MathUtils.randFloat(-7, 7),
         );
+        entry.body.addEventListener('collide', ({ body: otherBody }) => {
+            this.handleElementCollision(entry.body, otherBody);
+        });
         entry.mesh.position.copy(entry.body.position);
         entry.mesh.quaternion.copy(entry.body.quaternion);
         this.scene.add(entry.mesh);
@@ -540,6 +691,7 @@ class ProsperityExperience {
     }
 
     shower(availableCount, onSettled) {
+        this.createElementObstacles();
         const committedCount = this.entries.length + this.spawnTimers.size;
         const remainingCount = Math.max(0, availableCount - committedCount);
         const pieceCount = getShowerPieceCount(remainingCount, this.config);
@@ -639,11 +791,17 @@ class ProsperityExperience {
         this.lastFrameTime = time;
         this.world.step(1 / 60, delta, 3);
         let awakeBodies = 0;
+        let elementRestingBodies = 0;
         let maximumHorizontalRatio = 0;
         const horizontalRatios = [];
         for (const entry of this.entries) {
             const { mesh, body } = entry;
             const isCurrentBatch = this.batchBodies.has(body);
+            const isOnElement = this.isSupportedByElement(body);
+            if (isOnElement) {
+                elementRestingBodies += 1;
+                this.keepRollingOffElement(body, time);
+            }
             const isNearFloor = body.position.y < this.floorY + this.pieceRadius * 6;
             const isRestingNearPile = body.position.y < this.floorY + this.pieceRadius * 8
                 && body.velocity.length() < 0.65
@@ -666,6 +824,7 @@ class ProsperityExperience {
         horizontalRatios.sort((first, second) => first - second);
         const percentileIndex = Math.max(0, Math.ceil(horizontalRatios.length * 0.9) - 1);
         this.renderer.domElement.dataset.awakeBodies = String(awakeBodies);
+        this.renderer.domElement.dataset.elementRestingBodies = String(elementRestingBodies);
         this.renderer.domElement.dataset.maximumHorizontalRatio = maximumHorizontalRatio.toFixed(3);
         this.renderer.domElement.dataset.pile90HorizontalRatio = (horizontalRatios[percentileIndex] || 0).toFixed(3);
         this.render();

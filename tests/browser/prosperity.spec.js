@@ -22,8 +22,10 @@ for (const viewport of viewports) {
     await expect(canvas).toHaveAttribute('data-physics', 'earth-gravity');
     await expect(canvas).toHaveAttribute('data-performance-tier', viewport.tier);
     await expect(canvas).toHaveAttribute('data-container-shape', 'flat-bottom-viewport');
-    await expect(canvas).toHaveAttribute('data-release-origin', 'top-center');
+    await expect(canvas).toHaveAttribute('data-release-origin', 'full-width-top');
     await expect(canvas).toHaveAttribute('data-bounce-profile', 'lively-contained');
+    await expect(canvas).toHaveAttribute('data-obstacle-model', 'dom-elements');
+    expect(Number(await canvas.getAttribute('data-element-obstacle-count'))).toBeGreaterThan(5);
 
     const targetPiecePixels = Number(await canvas.getAttribute('data-target-piece-pixels'));
     const bodyLimit = Number(await canvas.getAttribute('data-max-bodies'));
@@ -34,6 +36,8 @@ for (const viewport of viewports) {
       .toBeGreaterThan(firstShowerSize);
     await expect.poll(async () => Number(await canvas.getAttribute('data-spawn-pending')), { timeout: 10000 }).toBe(0);
     await expect.poll(async () => Number(await canvas.getAttribute('data-awake-bodies')), { timeout: 30000 }).toBe(0);
+    expect(Number(await canvas.getAttribute('data-element-collision-count'))).toBeGreaterThan(0);
+    expect(Number(await canvas.getAttribute('data-element-resting-bodies'))).toBe(0);
 
     expect(targetPiecePixels).toBeGreaterThanOrEqual(10);
     expect(targetPiecePixels).toBeLessThanOrEqual(22);
@@ -60,20 +64,20 @@ for (const viewport of viewports) {
 }
 
 test('a reload starts a fresh relaxing treasure session', async ({ page }) => {
-  test.setTimeout(70_000);
+  test.setTimeout(95_000);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/index.html');
   await page.addStyleTag({ content: '.popup { display: none !important; }' });
   await page.getByRole('button', { name: 'Create a 3D prosperity treasure' }).click();
   let canvas = page.locator('.prosperity-canvas');
   await expect.poll(async () => Number(await canvas.getAttribute('data-body-count')), { timeout: 10_000 }).toBeGreaterThan(15);
-  await expect.poll(async () => Number(await canvas.getAttribute('data-awake-bodies')), { timeout: 30_000 }).toBe(0);
+  await expect.poll(async () => Number(await canvas.getAttribute('data-awake-bodies')), { timeout: 40_000 }).toBe(0);
   const firstSessionCount = Number(await canvas.getAttribute('data-collected-count'));
   await page.reload();
   await page.addStyleTag({ content: '.popup { display: none !important; }' });
   await page.getByRole('button', { name: 'Create a 3D prosperity treasure' }).click();
   canvas = page.locator('.prosperity-canvas');
   await expect.poll(async () => Number(await canvas.getAttribute('data-body-count')), { timeout: 10_000 }).toBeGreaterThan(15);
-  await expect.poll(async () => Number(await canvas.getAttribute('data-awake-bodies')), { timeout: 30_000 }).toBe(0);
+  await expect.poll(async () => Number(await canvas.getAttribute('data-awake-bodies')), { timeout: 40_000 }).toBe(0);
   expect(Number(await canvas.getAttribute('data-collected-count'))).toBe(firstSessionCount);
 });
