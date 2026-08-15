@@ -236,7 +236,7 @@
 
 ### CP-019 — Layered dynamic treasure mound and exact daily inventory
 
-- Status: implemented and validated locally.
+- Status: implemented, validated, and committed locally.
 - Objective: make each progressive batch land visibly on top of the retained treasure instead of visually intersecting it, preserve a dynamic pile effect, and prove that the retained visible total can reach the exact `#dailyCounter` inventory.
 - Layering model: one responsive click batch forms one 3D layer (24 mobile, 32 tablet, 40 desktop). Layers use both horizontal and depth slots with separated centres, subtle deterministic offsets, and physics-derived resting rotations. Lower layers remain broad while upper layers taper to 50% width/depth, producing a mound rather than a rectangular wall.
 - Dynamic collision model: after each batch settles, an invisible Cannon collision surface is rebuilt immediately above the current top layer. The next batch is released only inside that surface's responsive footprint, so falling bodies collide above the retained treasure instead of passing through it or landing behind it. The surface height and layer count rise after every completed batch.
@@ -249,5 +249,6 @@
   - `browser` PASS — Playwright Chromium (4/4): two-layer mobile, tablet, and desktop runs verify rising collision-surface height and layer count; the full-inventory case restores 441 pieces, drops the remaining 20, and verifies `collectedCount`, `visiblePieceCount`, and `#dailyCounter` all equal 461 with zero active bodies.
   - `visual` PASS — final full-count screenshot inspected: 461 varied pieces form a centred tapered mound with a broad base, narrower top, and no suspended or rectangular-wall arrangement.
 - Scope protection: user-owned untracked `Template-earn/qrcode.jpeg` remains untouched and excluded.
-- Progress: 100% complete | Confidence: high | Current phase: final regression validation and local checkpoint commit | Main remaining scope: target-device feel review.
-- Next: run the final responsive regression suite, commit locally, and push only when explicitly requested.
+- Git checkpoint: `43b4052` (`[CP-019] Build layered prosperity mound`) on `feature/prosperity-coins`.
+- Progress: 100% complete | Confidence: high | Current phase: implementation and local validation complete | Main remaining scope: target-device feel review.
+- Next: push/deploy only when explicitly requested, then review the completed mound and rising-layer motion on the target device.
