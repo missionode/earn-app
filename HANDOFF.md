@@ -455,3 +455,20 @@
 - Git checkpoint: `4e850e1` (`[CP-030] Stop celebration sound at settlement`) on `feature/prosperity-coins`.
 - Progress: 100% implementation and automated validation complete | Confidence: high | Main remaining scope: confirm the perceived stop point on the target phone.
 - Next: push/deploy only when explicitly requested, refresh to v40, and compare sound stop against the final visibly moving pieces.
+
+### CP-031 — Future-safe UPI handle validation
+
+- Status: implemented and validated locally.
+- Objective: accept the valid Google Pay `@okaxis` handle and prevent other legitimate/current or future UPI handles from being rejected merely because Earn's hardcoded domain list is incomplete.
+- Root cause: setup used an exact local `validDomains.includes(domain)` allowlist. It contained `axisbank`, `oksbi`, `okhdfcbank`, and `okicici`, but omitted `okaxis`, so a structurally valid Google Pay VPA failed with `Invalid UPI ID domain.`
+- Official evidence: Google Pay documents four PSP routes—`@okaxis`, `@okhdfcbank`, `@okicici`, and `@oksbi`; NPCI's published UPI member/handle material also identifies `okaxis` under Axis Bank.
+- Validation model: a shared `EarnUpiId` helper replaces the stale bank/PSP allowlist with bounded structural validation of the local part and handle. It explicitly exposes the four current Google Pay handles for regression coverage while allowing other structurally valid handles to be verified by the user's UPI app/payment network rather than falsely rejected offline.
+- Normalization: surrounding whitespace is trimmed and the handle portion is lowercased before validation/storage, so entries such as `teacher@OKAXIS` become `teacher@okaxis` without altering the local identifier.
+- Rejections retained: missing local part, missing handle, absent `@`, whitespace inside the identifier, and other malformed values continue to show `Invalid UPI ID format.`
+- Cache checkpoint: `earn-app-v41`; index loads cache-busted v41 validator/index scripts and both canonical/versioned assets are precached.
+- Validation: `node --check` PASS, `git diff --check` PASS, and `npm test` PASS (38/38), including all four Google Pay handles, a future/previously unknown PSP handle, domain normalization, and malformed input rejection.
+- Browser status: no connected browser backend is available in this session; the focused pure validation tests cover the changed behavior.
+- Scope protection: user-owned QR artwork remains untouched and excluded.
+- Git checkpoint: pending on `main`.
+- Progress: 100% implementation and automated validation complete | Confidence: high | Main remaining scope: target-device setup save using the user's real `@okaxis` VPA.
+- Next: push/deploy only when explicitly requested, refresh to v41, enter the real `@okaxis` address, and generate a low-value QR for device confirmation.

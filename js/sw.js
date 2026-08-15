@@ -1,4 +1,4 @@
-const CACHE_NAME = 'earn-app-v40';
+const CACHE_NAME = 'earn-app-v41';
 const urlsToCache = [
     '../',
     '../index.html',
@@ -33,6 +33,9 @@ const urlsToCache = [
     '../js/app.js',
     '../js/data.js',
     '../js/index.js',
+    '../js/index.js?v=41',
+    '../js/upi-id.js',
+    '../js/upi-id.js?v=41',
     '../js/daily-counter.js',
     '../js/daily-counter.js?v=40',
     '../js/opening-balance.js',

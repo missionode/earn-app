@@ -70,14 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else console.error("ERROR: upiSetupPopup element not found for hideUPISetupPopup.");
     };
 
-    const validateUPIId = (upiId) => {
-        if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,}@[a-zA-Z]{2,}$/.test(upiId)) return 'Invalid UPI ID format.';
-        const domain = upiId.split('@')[1];
-        const validDomains = [
-            'ybl', 'upi', 'okhdfcbank', 'hdfcbank', 'icici', 'axisbank', 'oksbi', 'paytm', 'fbl', 'okicici', 'kotak', 'yesbank', 'idbi', 'canarabank', 'pnb', 'airtel', 'barodapay', 'hsbc', 'rbl', 'indus', 'ubi', 'standardchartered', 'cbin', 'iob', 'sib', 'tjsb', 'kbl', 'dbs', 'bandhan', 'nsdl', 'jio', 'lvbank', 'punjabandsindh', 'idfcfirst', 'csb', 'citi', 'dlb', 'kvbank', 'jandkbank', 'equitas', 'dcb', 'aubank'
-        ];
-        return validDomains.includes(domain) ? '' : 'Invalid UPI ID domain.';
-    };
+    const validateUPIId = (upiId) => EarnUpiId.validate(upiId);
 
     const getCategoryIcon = (category) => ({
         'cash': 'assets/icons/cash.svg', 'rent': 'assets/icons/rent.svg', 'salary': 'assets/icons/salary.svg', 'gift': 'assets/icons/gift.svg', 'investment': 'assets/icons/investment.svg', 'other': 'assets/icons/other.svg', 'food': 'assets/icons/food.svg', 'shopping': 'assets/icons/shopping-bag.svg', 'entertainment': 'assets/icons/entertainment.svg', 'travel': 'assets/icons/travel.svg', 'others': 'assets/icons/others.svg', 'sadhana': 'assets/icons/namaskar.svg',
@@ -228,7 +221,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const handleUPISetupSubmit = (event) => {
         event.preventDefault();
-        const upiId = upiIdInput ? upiIdInput.value.trim() : '';
+        const upiId = EarnUpiId.normalize(
+            upiIdInput ? upiIdInput.value : '',
+        );
         const username = usernameInput ? usernameInput.value.trim() : '';
         const openingBalance = openingBalanceInput ?
             parseFloat(openingBalanceInput.value) : NaN;

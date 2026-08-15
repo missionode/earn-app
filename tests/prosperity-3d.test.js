@@ -98,7 +98,7 @@ test('landing page exposes an accessible prosperity trigger and offline 3D modul
   assert.match(page, /class="prosperity-container" role="button" tabindex="0"/);
   assert.match(page, /id="dailyCounter"[^>]+aria-live="polite"[^>]+aria-atomic="true"/);
   assert.doesNotMatch(page, /id="prosperityStatus"/);
-  assert.match(serviceWorker, /earn-app-v40/);
+  assert.match(serviceWorker, /earn-app-v41/);
   assert.match(serviceWorker, /daily-counter\.js/);
   assert.match(serviceWorker, /prosperity-celebration\.js/);
   assert.match(serviceWorker, /prosperity-3d\.mjs/);
